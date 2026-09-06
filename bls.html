@@ -574,7 +574,7 @@ body {
 /* ========================================================= */
 .map-layout-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 250px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   align-items: start;
   width: min(calc(100vw - 80px), 1640px);
@@ -681,7 +681,7 @@ body {
 
 @media (max-width: 1200px) {
   .map-layout-grid {
-    grid-template-columns: minmax(0, 1fr) 230px;
+    grid-template-columns: minmax(0, 1fr);
     width: 100%;
     left: 0;
     transform: none;
@@ -769,34 +769,77 @@ body {
   vertical-align: middle;
 }
 
-/* Right Sidebar: Occupation Statistics */
-.map-sidebar-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+/* Embedded Occupation Statistics inside Browse Card */
+.browse-stats-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 12px 16px;
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: all 0.15s ease;
 }
 @media (max-width: 900px) {
-  .map-sidebar-stats {
-    display: grid;
+  .browse-stats-container {
     grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-  .map-sidebar-stats .map-control-group {
-    grid-column: 1 / -1;
-  }
-  .map-sidebar-stats .map-stat-block {
-    border-top: none;
-    padding-top: 0;
+    gap: 10px;
+    padding: 10px 14px;
   }
 }
-@media (max-width: 580px) {
-  .map-sidebar-stats {
+@media (max-width: 520px) {
+  .browse-stats-container {
     grid-template-columns: 1fr;
+    gap: 8px;
   }
+}
+.browse-stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  min-width: 0;
+}
+.browse-stat-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+.browse-stat-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.browse-stat-value {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.25;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.browse-stat-footnote {
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.3;
+  opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .map-stat-block {
@@ -1137,16 +1180,24 @@ body {
   vector-effect: non-scaling-stroke;
 }
 .area-boundary-shape.selected {
-  stroke: #ffffff !important;
-  stroke-width: 2.2px !important;
+  stroke: rgba(56, 189, 248, 0.95) !important;
+  stroke-width: 2.5px !important;
   fill-opacity: 0.95 !important;
   vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.55)) brightness(1.12);
+  animation: glass-pulse 2.5s ease-in-out infinite;
 }
 [data-theme="light"] .area-boundary-shape.selected {
-  stroke: #0f172a !important;
-  stroke-width: 2.4px !important;
+  stroke: #0284c7 !important;
+  stroke-width: 2.5px !important;
   fill-opacity: 0.95 !important;
   vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 5px rgba(2, 132, 199, 0.45)) brightness(1.06);
+  animation: glass-pulse 2.5s ease-in-out infinite;
+}
+@keyframes glass-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.5)) brightness(1.10); }
+  50%       { filter: drop-shadow(0 0 9px rgba(56, 189, 248, 0.85)) brightness(1.18); }
 }
 .area-boundary-shape.area-focused {
   stroke: rgba(255, 255, 255, 0.45);
@@ -1169,24 +1220,36 @@ body {
   opacity: 0.25;
 }
 
-/* Metro & Statistical Area Shape Overlay - Clean, distinct highlight */
+/* Metro & Statistical Area Shape Overlay - 3D Glass Tint Highlight */
 .metro-overlay-path {
-  fill: rgba(56, 189, 248, 0.16);
-  stroke: #ffffff;
-  stroke-width: 2.2px;
+  fill: rgba(56, 189, 248, 0.13);
+  stroke: rgba(56, 189, 248, 0.9);
+  stroke-width: 2.4px;
   stroke-linejoin: round;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
   transition: opacity 0.2s ease;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5));
+  animation: overlay-glow 3s ease-in-out infinite;
+}
+@keyframes overlay-glow {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.4)); }
+  50%       { filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.75)); }
 }
 [data-theme="light"] .metro-overlay-path {
-  fill: rgba(15, 23, 42, 0.04);
-  stroke: #0f172a;
+  fill: rgba(2, 132, 199, 0.08);
+  stroke: #0284c7;
   stroke-width: 2.4px;
   stroke-linejoin: round;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 5px rgba(2, 132, 199, 0.35));
+  animation: overlay-glow-light 3s ease-in-out infinite;
+}
+@keyframes overlay-glow-light {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(2, 132, 199, 0.3)); }
+  50%       { filter: drop-shadow(0 0 10px rgba(2, 132, 199, 0.6)); }
 }
 .county-overlay-path {
   fill: transparent;
@@ -1241,17 +1304,17 @@ body {
   transition: r 0.2s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.15s ease, filter 0.15s ease, opacity 0.3s ease, fill-opacity 0.2s ease;
 }
 .metro-bubble:hover, .metro-bubble.highlighted {
-  stroke: #ffffff !important;
-  stroke-width: 2px !important;
-  fill-opacity: 0.92 !important;
-  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.9));
+  stroke: rgba(56, 189, 248, 0.95) !important;
+  stroke-width: 2.2px !important;
+  fill-opacity: 0.94 !important;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 1.0)) brightness(1.15);
 }
 .metro-bubble.bubble-dimmed {
   opacity: 0.15;
   fill-opacity: 0.4;
 }
 .metro-bubble.bubble-focused {
-  stroke: #ffffff !important;
+  stroke: rgba(56, 189, 248, 0.75) !important;
   stroke-width: 1.6px !important;
   fill-opacity: 0.82;
   opacity: 1;
@@ -1262,7 +1325,8 @@ body {
 }
 [data-theme="light"] .metro-bubble:hover, [data-theme="light"] .metro-bubble.highlighted {
   stroke: #0284c7 !important;
-  fill-opacity: 0.9 !important;
+  fill-opacity: 0.92 !important;
+  filter: drop-shadow(0 0 7px rgba(2, 132, 199, 0.75)) brightness(1.1);
 }
 
 
@@ -2156,6 +2220,7 @@ body {
         </div>
         <div>
           <h1 class="hero-heading" id="heroAreaTitle">United States (National)</h1>
+          <div class="hero-subheading" id="heroOccupationSub" style="display: none; font-size: 13.5px; font-weight: 500; color: var(--accent-cyan); margin-top: 3px; font-family: var(--font-sans);"></div>
         </div>
       </div>
     </div>
@@ -2344,7 +2409,10 @@ body {
                 </svg>
                 <span id="browseCardHeading">Occupations & Wages</span>
               </div>
-              <div id="browseCounter" class="tabular" style="font-size: 11.5px; color: var(--text-muted);"></div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div id="browseCounter" class="tabular" style="font-size: 11.5px; color: var(--text-muted);"></div>
+                <button id="browseResetBtn" class="hud-reset-btn" title="Reset all search filters and return to All Occupations">Reset ⟲</button>
+              </div>
             </div>
 
             <!-- Browse Filter Controls Bar -->
@@ -2375,6 +2443,45 @@ body {
                 <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); white-space: nowrap;">Areas</span>
               </div>
               <div id="browseDrilldownCounter" class="tabular" style="font-size: 11px; color: var(--text-muted); white-space: nowrap;"></div>
+            </div>
+
+            <!-- Embedded Occupation Statistics Container inside Browse Card -->
+            <div class="browse-stats-container" id="kpiBar">
+              <div class="browse-stat-block">
+                <div class="browse-stat-header">
+                  <span class="browse-stat-label" id="kpiEmpLabel">Total Employment</span>
+                  <span class="metric-badge" id="kpiEmpShare">Workforce</span>
+                </div>
+                <div class="browse-stat-value tabular" id="kpiTotalEmp">—</div>
+                <div class="browse-stat-footnote" id="kpiEmpFootnote">Cross-industry total</div>
+              </div>
+
+              <div class="browse-stat-block">
+                <div class="browse-stat-header">
+                  <span class="browse-stat-label" id="kpiMedianLabel">Annual Median Wage</span>
+                  <span class="metric-badge" id="kpiMedianDelta">—</span>
+                </div>
+                <div class="browse-stat-value tabular" id="kpiMedianWage">—</div>
+                <div class="browse-stat-footnote" id="kpiMedianFootnote">50th percentile worker earnings</div>
+              </div>
+
+              <div class="browse-stat-block">
+                <div class="browse-stat-header">
+                  <span class="browse-stat-label" id="kpiMeanLabel">Annual Mean Wage</span>
+                  <span class="metric-badge" id="kpiMeanBadge">All Occupations</span>
+                </div>
+                <div class="browse-stat-value tabular" id="kpiMeanWage">—</div>
+                <div class="browse-stat-footnote" id="kpiMeanFootnote">Average annual compensation</div>
+              </div>
+
+              <div class="browse-stat-block">
+                <div class="browse-stat-header">
+                  <span class="browse-stat-label" id="kpiTopLqLabel">Top Sector Concentration</span>
+                  <span class="metric-badge pos" id="kpiTopLqBadge">LQ</span>
+                </div>
+                <div class="browse-stat-value tabular" id="kpiTopLqSector">—</div>
+                <div class="browse-stat-footnote" id="kpiTopLqFootnote">Relative to national baseline</div>
+              </div>
             </div>
 
             <!-- Table Container -->
@@ -2412,50 +2519,6 @@ body {
           </div>
         </div>
       </div>
-
-      <!-- Right Sidebar: Occupation Statistics -->
-      <aside class="map-sidebar-stats" id="kpiBar">
-        <div class="map-control-group">
-          <label class="map-control-label">Occupation Statistics</label>
-          <div class="sidebar-info-value" id="sidebarStatsJobTitle">All Occupations</div>
-        </div>
-
-        <div class="map-stat-block">
-          <div class="map-stat-header">
-            <span class="map-stat-label" id="kpiEmpLabel">Total Employment</span>
-            <span class="metric-badge" id="kpiEmpShare">Workforce</span>
-          </div>
-          <div class="map-stat-value tabular" id="kpiTotalEmp">—</div>
-          <div class="map-stat-footnote" id="kpiEmpFootnote">Cross-industry total</div>
-        </div>
-
-        <div class="map-stat-block">
-          <div class="map-stat-header">
-            <span class="map-stat-label" id="kpiMedianLabel">Annual Median Wage</span>
-            <span class="metric-badge" id="kpiMedianDelta">—</span>
-          </div>
-          <div class="map-stat-value tabular" id="kpiMedianWage">—</div>
-          <div class="map-stat-footnote" id="kpiMedianFootnote">50th percentile worker earnings</div>
-        </div>
-
-        <div class="map-stat-block">
-          <div class="map-stat-header">
-            <span class="map-stat-label" id="kpiMeanLabel">Annual Mean Wage</span>
-            <span class="metric-badge" id="kpiMeanBadge">All Occupations</span>
-          </div>
-          <div class="map-stat-value tabular" id="kpiMeanWage">—</div>
-          <div class="map-stat-footnote" id="kpiMeanFootnote">Average annual compensation</div>
-        </div>
-
-        <div class="map-stat-block">
-          <div class="map-stat-header">
-            <span class="map-stat-label" id="kpiTopLqLabel">Top Sector Concentration</span>
-            <span class="metric-badge pos" id="kpiTopLqBadge">LQ</span>
-          </div>
-          <div class="map-stat-value" id="kpiTopLqSector">—</div>
-          <div class="map-stat-footnote" id="kpiTopLqFootnote">Relative to national baseline</div>
-        </div>
-      </aside>
     </div>
   </section>
 
@@ -3151,7 +3214,18 @@ function updateMapLegend() {
     usPuck.style.left = `${natPct}%`;
     usPuck.style.display = "flex";
 
-    usNameEl.textContent = isEmploymentMapping ? "U.S. National Total" : `U.S. National ${metricName}`;
+    const isAllJobs = !state.activeMapSoc || state.activeMapSoc === "00-0000";
+    let occName = "";
+    if (!isAllJobs) {
+      occName = payload.title || (state.mapData && state.mapData.occupations ? (state.mapData.occupations.find(o => o.soc === state.activeMapSoc)?.title || "") : "");
+      if (occName.length > 24) occName = occName.slice(0, 22) + "…";
+    }
+
+    if (isAllJobs) {
+      usNameEl.textContent = isEmploymentMapping ? "U.S. National Total" : `U.S. National ${metricName}`;
+    } else {
+      usNameEl.textContent = isEmploymentMapping ? `U.S. Total (${occName})` : `U.S. ${metricName} (${occName})`;
+    }
     usValEl.textContent = isEmploymentMapping ? fmt.number(natVal) : fmt.currency(natVal);
 
     // Edge clamping so badge does not clip off container boundaries
@@ -4343,8 +4417,22 @@ function renderHeroAndKPIs() {
     document.title = `${cleanAreaTitle} Wage Explorer · BLS OEWS 2025`;
   }
 
-  // Hero Area Title & Badges
-  document.getElementById("heroAreaTitle").textContent = cleanAreaTitle;
+  // Hero Area Title, Subheading & Badges
+  const heroAreaTitleEl = document.getElementById("heroAreaTitle");
+  const heroOccSubEl = document.getElementById("heroOccupationSub");
+  if (!isAllJobs) {
+    heroAreaTitleEl.textContent = `${occTitle} in ${cleanAreaTitle}`;
+    if (heroOccSubEl) {
+      heroOccSubEl.textContent = `Detailed Occupation Overview · ${cleanAreaTitle}`;
+      heroOccSubEl.style.display = "block";
+    }
+  } else {
+    heroAreaTitleEl.textContent = cleanAreaTitle;
+    if (heroOccSubEl) {
+      heroOccSubEl.textContent = "";
+      heroOccSubEl.style.display = "none";
+    }
+  }
   renderHeroAreaMapBadge(data.id);
   const typeMap = {
     national: "National Benchmark",
@@ -4353,7 +4441,8 @@ function renderHeroAndKPIs() {
     msa: "Metropolitan Statistical Area (MSA)",
     nonmetro: "Non-Metropolitan Balance Area"
   };
-  document.getElementById("areaTypeBadge").textContent = typeMap[data.type] || "Region";
+  const baseAreaType = typeMap[data.type] || "Region";
+  document.getElementById("areaTypeBadge").textContent = isAllJobs ? baseAreaType : `${baseAreaType} · ${occTitle}`;
 
   document.getElementById("areaSearchInput").value = "";
   document.getElementById("areaSearchInput").placeholder = data.name;
@@ -4919,6 +5008,34 @@ function setupEventListeners() {
   const backBtn = document.getElementById("browseDrilldownBackBtn");
   if (backBtn) {
     backBtn.addEventListener("click", closeOccupationAreaBreakdown);
+  }
+
+  // Reset Button in Browse Toolbar
+  const browseResetBtn = document.getElementById("browseResetBtn");
+  if (browseResetBtn) {
+    browseResetBtn.addEventListener("click", () => {
+      // Clear input query
+      const queryInput = document.getElementById("browseQuery");
+      if (queryInput) queryInput.value = "";
+
+      // Reset selects
+      const eduSelect = document.getElementById("browseEduFilter");
+      if (eduSelect) eduSelect.value = "-1";
+      const grpSelect = document.getElementById("browseGroupFilter");
+      if (grpSelect) grpSelect.value = "-1";
+
+      // Close drilldown if open
+      if (state.drilldownSoc) {
+        closeOccupationAreaBreakdown();
+      }
+
+      // Reset occupation on the map back to All Occupations
+      if (state.activeMapSoc && state.activeMapSoc !== "00-0000") {
+        loadMapJob("00-0000");
+      } else {
+        renderBrowseTable();
+      }
+    });
   }
 }
 

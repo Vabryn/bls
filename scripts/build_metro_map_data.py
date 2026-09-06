@@ -3,9 +3,11 @@ import sys
 import json
 from collections import defaultdict
 
-def main():
+def main(year='2025'):
+    year = str(year)
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    data_dir = os.path.join(repo_root, 'data')
+    root_data_dir = os.path.join(repo_root, 'data')
+    data_dir = os.path.join(root_data_dir, year)
     areas_dir = os.path.join(data_dir, 'areas')
     jobs_dir = os.path.join(data_dir, 'jobs')
     os.makedirs(jobs_dir, exist_ok=True)
@@ -19,7 +21,7 @@ def main():
     manifest_by_id = {a['id']: a for a in manifest}
 
     # 2. Load metro_shapes.json
-    shapes_path = os.path.join(data_dir, 'metro_shapes.json')
+    shapes_path = os.path.join(root_data_dir, 'metro_shapes.json')
     with open(shapes_path, 'r', encoding='utf-8') as f:
         shapes = json.load(f)
     print(f"Loaded {len(shapes)} statistical area shapes.")
@@ -152,4 +154,4 @@ def main():
     print("Done!")
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1] if len(sys.argv) > 1 else '2025')

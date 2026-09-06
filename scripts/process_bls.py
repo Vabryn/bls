@@ -46,6 +46,29 @@ def load_education_mapping(bls_html_path):
             existing[normalize_title(m.group(1))] = int(m.group(3))
     return existing
 
+def load_education_mapping_from_areas(areas_dir):
+    """Seed the education map from an already-processed set of area JSON files.
+
+    Each occupation row is [soc, title, grp_idx, edu_lvl, ...]. Using the
+    committed 2025 output as the source keeps education classification
+    identical across every year we process, regardless of what the current
+    bls.html happens to contain."""
+    existing = {}
+    if not os.path.isdir(areas_dir):
+        return existing
+    for fn in os.listdir(areas_dir):
+        if not fn.endswith('.json'):
+            continue
+        try:
+            with open(os.path.join(areas_dir, fn), 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except (ValueError, OSError):
+            continue
+        for row in data.get('occupations', []):
+            if len(row) >= 4 and row[0] and row[3] is not None:
+                existing.setdefault(normalize_title(row[1]), int(row[3]))
+    return existing
+
 def determine_edu_level(soc, title, existing_map):
     norm = normalize_title(title)
     if norm in existing_map:
@@ -126,19 +149,26 @@ def parse_num(v, default=None):
     except ValueError:
         return default
 
-def main():
+def main(year='2025'):
+    year = str(year)
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    bls_data_file = os.path.abspath(os.path.join(repo_root, '..', 'bls_data', 'all_data_M_2025.xlsx'))
-    out_dir = os.path.join(repo_root, 'data')
+    bls_data_file = os.path.abspath(os.path.join(repo_root, '..', 'bls_data', f'all_data_M_{year}.xlsx'))
+    out_dir = os.path.join(repo_root, 'data', year)
     areas_dir = os.path.join(out_dir, 'areas')
     os.makedirs(areas_dir, exist_ok=True)
 
     print(f"Reading from: {bls_data_file}")
     print(f"Output to: {areas_dir}")
 
-    # Load existing education mapping from previous bls.html
-    edu_map = load_education_mapping(os.path.join(repo_root, 'bls.html'))
-    print(f"Loaded {len(edu_map)} occupation education mappings.")
+    # Load existing education mapping. Prefer the committed 2025 area output so
+    # that every year is classified identically; fall back to bls.html.
+    ref_areas_dir = os.path.join(repo_root, 'data', '2025', 'areas')
+    edu_map = load_education_mapping_from_areas(ref_areas_dir)
+    if edu_map:
+        print(f"Loaded {len(edu_map)} education mappings from {ref_areas_dir}.")
+    else:
+        edu_map = load_education_mapping(os.path.join(repo_root, 'bls.html'))
+        print(f"Loaded {len(edu_map)} occupation education mappings from bls.html.")
 
     with zipfile.ZipFile(bls_data_file) as z:
         # Load shared strings
@@ -319,4 +349,4 @@ def main():
         print(f"Individual area files written to {areas_dir}")
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1] if len(sys.argv) > 1 else '2025')
