@@ -2134,14 +2134,6 @@ body {
   font-weight: 700;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
 }
-[data-theme="light"] .sidebar-info-label {
-  color: #475569;
-  font-weight: 700;
-}
-[data-theme="light"] .sidebar-info-value {
-  color: #0f172a;
-  font-weight: 600;
-}
 [data-theme="light"] .map-card-toolbar {
   background: var(--bg-canvas);
   border-bottom: 1px solid #e2e8f0;
@@ -2653,7 +2645,6 @@ const state = {
   nationalTotals: null,
   nationalArea: null,
   nationalMajorShares: null,
-  activeTab: "map",
   tableSort: { col: "wage", asc: false },
   drilldownSoc: null,
   drilldownRegion: "ALL",
@@ -3075,11 +3066,6 @@ function populateMapJobDropdown() {
 
 async function loadMapJob(soc) {
   state.activeMapSoc = soc;
-
-  // Highlight shortcut chip if present
-  document.querySelectorAll(".map-quick-jobs .quick-pill").forEach(p => {
-    p.classList.toggle("active", p.dataset.soc === soc);
-  });
 
   const occMeta = (state.mapData && state.mapData.occupations)
     ? (state.mapData.occupations.find(o => o.soc === soc) || { title: "All Occupations" })
@@ -4883,13 +4869,9 @@ function setupDropdowns() {
     }
   });
 
-  // Populate Major Sector Select Filters
-  const spreadGf = document.getElementById("spreadGroupFilter");
+  // Populate the Major Sector filter
   const browseGf = document.getElementById("browseGroupFilter");
-  GROUPS.forEach((name, idx) => {
-    if (spreadGf) spreadGf.add(new Option(name, idx));
-    if (browseGf) browseGf.add(new Option(name, idx));
-  });
+  if (browseGf) GROUPS.forEach((name, idx) => browseGf.add(new Option(name, idx)));
 }
 
 // Resolve a free-text query to specific areas via ZIP, place name, or county.
