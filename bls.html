@@ -4252,13 +4252,13 @@ function renderHeroAndKPIs() {
       const shareOfArea = ((occEmp / total.emp) * 100).toFixed(2);
       kpiEmpBadge.textContent = `${shareOfArea}% of Area`;
     } else {
-      kpiEmpBadge.textContent = "Occupation";
+      kpiEmpBadge.textContent = "Unreported";
     }
 
-    if (natJobEmp) {
-      kpiEmpFootnote.textContent = `U.S. National: ${fmt.number(natJobEmp)} employed total`;
+    if (occEmp && occEmp > 0) {
+      kpiEmpFootnote.textContent = natJobEmp ? `U.S. National: ${fmt.number(natJobEmp)} employed total` : `BLS OEWS occupation estimate`;
     } else {
-      kpiEmpFootnote.textContent = `BLS OEWS occupation estimate`;
+      kpiEmpFootnote.textContent = `Employment estimate suppressed by BLS for ${data.name}`;
     }
   } else {
     if (kpiEmpLabel) kpiEmpLabel.textContent = "Total Employment";
@@ -4300,11 +4300,11 @@ function renderHeroAndKPIs() {
         kpiMedFootnote.textContent = natJobMedian ? `U.S. Nat'l Median: ${fmt.currency(natJobMedian)}` : "50th percentile worker earnings";
       }
     } else {
-      kpiMedVal.textContent = "Hourly Schedule";
-      kpiMedBadge.textContent = "Hourly Schedule";
+      kpiMedVal.textContent = "Withheld / N/A";
+      kpiMedBadge.textContent = "Unreported";
       kpiMedBadge.className = "metric-badge";
       if (kpiMedFootnote) {
-        kpiMedFootnote.textContent = "BLS tracks hourly wage schedule for this occupation";
+        kpiMedFootnote.textContent = natJobMedian ? `U.S. Nat'l Median: ${fmt.currency(natJobMedian)}` : "Annual wage suppressed by BLS";
       }
     }
   } else {
@@ -4354,13 +4354,13 @@ function renderHeroAndKPIs() {
         kpiMeanFootnote.textContent = natJobMean ? `U.S. Nat'l Mean: ${fmt.currency(natJobMean)}` : "Average annual compensation";
       }
     } else {
-      kpiMeanVal.textContent = "Hourly Schedule";
+      kpiMeanVal.textContent = "Withheld / N/A";
       if (kpiMeanBadge) {
-        kpiMeanBadge.textContent = "Hourly Schedule";
+        kpiMeanBadge.textContent = "Unreported";
         kpiMeanBadge.className = "metric-badge";
       }
       if (kpiMeanFootnote) {
-        kpiMeanFootnote.textContent = "Annual rate not computed by BLS";
+        kpiMeanFootnote.textContent = natJobMean ? `U.S. Nat'l Mean: ${fmt.currency(natJobMean)}` : "Annual rate suppressed by BLS";
       }
     }
   } else {
@@ -4376,7 +4376,7 @@ function renderHeroAndKPIs() {
   }
 
   // -------------------------------------------------------------
-  // KPI 4: Concentration / Location Quotient
+  // KPI 4: Concentration / Density
   // -------------------------------------------------------------
   const kpiLqLabel = document.getElementById("kpiTopLqLabel");
   const kpiLqVal = document.getElementById("kpiTopLqSector");
@@ -4385,8 +4385,8 @@ function renderHeroAndKPIs() {
 
   if (!isAllJobs) {
     if (kpiLqLabel) {
-      kpiLqLabel.textContent = `${shortOcc} Concentration`;
-      kpiLqLabel.title = `${occTitle} Concentration`;
+      kpiLqLabel.textContent = `${shortOcc} Density`;
+      kpiLqLabel.title = `${occTitle} Density`;
     }
     if (data.id === "99") {
       kpiLqVal.textContent = "1.00× National Baseline";
@@ -4394,7 +4394,7 @@ function renderHeroAndKPIs() {
       kpiLqBadge.className = "metric-badge";
       kpiLqFootnote.textContent = "National benchmark density (1.00×)";
     } else if (occLq !== null && occLq > 0) {
-      kpiLqVal.textContent = `${occLq.toFixed(2)}× Location Quotient`;
+      kpiLqVal.textContent = `${occLq.toFixed(2)}× Density`;
       if (occLq >= 1.25) {
         kpiLqBadge.textContent = "High Concentration";
         kpiLqBadge.className = "metric-badge pos";
@@ -4414,7 +4414,7 @@ function renderHeroAndKPIs() {
       kpiLqVal.textContent = "Withheld / N/A";
       kpiLqBadge.textContent = "Unreported";
       kpiLqBadge.className = "metric-badge";
-      kpiLqFootnote.textContent = `Location quotient below BLS reporting threshold in ${data.name}`;
+      kpiLqFootnote.textContent = `Concentration below BLS reporting threshold in ${data.name}`;
     }
   } else {
     if (kpiLqLabel) kpiLqLabel.textContent = "Top Sector Concentration";
@@ -4426,7 +4426,7 @@ function renderHeroAndKPIs() {
         kpiLqBadge.className = "metric-badge";
         kpiLqFootnote.textContent = "Balanced national baseline";
       } else {
-        kpiLqBadge.textContent = `${topLqSector.lq.toFixed(2)}× LQ`;
+        kpiLqBadge.textContent = `${topLqSector.lq.toFixed(2)}× Density`;
         kpiLqBadge.className = topLqSector.lq >= 1.25 ? "metric-badge pos" : "metric-badge";
         const shareStr = topLqSector.areaShare ? ` (${fmt.pct(topLqSector.areaShare)} of workforce)` : "";
         kpiLqFootnote.textContent = `${fmt.number(topLqSector.emp)} employed${shareStr}`;
