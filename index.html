@@ -2669,7 +2669,9 @@ const fmt = {
     return n.toLocaleString();
   },
   lq: (n) => {
-    if (n === null || n === undefined || isNaN(n)) return "—";
+    // LQ is a ratio of employment shares; 0 / null means BLS suppressed the
+    // employment it's derived from, not "zero concentration".
+    if (n === null || n === undefined || isNaN(n) || n <= 0) return "—";
     return n.toFixed(2) + "×";
   },
   pct: (n) => {
@@ -3195,8 +3197,9 @@ async function ensurePriorJobYears(soc) {
 // { field: year } map of what was backfilled and whether any figure is an
 // hourly-derived annual estimate.
 function resolveOccAreaFigures(soc, areaId, currentStats) {
-  // The headline figures the Area Summary shows; LQ is derived and not flagged.
-  const fields = ["emp", "mean", "median"];
+  // Every headline figure the Area Summary shows — including density (LQ),
+  // which BLS drops whenever it suppresses the employment it's built from.
+  const fields = ["emp", "mean", "median", "lq"];
   const out = Object.assign({ emp: null, mean: null, median: null, lq: null }, currentStats || {});
   const backfill = {};
   let hourly = !!(currentStats && currentStats.hourly);
