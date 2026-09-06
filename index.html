@@ -283,6 +283,16 @@ body {
   position: relative;
   display: flex;
   align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 26px 0 30px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease;
+}
+.combobox-input-box:focus-within {
+  border-color: var(--accent-blue);
 }
 .combobox-input-box svg {
   position: absolute;
@@ -293,24 +303,21 @@ body {
   pointer-events: none;
 }
 .combobox-input {
-  width: 100%;
-  height: 38px;
-  padding: 0 34px 0 32px;
+  flex: 1 1 40px;
+  min-width: 40px;
+  height: 36px;
+  padding: 0;
   font-family: var(--font-sans);
   font-size: 13px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-md);
+  background: transparent;
+  border: none;
   color: var(--text-primary);
   outline: none;
-  transition: border-color 0.15s ease;
 }
-.combobox-input:focus {
-  border-color: var(--accent-blue);
-}
+.combobox-input:focus { border: none; }
 .combobox-clear {
   position: absolute;
-  right: 10px;
+  right: 6px;
   background: transparent;
   border: none;
   color: var(--text-muted);
@@ -967,21 +974,25 @@ body {
 }
 .card-search .combobox-dropdown { min-width: 260px; }
 
-/* Removable selection chip — the active area / occupation, wherever one is shown. */
+/* Removable selection chip — the active area / occupation, shown as a token
+   inside its search field. */
 .sel-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
+  flex-shrink: 1;
   min-width: 0;
-  max-width: 300px;
-  padding: 3px 5px 3px 10px;
+  max-width: 62%;
+  margin: 3px 0;
+  padding: 2px 4px 2px 9px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent-cyan) 14%, transparent);
   border: 1px solid color-mix(in srgb, var(--accent-cyan) 42%, transparent);
   color: var(--accent-cyan);
   font-weight: 600;
-  font-size: 12.5px;
+  font-size: 12px;
   line-height: 1.2;
+  white-space: nowrap;
 }
 .sel-chip .sel-chip-label {
   overflow: hidden;
@@ -1009,13 +1020,7 @@ body {
 .sel-chip .sel-chip-x:hover {
   background: color-mix(in srgb, var(--accent-cyan) 28%, transparent);
 }
-.sel-chip.is-empty {
-  background: transparent;
-  border-color: transparent;
-  color: var(--text-secondary);
-  padding-left: 0;
-}
-.sel-chip.is-empty .sel-chip-x { display: none; }
+.sel-chip.is-empty { display: none; }
 .map-toolbar-area-dot {
   width: 8px;
   height: 8px;
@@ -2310,17 +2315,16 @@ body {
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                   </svg>
+                  <span class="sel-chip is-empty" id="areaSelChip">
+                    <span class="sel-chip-label" id="hudMetroTitle">United States</span>
+                    <button type="button" class="sel-chip-x" id="areaSelChipClear" aria-label="Clear selected area" title="Clear selected area">✕</button>
+                  </span>
                   <input type="text" id="areaSearchInput" class="combobox-input" placeholder="Search state, metro area, or 5-digit ZIP..." autocomplete="off">
                   <button id="areaSearchClear" class="combobox-clear" aria-label="Clear area search">✕</button>
                 </div>
                 <div id="areaDropdown" class="combobox-dropdown"></div>
               </div>
               <div class="map-toolbar-area-info" id="mapToolbarAreaInfo">
-                <span class="map-toolbar-area-dot"></span>
-                <span class="sel-chip is-empty" id="areaSelChip">
-                  <span class="hud-metro-title sel-chip-label" id="hudMetroTitle">United States</span>
-                  <button type="button" class="sel-chip-x" id="areaSelChipClear" aria-label="Clear selected area" title="Clear selected area">✕</button>
-                </span>
                 <span class="hud-metro-counties" id="hudMetroCounties">National View</span>
               </div>
               <button class="hud-reset-btn" id="hudResetBtn" title="Reset map zoom to National view" style="display: none;">Reset zoom</button>
@@ -2436,15 +2440,15 @@ body {
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                   </svg>
+                  <span class="sel-chip is-empty" id="jobSelChip">
+                    <span class="sel-chip-label" id="browseCardHeading">All occupations</span>
+                    <button type="button" class="sel-chip-x" id="jobSelChipClear" aria-label="Clear selected occupation" title="Clear selected occupation">✕</button>
+                  </span>
                   <input type="text" id="mapJobSearchInput" class="combobox-input" placeholder="Search occupation (e.g. Registered Nurses)..." autocomplete="off">
                   <button id="mapJobClear" class="combobox-clear" aria-label="Clear occupation search">✕</button>
                 </div>
                 <div id="mapJobDropdown" class="combobox-dropdown"></div>
               </div>
-              <span class="sel-chip is-empty browse-toolbar-title" id="jobSelChip">
-                <span class="sel-chip-label" id="browseCardHeading">All occupations</span>
-                <button type="button" class="sel-chip-x" id="jobSelChipClear" aria-label="Clear selected occupation" title="Clear selected occupation">✕</button>
-              </span>
               <button id="browseResetBtn" class="hud-reset-btn" title="Reset all search filters and return to All Occupations">Reset ⟲</button>
             </div>
 
@@ -2844,10 +2848,6 @@ async function init() {
     if (state._pendingOccBreakdown) {
       const o = state._pendingOccBreakdown;
       state._pendingOccBreakdown = null;
-      const inp = document.getElementById("mapJobSearchInput");
-      if (inp) inp.value = o.title;
-      const clr = document.getElementById("mapJobClear");
-      if (clr) clr.style.display = "block";
       try { await openOccupationAreaBreakdown(o.soc, o.title); } catch (e) {}
     }
   } catch (err) {
@@ -3099,15 +3099,13 @@ async function loadMapJob(soc) {
   const jobInput = document.getElementById("mapJobSearchInput");
   const clearBtn = document.getElementById("mapJobClear");
   if (jobInput) {
-    if (soc === "00-0000") {
-      jobInput.value = "";
-      jobInput.placeholder = "Search occupation (e.g. Actors, Software Developers)...";
-      if (clearBtn) clearBtn.style.display = "none";
-    } else {
-      jobInput.value = occMeta.title;
-      jobInput.placeholder = occMeta.title;
-      if (clearBtn) clearBtn.style.display = "block";
-    }
+    // The selection shows as a chip inside the field, so the input stays empty
+    // and ready to type a new search.
+    jobInput.value = "";
+    jobInput.placeholder = soc === "00-0000"
+      ? "Search occupation (e.g. Registered Nurses)…"
+      : "Change occupation…";
+    if (clearBtn) clearBtn.style.display = "none";
   }
   const sidebarJobTitle = document.getElementById("sidebarActiveJobTitle");
   if (sidebarJobTitle) {
@@ -4075,10 +4073,11 @@ function setupMapControls() {
       e.preventDefault();
       const pick = highlighted || visibleOptions[0];
       if (pick) {
-        input.value = pick.querySelector(".area-opt-name") ? pick.querySelector(".area-opt-name").textContent : input.value;
-        if (clearBtn) clearBtn.style.display = "block";
+        const pickName = pick.querySelector(".area-opt-name") ? pick.querySelector(".area-opt-name").textContent : (pick.dataset.title || "");
+        input.value = "";
+        if (clearBtn) clearBtn.style.display = "none";
         closeMapJobDropdown();
-        openOccupationAreaBreakdown(pick.dataset.soc, pick.dataset.title || input.value);
+        openOccupationAreaBreakdown(pick.dataset.soc, pickName);
       }
     } else if (e.key === "Escape") {
       closeMapJobDropdown();
@@ -4350,9 +4349,9 @@ function filterMapJobDropdown(query) {
 
     opt.addEventListener("click", () => {
       const inp = document.getElementById("mapJobSearchInput");
-      if (inp) inp.value = occ.title;
+      if (inp) inp.value = "";
       const clr = document.getElementById("mapJobClear");
-      if (clr) clr.style.display = "block";
+      if (clr) clr.style.display = "none";
       closeMapJobDropdown();
       // Picking an occupation opens its per-area breakdown in the browse panel
       // and recolors the map (openOccupationAreaBreakdown calls loadMapJob).
@@ -4721,7 +4720,7 @@ function renderHeroAndKPIs() {
   const areaInputEl = document.getElementById("areaSearchInput");
   if (areaInputEl && document.activeElement !== areaInputEl) {
     areaInputEl.value = "";
-    areaInputEl.placeholder = data.name;
+    areaInputEl.placeholder = data.id === "99" ? "Search state, metro area, or ZIP…" : "Change area…";
   }
 
   const statsJobTitle = document.getElementById("sidebarStatsJobTitle");
