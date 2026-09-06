@@ -829,11 +829,12 @@ body {
   scrollbar-width: none;
 }
 .map-card-controls-bar::-webkit-scrollbar { display: none; }
-@media (max-width: 640px) {
+@media (max-width: 760px) {
   .map-card-controls-bar {
     flex-wrap: wrap;
     gap: 9px 12px;
     padding: 9px 12px;
+    overflow-x: visible;
   }
   .map-controls-job-meta { margin-left: 0; }
   /* Each control group takes a full-width row; buttons share it evenly. */
@@ -938,6 +939,18 @@ body {
   gap: 6px 6px;
   padding: 13px 24px 12px;
   border-bottom: 1px solid var(--area-rule);
+}
+/* Pills wrap to their own line rather than shrink-clipping mid-word. */
+.area-summary-head .pill-token {
+  flex: 0 1 auto;
+  max-width: calc(100% - 32px);
+}
+@media (max-width: 760px) {
+  .area-summary-head {
+    justify-content: flex-start;
+    padding: 12px 16px;
+  }
+  .data-year-flag { position: static; margin-left: auto; }
 }
 .area-summary-eyebrow {
   font-size: 13px;
@@ -1389,7 +1402,7 @@ body {
   background: var(--bg-elevated);
   color: var(--accent-blue);
 }
-@media (max-width: 640px) {
+@media (max-width: 760px) {
   .map-card-toolbar,
   .browse-card-toolbar {
     padding: 10px 14px;
@@ -1919,6 +1932,13 @@ body {
   display: none;
   min-width: 240px;
   max-width: 320px;
+  max-height: 90vh;
+  overflow: hidden;
+}
+/* Touch devices have no real hover — a tapped tooltip just gets stuck and
+   clips. Suppress it; the tap already updates the Summary + map. */
+@media (hover: none), (pointer: coarse) {
+  .custom-tooltip { display: none !important; }
 }
 
 /* Legend Bar for Spread Tab */
@@ -5933,10 +5953,19 @@ function applyTheme(isDark) {
 const tooltip = document.getElementById("chartTooltip");
 
 function moveTooltip(e) {
-  const x = e.clientX + 16;
-  const y = e.clientY + 16;
-  const maxX = window.innerWidth - 320;
-  tooltip.style.left = Math.min(x, maxX) + "px";
+  const pad = 10;
+  const cx = e.clientX != null ? e.clientX : 0;
+  const cy = e.clientY != null ? e.clientY : 0;
+  const tw = tooltip.offsetWidth || 300;
+  const th = tooltip.offsetHeight || 200;
+  let x = cx + 16;
+  let y = cy + 16;
+  // Flip to the other side / clamp so the card never spills off any edge.
+  if (x + tw + pad > window.innerWidth) x = cx - tw - 16;
+  if (x < pad) x = pad;
+  if (y + th + pad > window.innerHeight) y = window.innerHeight - th - pad;
+  if (y < pad) y = pad;
+  tooltip.style.left = x + "px";
   tooltip.style.top = y + "px";
 }
 
