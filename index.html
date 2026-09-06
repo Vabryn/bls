@@ -236,11 +236,38 @@ body {
   min-height: 22px;
 }
 
-/* Area Picker */
-.area-picker-wrapper {
+/* Dual Global Search Bars */
+.dual-search-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 18px;
+  margin-bottom: 6px;
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .dual-search-bar {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+.search-field-group {
   position: relative;
   width: 100%;
-  max-width: 380px;
+}
+.search-field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+  font-family: var(--font-mono);
+}
+.area-picker-wrapper, .job-picker-wrapper {
+  position: relative;
+  width: 100%;
 }
 .combobox-input-box {
   position: relative;
@@ -546,44 +573,107 @@ body {
 /* ========================================================= */
 /* METRO MAP TAB STYLING                                      */
 /* ========================================================= */
-.map-controls-header {
+.map-layout-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
+  grid-template-columns: 210px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .map-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+.map-sidebar-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 14px 16px;
-  margin-bottom: 12px;
+  padding: 16px;
 }
-@media (min-width: 960px) {
-  .map-controls-header {
-    grid-template-columns: 1.4fr 1.6fr auto;
-    align-items: start;
+@media (max-width: 900px) {
+  .map-sidebar-controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-start;
   }
 }
 .map-control-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  position: relative;
-  z-index: auto;
+  gap: 6px;
+  width: 100%;
 }
-.map-control-group:first-child {
-  z-index: 10;
+@media (max-width: 900px) {
+  .map-control-group {
+    width: auto;
+    flex: 1;
+    min-width: 160px;
+  }
 }
 .map-control-label {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
-  letter-spacing: 0.01em;
+  font-family: var(--font-mono);
 }
-.map-quick-jobs {
+.segmented-control.vertical {
   display: flex;
-  align-items: center;
-  gap: 5px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
+  flex-direction: column;
+  width: 100%;
+  gap: 2px;
+  background: var(--bg-elevated);
+  padding: 3px;
+  border-radius: var(--radius-sm);
+}
+@media (max-width: 900px) {
+  .segmented-control.vertical {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto;
+  }
+}
+.segmented-control.vertical .segmented-btn {
+  text-align: left;
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+}
+@media (max-width: 900px) {
+  .segmented-control.vertical .segmented-btn {
+    text-align: center;
+    width: auto;
+    padding: 6px 10px;
+  }
+}
+.map-sidebar-info {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.sidebar-info-label {
+  color: var(--text-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+.sidebar-info-value {
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 /* Map Card & SVG */
@@ -1426,18 +1516,36 @@ body {
           </p>
         </div>
       </div>
+    </div>
 
-      <!-- Searchable Area Combobox -->
-      <div class="area-picker-wrapper">
+    <!-- Dual Global Search Bars: Area (with ZIP) & Occupation -->
+    <div class="dual-search-bar">
+      <!-- 1. Searchable Area / ZIP Combobox -->
+      <div class="search-field-group area-picker-wrapper">
+        <label class="search-field-label" for="areaSearchInput">Area or ZIP Code</label>
         <div class="combobox-input-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" id="areaSearchInput" class="combobox-input" placeholder="Search state or metro area..." autocomplete="off">
-          <button id="areaSearchClear" class="combobox-clear" aria-label="Clear search">✕</button>
+          <input type="text" id="areaSearchInput" class="combobox-input" placeholder="Search state, metro area, or 5-digit ZIP..." autocomplete="off">
+          <button id="areaSearchClear" class="combobox-clear" aria-label="Clear area search">✕</button>
         </div>
         <div id="areaDropdown" class="combobox-dropdown"></div>
+      </div>
+
+      <!-- 2. Searchable Occupation Combobox -->
+      <div class="search-field-group job-picker-wrapper map-job-picker">
+        <label class="search-field-label" for="mapJobSearchInput">Occupation</label>
+        <div class="combobox-input-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="mapJobSearchInput" class="combobox-input" placeholder="Search occupation (e.g. Software Developers)..." autocomplete="off">
+          <button id="mapJobClear" class="combobox-clear" aria-label="Clear occupation search">✕</button>
+        </div>
+        <div id="mapJobDropdown" class="combobox-dropdown"></div>
       </div>
     </div>
 
@@ -1505,80 +1613,54 @@ body {
   <!-- TAB 0: Metro Wage Map (USA Geographic Visualizer)       -->
   <!-- ======================================================= -->
   <section id="tab-map" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-map">
-    <!-- Map Controls Toolbar -->
-    <div class="map-controls-header">
-      <!-- Job Selector Combobox -->
-      <div class="map-control-group">
-        <label class="map-control-label" for="mapJobSearchInput">Occupation</label>
-        <div class="combobox-input-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" id="mapJobSearchInput" class="control-input" placeholder="Search occupation (e.g. Software Developers, Registered Nurses)..." autocomplete="off">
-          <button id="mapJobClear" class="combobox-clear" aria-label="Clear job search">✕</button>
-        </div>
-        <div id="mapJobDropdown" class="combobox-dropdown"></div>
-      </div>
-
-      <!-- Wage Metric Picker -->
-      <div class="map-control-group">
-        <label class="map-control-label">Wage metric</label>
-        <div class="segmented-control" id="mapMetricTabs">
-          <button class="segmented-btn active" data-metric="median">Median Wage</button>
-          <button class="segmented-btn" data-metric="mean">Mean Wage</button>
-          <button class="segmented-btn" data-metric="p25">Bottom 25% (P25)</button>
-          <button class="segmented-btn" data-metric="p75">Top 25% (P75)</button>
-        </div>
-      </div>
-
-      <!-- Map Style Picker -->
-      <div class="map-control-group">
-        <label class="map-control-label">Map style</label>
-        <div class="segmented-control" id="mapModeTabs">
-          <button class="segmented-btn active" data-mode="area">Area Map</button>
-          <button class="segmented-btn" data-mode="bubble">Bubble Map</button>
-          <button class="segmented-btn" data-mode="bar">3D Bar Map</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="map-quick-jobs">
-      <button class="quick-pill active" data-soc="00-0000">All Occupations</button>
-      <button class="quick-pill" data-soc="15-1252">Software Developers</button>
-      <button class="quick-pill" data-soc="29-1141">Registered Nurses</button>
-      <button class="quick-pill" data-soc="11-1021">General Managers</button>
-      <button class="quick-pill" data-soc="47-2111">Electricians</button>
-      <button class="quick-pill" data-soc="23-1011">Lawyers</button>
-      <button class="quick-pill" data-soc="13-2011">Accountants</button>
-      <button class="quick-pill" data-soc="17-2141">Mechanical Engineers</button>
-      <button class="quick-pill" data-soc="15-2051">Data Scientists</button>
-      <button class="quick-pill" data-soc="35-2014">Restaurant Cooks</button>
-    </div>
-
-    <!-- Map Canvas Card -->
-    <div class="map-card">
-      <div class="map-card-toolbar">
-        <div class="map-summary-text" id="mapSummaryStats">
-          Loading 393 Metropolitan Statistical Areas...
-        </div>
-        <div class="map-toolbar-right">
-          <div class="map-metro-search-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="map-search-icon">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" id="mapMetroSearchInput" class="map-search-input" placeholder="Search metro or county..." autocomplete="off">
-            <button id="mapMetroSearchClear" class="map-search-clear" aria-label="Clear map search">✕</button>
-            <div id="mapMetroSearchDropdown" class="map-search-dropdown"></div>
-          </div>
-          <div class="map-zoom-buttons">
-            <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in">+</button>
-            <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out">−</button>
-            <button class="map-zoom-btn" id="mapZoomReset" aria-label="Reset zoom">⟲</button>
+    <div class="map-layout-grid">
+      <!-- Left Controls Sidebar (Wage Metric & Map Style) -->
+      <aside class="map-sidebar-controls">
+        <!-- Wage Metric Picker -->
+        <div class="map-control-group">
+          <label class="map-control-label">Wage Metric</label>
+          <div class="segmented-control vertical" id="mapMetricTabs">
+            <button class="segmented-btn active" data-metric="median">Median Wage</button>
+            <button class="segmented-btn" data-metric="mean">Mean Wage</button>
+            <button class="segmented-btn" data-metric="p25">Bottom 25% (P25)</button>
+            <button class="segmented-btn" data-metric="p75">Top 25% (P75)</button>
           </div>
         </div>
-      </div>
+
+        <!-- Map Style Picker -->
+        <div class="map-control-group">
+          <label class="map-control-label">Map Style</label>
+          <div class="segmented-control vertical" id="mapModeTabs">
+            <button class="segmented-btn active" data-mode="area">Area Map</button>
+            <button class="segmented-btn" data-mode="bubble">Bubble Map</button>
+            <button class="segmented-btn" data-mode="bar">3D Bar Map</button>
+          </div>
+        </div>
+
+        <!-- Sidebar Info -->
+        <div class="map-sidebar-info">
+          <div>
+            <div class="sidebar-info-label">Active Occupation</div>
+            <div class="sidebar-info-value" id="sidebarActiveJobTitle">All Occupations</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Column: Map Canvas Card -->
+      <div class="map-canvas-column">
+        <div class="map-card">
+          <div class="map-card-toolbar">
+            <div class="map-summary-text" id="mapSummaryStats">
+              Loading 393 Metropolitan Statistical Areas...
+            </div>
+            <div class="map-toolbar-right">
+              <div class="map-zoom-buttons">
+                <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in">+</button>
+                <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out">−</button>
+                <button class="map-zoom-btn" id="mapZoomReset" aria-label="Reset zoom">⟲</button>
+              </div>
+            </div>
+          </div>
 
       <!-- Responsive SVG Viewport (Albers USA 975x610) -->
       <div class="map-svg-container" id="mapSvgContainer">
@@ -1628,7 +1710,8 @@ body {
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
   <!-- TAB 1: Wage Spread (Percentiles P10-P90) -->
   <section id="tab-spread" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-spread">
@@ -1970,6 +2053,12 @@ async function init() {
     } else {
       state.currentAreaId = "99";
     }
+
+    // Fetch ZIP crosswalk asynchronously
+    fetch("data/zip_to_area.json")
+      .then(r => r.json())
+      .then(d => { state.zipToArea = d; })
+      .catch(err => console.warn("ZIP data load:", err));
 
     // Load initial area and boot the metro map
     await Promise.all([
@@ -2335,8 +2424,15 @@ async function loadMapJob(soc) {
   });
 
   const occMeta = state.mapData.occupations.find(o => o.soc === soc) || { title: "Occupational Wages" };
-  document.getElementById("mapJobSearchInput").value = "";
-  document.getElementById("mapJobSearchInput").placeholder = occMeta.title;
+  const jobInput = document.getElementById("mapJobSearchInput");
+  if (jobInput) {
+    jobInput.value = "";
+    jobInput.placeholder = occMeta.title;
+  }
+  const sidebarJobTitle = document.getElementById("sidebarActiveJobTitle");
+  if (sidebarJobTitle) {
+    sidebarJobTitle.textContent = occMeta.title;
+  }
 
   if (soc === "00-0000") {
     // All occupations total: build payload from master map data
@@ -2777,13 +2873,6 @@ function setupMapControls() {
     });
   });
 
-  // Quick job shortcut pills
-  document.querySelectorAll(".map-quick-jobs .quick-pill").forEach(pill => {
-    pill.addEventListener("click", () => {
-      loadMapJob(pill.dataset.soc);
-    });
-  });
-
   // Job Search Combobox
   const input = document.getElementById("mapJobSearchInput");
   const dropdown = document.getElementById("mapJobDropdown");
@@ -2998,147 +3087,7 @@ function setupMapControls() {
     hudResetBtn.addEventListener("click", resetMapZoom);
   }
 
-  // Map Metro & County Search Toolbar Handlers
-  const mapMetroInput = document.getElementById("mapMetroSearchInput");
-  const mapMetroDropdown = document.getElementById("mapMetroSearchDropdown");
-  const mapMetroClear = document.getElementById("mapMetroSearchClear");
 
-  if (mapMetroInput && mapMetroDropdown) {
-    const filterMapMetroDropdown = (q) => {
-      const query = q.toLowerCase().trim();
-      if (!query) {
-        mapMetroDropdown.innerHTML = "";
-        mapMetroDropdown.classList.remove("open");
-        return;
-      }
-
-      let matches = [];
-      // 1. Search in MSAs
-      state.manifest.forEach(a => {
-        if (a.type !== "msa") return;
-        const nameMatch = a.name.toLowerCase().includes(query);
-        const stateMatch = (a.state || "").toLowerCase() === query;
-        let countyMatch = null;
-
-        if (state.metroShapes && state.metroShapes[a.id]) {
-          const counties = state.metroShapes[a.id].counties || [];
-          const foundCounty = counties.find(c => c.name.toLowerCase().includes(query));
-          if (foundCounty) countyMatch = foundCounty.name;
-        }
-
-        if (nameMatch || stateMatch || countyMatch) {
-          matches.push({ area: a, countyMatch });
-        }
-      });
-
-      // 2. Search States
-      state.manifest.forEach(a => {
-        if (a.type !== "state") return;
-        if (a.name.toLowerCase().includes(query) || (a.state || "").toLowerCase() === query) {
-          matches.push({ area: a, isState: true });
-        }
-      });
-
-      matches = matches.slice(0, 15);
-
-      if (matches.length === 0) {
-        mapMetroDropdown.innerHTML = `<div class="map-search-opt" style="color:var(--text-muted); cursor:default;">No matching metro, state, or county found.</div>`;
-        mapMetroDropdown.classList.add("open");
-        return;
-      }
-
-      mapMetroDropdown.innerHTML = "";
-      const frag = document.createDocumentFragment();
-      matches.forEach(m => {
-        const item = document.createElement("div");
-        item.className = "map-search-opt";
-        const metaText = m.isState
-          ? `U.S. State · ${fmt.compact(m.area.emp)} jobs`
-          : (m.countyMatch
-              ? `<span class="map-search-opt-county">Includes ${m.countyMatch}</span> · ${m.area.state || ""}`
-              : `Metropolitan Area · ${fmt.compact(m.area.emp)} jobs`);
-
-        item.innerHTML = `
-          <span class="map-search-opt-name">${m.area.name}</span>
-          <span class="map-search-opt-meta">${metaText}</span>
-        `;
-
-        item.addEventListener("click", () => {
-          loadArea(m.area.id, true);
-          mapMetroInput.value = m.area.name;
-          mapMetroDropdown.classList.remove("open");
-          if (mapMetroClear) mapMetroClear.style.display = "block";
-        });
-
-        frag.appendChild(item);
-      });
-
-      mapMetroDropdown.appendChild(frag);
-      mapMetroDropdown.classList.add("open");
-    };
-
-    mapMetroInput.addEventListener("input", (e) => {
-      const val = e.target.value;
-      if (mapMetroClear) mapMetroClear.style.display = val ? "block" : "none";
-      filterMapMetroDropdown(val);
-    });
-
-    mapMetroInput.addEventListener("focus", (e) => {
-      if (e.target.value.trim()) {
-        filterMapMetroDropdown(e.target.value);
-      }
-    });
-
-    mapMetroInput.addEventListener("keydown", (e) => {
-      const visibleOptions = Array.from(mapMetroDropdown.querySelectorAll(".map-search-opt:not([style*='cursor:default'])"));
-      if (!visibleOptions.length) return;
-
-      let highlighted = mapMetroDropdown.querySelector(".map-search-opt.highlighted");
-      let idx = visibleOptions.indexOf(highlighted);
-
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        if (!mapMetroDropdown.classList.contains("open")) {
-          mapMetroDropdown.classList.add("open");
-          return;
-        }
-        if (highlighted) highlighted.classList.remove("highlighted");
-        idx = (idx + 1) % visibleOptions.length;
-        visibleOptions[idx].classList.add("highlighted");
-        visibleOptions[idx].scrollIntoView({ block: "nearest" });
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        if (highlighted) highlighted.classList.remove("highlighted");
-        idx = (idx - 1 + visibleOptions.length) % visibleOptions.length;
-        visibleOptions[idx].classList.add("highlighted");
-        visibleOptions[idx].scrollIntoView({ block: "nearest" });
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        if (highlighted) {
-          highlighted.click();
-        } else if (visibleOptions.length > 0) {
-          visibleOptions[0].click();
-        }
-      } else if (e.key === "Escape") {
-        mapMetroDropdown.classList.remove("open");
-      }
-    });
-
-    if (mapMetroClear) {
-      mapMetroClear.addEventListener("click", () => {
-        mapMetroInput.value = "";
-        mapMetroClear.style.display = "none";
-        mapMetroDropdown.classList.remove("open");
-        resetMapZoom();
-      });
-    }
-
-    document.addEventListener("click", (e) => {
-      if (!e.target.closest(".map-metro-search-wrap")) {
-        mapMetroDropdown.classList.remove("open");
-      }
-    });
-  }
 }
 
 function filterMapJobDropdown(query) {
@@ -3214,9 +3163,9 @@ function renderMetroShapeOverlay(areaId, shouldZoom = false) {
     // Update HUD Banner
     if (hud) {
       document.getElementById("hudMetroTitle").textContent = metroMeta.name;
-      const countyNames = shape.counties.map(c => c.name.replace(/ County$/i, "")).join(", ");
+      const count = shape.counties ? shape.counties.length : 0;
       document.getElementById("hudMetroCounties").textContent =
-        `${shape.counties.length} constituent counties: ${countyNames}`;
+        count > 0 ? `${count} constituent ${count === 1 ? "county" : "counties"}` : "Statistical Area";
       hud.classList.add("active");
     }
 
@@ -3624,6 +3573,12 @@ function setupDropdowns() {
       visibleOptions[idx].scrollIntoView({ block: "nearest" });
     } else if (e.key === "Enter") {
       e.preventDefault();
+      const zipBanner = document.getElementById("areaDropdownZipMatch");
+      if (zipBanner && zipBanner.style.display !== "none") {
+        loadArea(zipBanner.dataset.id, true);
+        closeAreaDropdown();
+        return;
+      }
       if (highlighted) {
         loadArea(highlighted.dataset.id, true);
         closeAreaDropdown();
@@ -3661,9 +3616,44 @@ function setupDropdowns() {
 }
 
 function filterAreaDropdown(query) {
-  const q = query.toLowerCase().trim();
-  const options = document.querySelectorAll("#areaDropdown .area-option");
+  const q = (query || "").toLowerCase().trim();
+  const dropdown = document.getElementById("areaDropdown");
+  const options = document.querySelectorAll("#areaDropdown .area-option:not(#areaDropdownZipMatch)");
   const headers = document.querySelectorAll("#areaDropdown .area-optgroup-title");
+
+  // Check if query is 5-digit ZIP or numeric code
+  const isNumeric = /^\d{2,5}$/.test(q);
+  let matchedArea = null;
+
+  if (isNumeric && state.zipToArea) {
+    const areaId = state.zipToArea[q];
+    if (areaId) {
+      matchedArea = state.manifest.find(a => a.id === areaId);
+    }
+  }
+
+  let zipBanner = document.getElementById("areaDropdownZipMatch");
+  if (matchedArea) {
+    if (!zipBanner) {
+      zipBanner = document.createElement("div");
+      zipBanner.id = "areaDropdownZipMatch";
+      zipBanner.className = "area-option highlighted";
+      zipBanner.style.cssText = "background: rgba(107, 163, 214, 0.12); border-bottom: 2px solid var(--accent-blue); padding: 10px 14px;";
+      dropdown.prepend(zipBanner);
+    }
+    zipBanner.style.display = "flex";
+    zipBanner.dataset.id = matchedArea.id;
+    zipBanner.innerHTML = `
+      <span class="area-opt-name" style="font-weight:600; color:var(--text-accent);">📍 ZIP ${q} → ${matchedArea.name}</span>
+      <span class="area-opt-meta" style="color:var(--text-accent); font-weight:600;">Direct Jump ↵</span>
+    `;
+    zipBanner.onclick = () => {
+      loadArea(matchedArea.id, true);
+      closeAreaDropdown();
+    };
+  } else if (zipBanner) {
+    zipBanner.style.display = "none";
+  }
 
   options.forEach(opt => {
     const name = opt.dataset.name || "";
