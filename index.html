@@ -197,10 +197,13 @@ body {
 .page-container {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 18px 24px 72px;
+  padding: 16px 24px 20px;
+}
+@media (max-width: 990px) {
+  .page-container { padding: 14px 16px 40px; }
 }
 @media (max-width: 560px) {
-  .page-container { padding: 14px 12px 56px; }
+  .page-container { padding: 14px 12px 40px; }
 }
 
 /* Hero Section */
@@ -578,6 +581,15 @@ body {
 .map-canvas-column {
   min-width: 0;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  /* Fill the viewport so map + browse + summary all fit with no page scroll. */
+  height: calc(100vh - 100px);
+  min-height: 520px;
+  overflow: hidden;
+}
+@media (max-width: 990px) {
+  .map-canvas-column { height: auto; min-height: 0; overflow: visible; }
 }
 .map-center-split {
   display: flex;
@@ -586,17 +598,24 @@ body {
   position: relative;
   width: 100%;
   min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;            /* take the space left over the Summary panel */
   gap: 0;
-  --map-split-width: 52%;
+  --map-split-width: 50%;    /* divider defaults to the horizontal centre */
 }
 .map-center-split > .map-card {
   flex: 0 0 var(--map-split-width);
   min-width: 380px;
+  min-height: 0;
   max-width: calc(100% - 340px);
 }
 .map-center-split > .browse-card {
   flex: 1 1 0;
   min-width: 340px;
+  min-height: 0;
+}
+@media (max-width: 990px) {
+  .map-center-split { flex: 0 0 auto; }
 }
 
 /* Draggable Splitter Divider & Handle Puck */
@@ -705,6 +724,75 @@ body {
   }
 }
 
+/* Horizontal splitter — drag to resize the Summary panel. Mirrors .split-divider. */
+.split-divider-h {
+  position: relative;
+  height: 16px;
+  margin: 2px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: row-resize;
+  user-select: none;
+  touch-action: none;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.split-divider-h::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1px;
+  background: var(--border-subtle);
+  transition: background 0.15s ease, height 0.15s ease;
+}
+.split-divider-h:hover::before,
+.split-divider-h.is-dragging::before {
+  background: var(--accent-cyan);
+  height: 2px;
+}
+.split-divider-h .split-handle-puck {
+  width: 44px;
+  height: 14px;
+}
+.split-divider-h .split-handle-puck::after {
+  content: "⋯";
+}
+@media (max-width: 990px) {
+  .split-divider-h { display: none; }
+}
+
+/* Display-only token (no clear button) — selection pills in the Summary head
+   and the map hover card. Shares the removable chip's look. */
+.pill-token {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-width: 0;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-cyan) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 42%, transparent);
+  color: var(--accent-cyan);
+  font-weight: 600;
+  font-size: 11.5px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pill-token.wrap {
+  white-space: normal;
+  overflow: visible;
+}
+.pill-token + .pill-token {
+  margin-left: 6px;
+}
+.pill-token[hidden] { display: none; }
+
 /* Map Card Controls Bar (Wage Metric & Map Style directly above the map) */
 .map-card-controls-bar {
   display: flex;
@@ -798,25 +886,34 @@ body {
    ============================================================ */
 .area-summary {
   --area-rule: rgba(255, 255, 255, 0.14);
-  margin-top: auto;
-  border-top: 2px solid var(--area-rule);
+  flex: 0 0 var(--summary-h, 230px);
+  min-height: 120px;
+  overflow: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, var(--shadow-md);
   background:
-    linear-gradient(180deg, rgba(126, 174, 212, 0.035), transparent 55%),
+    linear-gradient(180deg, rgba(126, 174, 212, 0.045), transparent 45%),
     var(--bg-elevated);
 }
 [data-theme="light"] .area-summary {
   --area-rule: rgba(15, 23, 42, 0.14);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, var(--shadow-md);
+}
+@media (max-width: 990px) {
+  .area-summary { flex: 0 0 auto; min-height: 0; overflow: visible; }
 }
 .area-summary-head {
   display: flex;
-  align-items: baseline;
-  gap: 14px;
-  padding: 9px 20px 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 13px 24px 12px;
   border-bottom: 1px solid var(--area-rule);
 }
 .area-summary-eyebrow {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   letter-spacing: 0;
   color: var(--text-primary);
   white-space: nowrap;
@@ -849,8 +946,8 @@ body {
 .area-metric {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 11px 20px 12px;
+  gap: 6px;
+  padding: 15px 24px 16px;
   min-width: 0;
   border-left: 1px solid var(--area-rule);
   border-top: 1px solid var(--area-rule);
@@ -872,7 +969,7 @@ body {
   overflow: visible;
 }
 .area-metric-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0;
   color: var(--text-muted);
@@ -883,7 +980,7 @@ body {
 }
 .area-metric-value {
   font-family: var(--font-mono);
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text-primary);
@@ -948,6 +1045,9 @@ body {
   overflow: hidden;
   position: relative;
   overflow-anchor: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 .map-card-toolbar {
   display: flex;
@@ -1272,6 +1372,8 @@ body {
 .map-svg-container {
   position: relative;
   width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
   background: var(--bg-surface);
   user-select: none;
@@ -1286,8 +1388,12 @@ body {
 #usMetroSvg {
   width: 100%;
   max-width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
+}
+@media (max-width: 990px) {
+  .map-svg-container { flex: 0 0 auto; min-height: 300px; }
+  #usMetroSvg { height: auto; }
 }
 
 /* State Boundaries Layer (Thin background context) */
@@ -2304,7 +2410,7 @@ body {
   <section id="tab-map" class="tab-panel active" role="region" aria-label="Wage Visualizer">
     <div class="map-layout-grid">
       <!-- Center Column: Map & Browse Visualizers Side by Side with Draggable Resizer Puck -->
-      <div class="map-canvas-column">
+      <div class="map-canvas-column" id="mapCanvasColumn">
         <div class="map-center-split" id="mapCenterSplit">
           <!-- Left Visualizer: Interactive Wage Map -->
           <div class="map-card" id="mapCardContainer">
@@ -2519,11 +2625,20 @@ body {
                 <tbody id="occupationAreasTableBody"></tbody>
               </table>
             </div>
+          </div>
+        </div>
 
-            <!-- Area Summary — institutional tearsheet strip, pinned to the base of the card -->
-            <div class="area-summary" id="kpiBar">
-              <div class="area-summary-head">
-                <span class="area-summary-eyebrow">Area Summary</span>
+        <!-- Horizontal resizer — drag to resize the Area Summary (mirrors the vertical splitter) -->
+        <div class="split-divider-h" id="summaryDivider" title="Drag to resize the Area Summary" role="separator" aria-orientation="horizontal">
+          <div class="split-handle-puck" aria-hidden="true"></div>
+        </div>
+
+        <!-- Area Summary — its own resizable panel beneath the map + browse -->
+        <div class="area-summary" id="kpiBar">
+          <div class="area-summary-head">
+                <span class="area-summary-eyebrow">Summary</span>
+                <span class="pill-token" id="kpiAreaPill" hidden></span>
+                <span class="pill-token" id="kpiJobPill" hidden></span>
                 <span class="area-summary-context" id="kpiContext">National Reference · BLS OEWS</span>
                 <span class="data-year-flag" id="kpiDataYearNote" hidden></span>
               </div>
@@ -2564,8 +2679,6 @@ body {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -3936,11 +4049,9 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
     : "";
 
   tooltip.innerHTML = `
-    <div style="font-weight: 700; font-size: 13.5px; color: var(--text-primary); margin-bottom: 2px;">
-      ${formatAreaName(metro.name)}
-    </div>
-    <div style="font-size: 11.5px; color: var(--accent-cyan); font-weight: 600; margin-bottom: 8px;">
-      ${jobPayload.title}${priorTag}
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px;">
+      <span class="pill-token wrap">${formatAreaName(metro.name)}</span>
+      <span class="pill-token">${jobPayload.title}</span>${priorTag}
     </div>
 
     <div style="background: var(--bg-elevated); padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 8px;">
@@ -4247,6 +4358,55 @@ function setupMapControls() {
   // Dynamic Splitter Puck between Map and Search/Browse
   // -------------------------------------------------------------
   setupSplitterPuck();
+  setupSummaryResizer();
+}
+
+// Horizontal splitter: drag up/down to resize the Summary panel against the
+// map + browse split above it. Bar is horizontal, motion is vertical.
+function setupSummaryResizer() {
+  const divider = document.getElementById("summaryDivider");
+  const col = document.getElementById("mapCanvasColumn");
+  const panel = document.getElementById("kpiBar");
+  if (!divider || !col || !panel) return;
+
+  let dragging = false, startY = 0, startH = 0, colH = 0;
+  const clientY = (e) => e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+
+  const down = (e) => {
+    if (e.button && e.button !== 0) return;
+    dragging = true;
+    divider.classList.add("is-dragging");
+    document.body.style.cursor = "row-resize";
+    document.body.style.userSelect = "none";
+    startY = clientY(e);
+    startH = panel.getBoundingClientRect().height;
+    colH = col.getBoundingClientRect().height;
+    if (e.cancelable && e.type === "touchstart") e.preventDefault();
+  };
+  const move = (e) => {
+    if (!dragging) return;
+    const dy = clientY(e) - startY;
+    // drag down -> summary shrinks; drag up -> summary grows
+    const minH = 120;
+    const maxH = Math.max(minH, colH - 260);
+    const h = Math.max(minH, Math.min(maxH, startH - dy));
+    col.style.setProperty("--summary-h", `${h.toFixed(0)}px`);
+  };
+  const up = () => {
+    if (!dragging) return;
+    dragging = false;
+    divider.classList.remove("is-dragging");
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+  };
+
+  divider.addEventListener("mousedown", down);
+  window.addEventListener("mousemove", move);
+  window.addEventListener("mouseup", up);
+  divider.addEventListener("touchstart", down, { passive: false });
+  window.addEventListener("touchmove", move, { passive: true });
+  window.addEventListener("touchend", up, { passive: true });
+  window.addEventListener("touchcancel", up, { passive: true });
 }
 
 function setupSplitterPuck() {
@@ -4676,11 +4836,24 @@ function renderHeroAndKPIs() {
     document.title = `${cleanAreaTitle} Wage Explorer · BLS OEWS ${state.year}`;
   }
 
-  // Area-summary panel context line
+  // Summary panel head: selection pills + fallback context line
+  const kpiAreaPill = document.getElementById("kpiAreaPill");
+  if (kpiAreaPill) {
+    kpiAreaPill.textContent = cleanAreaTitle;
+    kpiAreaPill.hidden = (data.id === "99");
+  }
+  const kpiJobPill = document.getElementById("kpiJobPill");
+  if (kpiJobPill) {
+    kpiJobPill.textContent = occTitle;
+    kpiJobPill.hidden = isAllJobs;
+  }
   const kpiContext = document.getElementById("kpiContext");
   if (kpiContext) {
     const scope = isAllJobs ? "All occupations" : occTitle;
     kpiContext.textContent = `${cleanAreaTitle}  ·  ${scope}`;
+    // The pills carry this when a selection is active; keep the line only as a
+    // fallback for the all-occupations / national baseline view.
+    kpiContext.hidden = !(data.id === "99" && isAllJobs);
   }
 
   // Provenance flag in the Area Summary head. Three cases, most specific first:
