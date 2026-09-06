@@ -4045,13 +4045,13 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
     : metricKind === "density" ? `${(metricVal || 0).toFixed(2)}×`
     : fmt.currency(metricVal);
   const priorTag = priorYear
-    ? `<span style="display:inline-block; margin-left:6px; font-family:var(--font-mono); font-size:10px; color:var(--accent-cyan); border:1px solid var(--accent-cyan); border-radius:4px; padding:0 4px;">${priorYear} data</span>`
+    ? `<span style="font-family:var(--font-mono); font-size:10px; color:var(--accent-cyan); border:1px solid var(--accent-cyan); border-radius:4px; padding:0 4px;">${priorYear} data</span>`
     : "";
 
   tooltip.innerHTML = `
-    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px;">
-      <span class="pill-token wrap">${formatAreaName(metro.name)}</span>
-      <span class="pill-token">${jobPayload.title}</span>${priorTag}
+    <div style="display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; margin-bottom: 8px;">
+      <span class="pill-token" style="flex: 0 1 auto; min-width: 0;">${formatAreaName(metro.name)}</span>
+      <span class="pill-token" style="flex: 0 1 auto; min-width: 0;">${jobPayload.title}</span>
     </div>
 
     <div style="background: var(--bg-elevated); padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 8px;">
@@ -4062,8 +4062,9 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
       <div class="tabular" style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin-top: 2px;">
         ${primaryValue}
       </div>
-      <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
-        National Rank: <strong style="color: var(--text-secondary);">${rankText}</strong>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 3px;">
+        <span>National Rank: <strong style="color: var(--text-secondary);">${rankText}</strong></span>
+        ${priorTag}
       </div>
     </div>
 
