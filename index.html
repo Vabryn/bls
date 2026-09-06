@@ -183,31 +183,31 @@ body {
 
 /* Hero Section */
 .hero-editorial {
-  padding-bottom: 28px;
+  padding-bottom: 16px;
   margin-bottom: 6px;
   border-bottom: 1px solid var(--border-subtle);
 }
 .hero-kicker {
-  font-size: 11px;
+  font-size: 10.5px;
   font-family: var(--font-mono);
   color: var(--text-muted);
-  margin-bottom: 10px;
+  margin-bottom: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  opacity: 0.7;
+  letter-spacing: 0.05em;
+  opacity: 0.75;
 }
 .hero-title-row {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 @media (min-width: 900px) {
   .hero-title-row {
     flex-direction: row;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 40px;
+    gap: 24px;
   }
 }
 .hero-title-cluster {
@@ -223,25 +223,15 @@ body {
 .hero-badge-tag { display: none; }
 
 .hero-heading {
-  font-size: 36px;
-  line-height: 1.08;
+  font-size: 20px;
+  line-height: 1.25;
   font-weight: 700;
-  letter-spacing: -0.04em;
-  min-height: 39px;
+  letter-spacing: -0.02em;
 }
 @media (min-width: 768px) {
   .hero-heading {
-    font-size: 48px;
-    min-height: 52px;
+    font-size: 24px;
   }
-}
-.hero-subtitle {
-  font-size: 14px;
-  color: var(--text-muted);
-  max-width: 540px;
-  line-height: 1.55;
-  margin-top: 8px;
-  min-height: 22px;
 }
 
 /* Dual Global Search Bars */
@@ -2015,9 +2005,6 @@ body {
         </div>
         <div>
           <h1 class="hero-heading" id="heroAreaTitle">United States (National)</h1>
-          <p class="hero-subtitle" id="heroAreaSubtitle">
-            Comprehensive cross-industry occupational wages, percentile distributions (10th to 90th percentile), and minimum credential requirements.
-          </p>
         </div>
       </div>
     </div>
@@ -4220,28 +4207,6 @@ function renderHeroAndKPIs() {
     nonmetro: "Non-Metropolitan Balance Area"
   };
   document.getElementById("areaTypeBadge").textContent = typeMap[data.type] || "Region";
-
-  // Hero Area Subtitle
-  const heroSubtitle = document.getElementById("heroAreaSubtitle");
-  if (heroSubtitle) {
-    if (!isAllJobs) {
-      let empPart = (occEmp !== null && occEmp > 0) ? `${fmt.number(occEmp)} employed` : "employment withheld";
-      let wagePart = (occMedian !== null && occMedian > 0)
-        ? `annual median wage ${fmt.currency(occMedian)}`
-        : "hourly wage schedule in BLS";
-      let lqPart = (occLq !== null && data.id !== "99") ? `, Location Quotient ${occLq.toFixed(2)}×` : "";
-      heroSubtitle.textContent =
-        `${occTitle} (SOC ${state.activeMapSoc}) in ${data.name}: ${empPart}, ${wagePart}${lqPart}. Geographic wage and employment distribution visualizer below.`;
-    } else {
-      if (data.id === "99") {
-        heroSubtitle.textContent =
-          `National cross-industry occupational wages, percentile distributions (10th to 90th percentile), and education benchmarks for 830 detailed occupations.`;
-      } else {
-        heroSubtitle.textContent =
-          `Detailed occupational wage spreads, employment concentrations (Location Quotients), and earnings benchmarks for ${data.occupations ? data.occupations.length : 0} occupations in ${data.name}.`;
-      }
-    }
-  }
 
   document.getElementById("areaSearchInput").value = "";
   document.getElementById("areaSearchInput").placeholder = data.name;
