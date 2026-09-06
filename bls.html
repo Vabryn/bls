@@ -1144,57 +1144,163 @@ body {
 
 /* Map Legend */
 .map-legend-container {
-  padding: 14px 18px;
+  padding: 10px 18px 12px;
   background: var(--bg-elevated);
   border-top: 1px solid var(--border-subtle);
-}
-.map-legend-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-}
-.map-legend-gradient-track {
   position: relative;
-  height: 12px;
-  border-radius: 6px;
-  overflow: visible;
 }
-.map-legend-gradient-bar {
+[data-theme="light"] .map-legend-container {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Dynamic Arrow Puck Track positioned above the bar */
+.map-legend-puck-track {
+  position: relative;
   width: 100%;
-  height: 100%;
-  border-radius: 6px;
-  background: linear-gradient(90deg, #312e81 0%, #0284c7 25%, #0d9488 50%, #10b981 75%, #fbbf24 100%);
+  height: 28px;
+  margin-bottom: 4px;
+  pointer-events: none;
 }
-.map-legend-nat-marker {
+.map-legend-puck {
   position: absolute;
-  top: -8px;
+  bottom: 0;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  pointer-events: none;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: left;
+  pointer-events: auto;
+  z-index: 5;
 }
-.legend-pin {
+.legend-puck-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  padding: 3px 9px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+[data-theme="light"] .legend-puck-badge {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+}
+.puck-area-name {
+  color: var(--text-secondary);
+  font-weight: 500;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+[data-theme="light"] .puck-area-name {
+  color: #475569;
+}
+.puck-value {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+[data-theme="light"] .puck-value {
+  color: #0f172a;
+}
+.puck-comparison {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  letter-spacing: -0.01em;
+}
+.puck-comparison.pos {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.14);
+}
+[data-theme="light"] .puck-comparison.pos {
+  color: #047857;
+  background: rgba(16, 185, 129, 0.15);
+}
+.puck-comparison.neg {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.14);
+}
+[data-theme="light"] .puck-comparison.neg {
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.15);
+}
+.puck-comparison.neutral {
+  color: var(--text-muted);
+  background: var(--bg-hover);
+}
+.legend-puck-arrow {
   width: 0;
   height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 6px solid var(--text-primary);
+  border-left: 4.5px solid transparent;
+  border-right: 4.5px solid transparent;
+  border-top: 5px solid var(--border-medium);
+  margin-top: -1px;
 }
-.legend-pin-label {
+[data-theme="light"] .legend-puck-arrow {
+  border-top-color: #cbd5e1;
+}
+
+/* Slimmed Down Gradient Color Bar Track */
+.map-legend-gradient-track {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  overflow: visible;
+  width: 100%;
+}
+.map-legend-gradient-bar {
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #312e81 0%, #0284c7 25%, #0d9488 50%, #10b981 75%, #fbbf24 100%);
+}
+
+/* U.S. Benchmark Notch Tick on the bar */
+.legend-us-notch {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  transform: translateX(-50%);
+  display: none;
+  pointer-events: none;
+  z-index: 2;
+}
+.legend-us-notch-line {
+  width: 2px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 1px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.85);
+}
+[data-theme="light"] .legend-us-notch-line {
+  background: #0f172a;
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.85);
+}
+
+/* Wages Row: Min on Left, Max on Right */
+.map-legend-wages-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: var(--text-primary);
-  white-space: nowrap;
-  background: var(--bg-surface);
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-subtle);
-  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+[data-theme="light"] .map-legend-wages-row {
+  color: #64748b;
+  font-weight: 500;
 }
 
 /* Tooltip overlay */
@@ -1691,17 +1797,6 @@ body {
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
 }
-[data-theme="light"] .map-legend-meta {
-  color: #334155;
-  font-weight: 600;
-}
-[data-theme="light"] .legend-pin-label {
-  background: #ffffff;
-  border-color: #cbd5e1;
-  color: #0f172a;
-  box-shadow: var(--shadow-sm);
-  font-weight: 700;
-}
 [data-theme="light"] .table-card {
   border: 1px solid #cbd5e1;
 }
@@ -1977,17 +2072,30 @@ body {
 
       <!-- Continuous Color Scale Legend -->
       <div class="map-legend-container">
-        <div class="map-legend-meta">
-          <span id="legendMinLabel" class="tabular">$0</span>
-          <span id="legendTitleLabel" class="tabular">Wage Spectrum Across All Statistical Areas</span>
-          <span id="legendMaxLabel" class="tabular">$250,000+</span>
+        <!-- Dynamic Arrow Puck Track positioned cleanly above the bar -->
+        <div class="map-legend-puck-track">
+          <div class="map-legend-puck" id="mapLegendPuck">
+            <div class="legend-puck-badge" id="legendPuckBadge">
+              <span class="puck-area-name" id="puckAreaName">U.S. National</span>
+              <span class="puck-value tabular" id="puckValue">$0</span>
+              <span class="puck-comparison tabular" id="puckComparison" style="display: none;"></span>
+            </div>
+            <div class="legend-puck-arrow" id="legendPuckArrow"></div>
+          </div>
         </div>
+
+        <!-- Slimmed Down Color Bar Track -->
         <div class="map-legend-gradient-track">
           <div class="map-legend-gradient-bar"></div>
-          <div class="map-legend-nat-marker" id="legendNatMarker">
-            <div class="legend-pin"></div>
-            <span class="legend-pin-label tabular" id="legendNatLabel">U.S. National: $0</span>
+          <div class="legend-us-notch" id="legendUsNotch" title="U.S. National Benchmark">
+            <div class="legend-us-notch-line"></div>
           </div>
+        </div>
+
+        <!-- Wages row: Min on Left, Max on Right -->
+        <div class="map-legend-wages-row">
+          <span id="legendMinLabel" class="tabular">$0</span>
+          <span id="legendMaxLabel" class="tabular">$250,000+</span>
         </div>
       </div>
     </div>
@@ -2703,6 +2811,8 @@ function resetMapZoom() {
 
   if (state.currentAreaId && state.currentAreaId !== "99") {
     loadArea("99", false);
+  } else {
+    updateMapLegend();
   }
 }
 
@@ -2785,6 +2895,127 @@ async function loadMapJob(soc) {
   }
 }
 
+// -------------------------------------------------------------
+// DYNAMIC MAP LEGEND & AREA COMPARISON PUCK
+// -------------------------------------------------------------
+function updateMapLegend() {
+  const payload = state.activeJobPayload;
+  if (!payload || !state.mapLegendScale) return;
+
+  const { minVal, maxVal, natVal, isEmploymentMapping, metricName, metricIdx, metric } = state.mapLegendScale;
+
+  // 1. Minimum and Maximum wages (edges)
+  const minEl = document.getElementById("legendMinLabel");
+  const maxEl = document.getElementById("legendMaxLabel");
+  if (minEl) minEl.textContent = isEmploymentMapping ? fmt.number(minVal) : fmt.currency(minVal);
+  if (maxEl) maxEl.textContent = isEmploymentMapping ? fmt.number(maxVal) : fmt.currency(maxVal);
+
+  // 2. U.S. Benchmark Notch on the bar
+  const usNotch = document.getElementById("legendUsNotch");
+  if (usNotch) {
+    if (!isEmploymentMapping && natVal && natVal >= minVal && natVal <= maxVal) {
+      const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal || 1)) * 100));
+      usNotch.style.left = `${natPct}%`;
+      usNotch.style.display = "block";
+      usNotch.title = `U.S. National ${metricName}: ${fmt.currency(natVal)}`;
+    } else {
+      usNotch.style.display = "none";
+    }
+  }
+
+  // 3. Dynamic Area / National Arrow Puck
+  const puck = document.getElementById("mapLegendPuck");
+  const areaNameEl = document.getElementById("puckAreaName");
+  const valEl = document.getElementById("puckValue");
+  const compEl = document.getElementById("puckComparison");
+  const arrowEl = document.getElementById("legendPuckArrow");
+
+  if (!puck || !areaNameEl || !valEl || !compEl) return;
+
+  const curAreaId = state.currentAreaId;
+  const isSpecificArea = curAreaId && curAreaId !== "99";
+
+  let displayVal = null;
+  let displayName = "";
+  let diffPct = null;
+  let diffVal = 0;
+
+  if (isSpecificArea && payload.metros && payload.metros[curAreaId]) {
+    const areaStats = payload.metros[curAreaId];
+    displayVal = isEmploymentMapping ? areaStats[0] : areaStats[metricIdx];
+    const areaMeta = state.manifest ? state.manifest.find(a => a.id === curAreaId) : null;
+    displayName = areaMeta ? areaMeta.name : "Selected Area";
+
+    if (natVal && displayVal && !isEmploymentMapping && natVal > 0) {
+      diffVal = displayVal - natVal;
+      diffPct = ((displayVal - natVal) / natVal) * 100;
+    }
+  } else if (!isSpecificArea && natVal) {
+    displayVal = natVal;
+    displayName = `U.S. National ${metricName}`;
+  }
+
+  if (displayVal && displayVal > 0 && maxVal > minVal) {
+    const pct = Math.max(0, Math.min(100, ((displayVal - minVal) / (maxVal - minVal)) * 100));
+    puck.style.left = `${pct}%`;
+    puck.style.display = "flex";
+
+    areaNameEl.textContent = displayName;
+    valEl.textContent = isEmploymentMapping ? fmt.number(displayVal) : fmt.currency(displayVal);
+
+    if (diffPct !== null && isSpecificArea) {
+      compEl.style.display = "inline-block";
+      const sign = diffPct >= 0 ? "+" : "";
+      compEl.textContent = `${sign}${diffPct.toFixed(1)}% vs U.S.`;
+      compEl.className = "puck-comparison tabular " + (Math.abs(diffPct) < 0.2 ? "neutral" : (diffPct > 0 ? "pos" : "neg"));
+      compEl.title = `U.S. ${metricName}: ${fmt.currency(natVal)} (Diff: ${sign}${fmt.currency(diffVal)})`;
+    } else {
+      compEl.style.display = "none";
+    }
+
+    // Edge clamping so badge does not clip off container boundaries
+    if (pct < 14) {
+      puck.style.transform = "translateX(0%)";
+      if (arrowEl) {
+        arrowEl.style.alignSelf = "flex-start";
+        arrowEl.style.marginLeft = "14px";
+        arrowEl.style.marginRight = "0";
+      }
+    } else if (pct > 86) {
+      puck.style.transform = "translateX(-100%)";
+      if (arrowEl) {
+        arrowEl.style.alignSelf = "flex-end";
+        arrowEl.style.marginRight = "14px";
+        arrowEl.style.marginLeft = "0";
+      }
+    } else {
+      puck.style.transform = "translateX(-50%)";
+      if (arrowEl) {
+        arrowEl.style.alignSelf = "center";
+        arrowEl.style.marginLeft = "0";
+        arrowEl.style.marginRight = "0";
+      }
+    }
+  } else if (isSpecificArea) {
+    // Area is selected, but no wage data for this specific occupation in this area
+    const areaMeta = state.manifest ? state.manifest.find(a => a.id === curAreaId) : null;
+    const areaName = areaMeta ? areaMeta.name : "Selected Area";
+    if (natVal) {
+      const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal || 1)) * 100));
+      puck.style.left = `${natPct}%`;
+      puck.style.display = "flex";
+      areaNameEl.textContent = areaName;
+      valEl.textContent = "Data Suppressed";
+      compEl.style.display = "none";
+      puck.style.transform = "translateX(-50%)";
+    } else {
+      puck.style.display = "none";
+    }
+  } else {
+    puck.style.display = "none";
+  }
+}
+
 function renderMetroMap() {
   const payload = state.activeJobPayload;
   if (!payload || !state.mapData) return;
@@ -2837,28 +3068,17 @@ function renderMetroMap() {
   const minVal = validMetros.length ? validMetros[validMetros.length - 1].val : (isEmploymentMapping ? 10 : 30000);
   const natVal = payload.nat ? (isEmploymentMapping ? payload.nat.emp : payload.nat[metric]) : null;
 
-
-
-  // Update Legend Labels
-  if (isEmploymentMapping) {
-    document.getElementById("legendMinLabel").textContent = fmt.number(minVal);
-    document.getElementById("legendMaxLabel").textContent = fmt.number(maxVal);
-    document.getElementById("legendTitleLabel").textContent = `${payload.title} · Employment Density (Hourly Schedule)`;
-  } else {
-    document.getElementById("legendMinLabel").textContent = fmt.currency(minVal);
-    document.getElementById("legendMaxLabel").textContent = fmt.currency(maxVal);
-    document.getElementById("legendTitleLabel").textContent = `${payload.title} · ${metricName} Wage Spectrum`;
-  }
-
-  const natMarker = document.getElementById("legendNatMarker");
-  if (!isEmploymentMapping && natVal && natVal >= minVal && natVal <= maxVal) {
-    const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal || 1)) * 100));
-    natMarker.style.left = `${natPct}%`;
-    natMarker.style.display = "flex";
-    document.getElementById("legendNatLabel").textContent = `U.S. Nat'l ${metricName}: ${fmt.currency(natVal)}`;
-  } else {
-    natMarker.style.display = "none";
-  }
+  // Store Legend Scale and Update Dynamic Puck & Min/Max Labels
+  state.mapLegendScale = {
+    minVal,
+    maxVal,
+    natVal,
+    isEmploymentMapping,
+    metricName,
+    metricIdx,
+    metric
+  };
+  updateMapLegend();
 
   // -------------------------------------------------------------
   // RENDER ACTIVE MAP MODE LAYER (Area Map | Bubble Map | 3D Bar Map)
@@ -3695,6 +3915,7 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
       }
     }
   }
+  updateMapLegend();
 }
 
 // -------------------------------------------------------------
