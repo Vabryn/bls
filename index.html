@@ -935,7 +935,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 8px 12px;
+  gap: 6px 6px;
   padding: 13px 24px 12px;
   border-bottom: 1px solid var(--area-rule);
 }
@@ -2610,7 +2610,7 @@ body {
             <!-- Browse Filter Controls Bar -->
             <div class="control-bar" id="browseControlBar" style="padding: 10px 14px; border-bottom: 1px solid var(--border-subtle); display: flex; gap: 8px; align-items: center; background: var(--bg-surface); flex-wrap: wrap;">
               <select id="browseEduFilter" class="control-select" style="flex: 0 1 140px; min-width: 96px;">
-                <option value="-1">All Education Tiers</option>
+                <option value="-1">Education</option>
                 <option value="0">No Formal Requirement</option>
                 <option value="1">High School / GED</option>
                 <option value="2">Certificate / License</option>
@@ -2620,7 +2620,7 @@ body {
                 <option value="6">Doctoral / Professional</option>
               </select>
               <select id="browseGroupFilter" class="control-select" style="flex: 0 1 150px; min-width: 100px;">
-                <option value="-1">All 22 Major Sectors</option>
+                <option value="-1">Sectors</option>
               </select>
               <select id="browseWageMetric" class="control-select" style="flex: 0 1 130px; min-width: 96px;" aria-label="Wage metric shown">
                 <option value="median">Median Wage</option>
@@ -2642,7 +2642,12 @@ body {
                 <select id="drilldownRegionFilter" class="control-select" style="max-width: 190px;">
                   <option value="ALL">All Regions</option>
                 </select>
-                <div id="browseDrilldownCounter" class="tabular" style="font-size: 11px; color: var(--text-muted); white-space: nowrap;"></div>
+                <select id="drilldownWageMetric" class="control-select" style="flex: 0 1 130px; min-width: 96px;" aria-label="Wage metric shown">
+                  <option value="median">Median Wage</option>
+                  <option value="mean">Mean Wage</option>
+                  <option value="p25">Bottom 25% Wage</option>
+                  <option value="p75">Top 25% Wage</option>
+                </select>
               </div>
             </div>
 
@@ -2688,8 +2693,10 @@ body {
                 <span class="area-summary-eyebrow">Summary</span>
                 <span class="area-summary-conn" id="kpiConnOf" hidden>of</span>
                 <span class="pill-token" id="kpiJobPill" hidden></span>
+                <span class="area-summary-conn" id="kpiJobAll" hidden>all occupations</span>
                 <span class="area-summary-conn" id="kpiConnIn" hidden>in</span>
                 <span class="pill-token" id="kpiAreaPill" hidden></span>
+                <span class="area-summary-conn" id="kpiAreaAll" hidden>all areas</span>
                 <span class="area-summary-context" id="kpiContext">National Reference · BLS OEWS</span>
                 <span class="data-year-flag" id="kpiDataYearNote" hidden></span>
               </div>
@@ -3110,6 +3117,7 @@ function renderStateBoundaries(states) {
 
     layer.appendChild(path);
   });
+  state._stateEls = Array.from(layer.querySelectorAll(".state-boundary"));
 }
 
 // -------------------------------------------------------------
@@ -4611,6 +4619,17 @@ function precommitAreaZoom(areaId) {
   state.mapZoom = { scale, x: tx, y: ty };
 }
 
+// Which state the choropleth should focus/dim around, given the active area.
+// A metro/nonmetro area focuses its parent state; a state focuses itself;
+// national clears focus. zoomToState still manages this on its own path.
+function syncFocusedStateForArea(areaId) {
+  if (areaId === "99" || areaId == null) { state.focusedState = null; return; }
+  const shape = state.metroShapes && state.metroShapes[areaId];
+  if (shape) { state.focusedState = shape.state || null; return; }
+  const st = state.statesById && state.statesById[areaId];
+  if (st) { state.focusedState = st.state || null; }
+}
+
 // -------------------------------------------------------------
 // METRO & STATISTICAL AREA BACKGROUND SHAPE OVERLAY
 // -------------------------------------------------------------
@@ -4618,15 +4637,14 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
   const layer = document.getElementById("metroOverlayLayer");
   if (!layer) return;
 
-  layer.innerHTML = "";
+  // renderAll normally sets this before the map renders, but on some paths
+  // (init race, standalone calls) it hasn't — if it changes here, the map
+  // layer needs one more pass to grey the siblings.
+  const _prevFocus = state.focusedState;
+  syncFocusedStateForArea(areaId);
+  const _refocused = state.focusedState !== _prevFocus;
 
-  // Reset highlighted elements in map
-  document.querySelectorAll(".area-boundary-shape.selected").forEach(b => b.classList.remove("selected"));
-  document.querySelectorAll(".metro-bubble.highlighted").forEach(b => b.classList.remove("highlighted"));
-  document.querySelectorAll(".state-boundary.state-focused").forEach(p => p.classList.remove("state-focused"));
-  document.querySelectorAll(".state-boundary.state-dimmed").forEach(p => p.classList.remove("state-dimmed"));
-  document.querySelectorAll(".area-boundary-shape.area-focused").forEach(p => p.classList.remove("area-focused"));
-  document.querySelectorAll(".area-boundary-shape.area-dimmed").forEach(p => p.classList.remove("area-dimmed"));
+  layer.innerHTML = "";
 
   // 1. If MSA or Non-Metro Area
   if (state.metroShapes && state.metroShapes[areaId]) {
@@ -4646,24 +4664,14 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     }
     if (resetBtn) resetBtn.style.display = "inline-flex";
 
-    // Highlight parent state perimeter & focus in-state sibling areas
-    if (shape.state) {
-      document.querySelectorAll(".state-boundary").forEach(p => {
-        const isParent = p.dataset.state === shape.state;
-        p.classList.toggle("state-focused", isParent);
-        p.classList.toggle("state-dimmed", !isParent);
-      });
-      document.querySelectorAll(".area-boundary-shape").forEach(p => {
-        const inState = p.dataset.state === shape.state;
-        p.classList.toggle("area-focused", inState && p.dataset.id !== areaId);
-        p.classList.toggle("area-dimmed", !inState);
-      });
-      document.querySelectorAll(".metro-bubble").forEach(c => {
-        const inState = c.dataset.state === shape.state;
-        c.classList.toggle("bubble-focused", inState);
-        c.classList.toggle("bubble-dimmed", !inState);
-      });
-    }
+    // Parent-state perimeter highlight (~51 nodes). The area / bubble focus+dim
+    // is done by renderAreasLayer / renderBubblesLayer off state.focusedState,
+    // which syncFocusedStateForArea set before this ran.
+    (state._stateEls || document.querySelectorAll(".state-boundary")).forEach(p => {
+      const isParent = p.dataset.state === shape.state;
+      p.classList.toggle("state-focused", !!shape.state && isParent);
+      p.classList.toggle("state-dimmed", !!shape.state && !isParent);
+    });
 
     // Render unified outer statistical wage area boundary polygon
     if (shape.d) {
@@ -4672,14 +4680,6 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
       outerPath.setAttribute("d", shape.d);
       layer.appendChild(outerPath);
     }
-
-    // Highlight target area / bubble
-    const targetArea = document.querySelector(`.area-boundary-shape[data-id="${areaId}"]`);
-    if (targetArea) targetArea.classList.add("selected");
-    const targetBubble = document.querySelector(`.metro-bubble[data-id="${areaId}"]`);
-    if (targetBubble) targetBubble.classList.add("highlighted");
-
-    // Update Hero Area Map Badge next to main area header
 
     // Smooth Auto-Zoom to Metro Bounding Box
     if (shouldZoom && shape.bounds && shape.bounds.length === 2) {
@@ -4766,6 +4766,9 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     if (subEl) subEl.textContent = "National View";
     if (resetBtn) resetBtn.style.display = "inline-flex";
 
+    (state._stateEls || document.querySelectorAll(".state-boundary")).forEach(p => {
+      p.classList.remove("state-focused", "state-dimmed");
+    });
     document.querySelectorAll(".area-boundary-shape").forEach(p => {
       p.classList.remove("area-focused", "area-dimmed", "selected");
     });
@@ -4781,6 +4784,7 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     }
   }
   updateMapLegend();
+  if (_refocused && state.activeJobPayload) renderMetroMap();
 }
 
 // -------------------------------------------------------------
@@ -4837,6 +4841,10 @@ function renderAll(shouldZoom = false) {
     const zoom = _renderAllZoom;
     _renderAllQueued = false;
     _renderAllZoom = false;
+    // Point the choropleth's focus/dim pass at the right state up front so the
+    // map layer greys siblings itself — renderMetroShapeOverlay no longer walks
+    // all ~510 area nodes a second time.
+    syncFocusedStateForArea(state.currentAreaId);
     renderHeroAndKPIs();
     renderBrowseTable();
     // Commit the target zoom before the map renders so the bubble layer sizes
@@ -4935,17 +4943,19 @@ function renderHeroAndKPIs() {
     kpiAreaPill.textContent = cleanAreaTitle;
     kpiAreaPill.hidden = !isSpecificArea;
   }
-  // "of" leads whichever pill comes first; "in" only joins a second pill.
-  const kpiConnOf = document.getElementById("kpiConnOf");
-  if (kpiConnOf) kpiConnOf.hidden = !(!isAllJobs || isSpecificArea);
-  const kpiConnIn = document.getElementById("kpiConnIn");
-  if (kpiConnIn) kpiConnIn.hidden = !(!isAllJobs && isSpecificArea);
+  // Reads "Summary of <occupation | all occupations> in <area | all areas>"
+  // whenever at least one is picked; just "Summary" + context line otherwise.
+  const anySel = !isAllJobs || isSpecificArea;
+  const setHidden = (id, hide) => { const el = document.getElementById(id); if (el) el.hidden = hide; };
+  setHidden("kpiConnOf", !anySel);
+  setHidden("kpiConnIn", !anySel);
+  setHidden("kpiJobAll", !(anySel && isAllJobs));
+  setHidden("kpiAreaAll", !(anySel && !isSpecificArea));
   const kpiContext = document.getElementById("kpiContext");
   if (kpiContext) {
     const scope = isAllJobs ? "All occupations" : occTitle;
     kpiContext.textContent = `${cleanAreaTitle}  ·  ${scope}`;
-    // Plain context line only when nothing is picked at all.
-    kpiContext.hidden = !(isAllJobs && !isSpecificArea);
+    kpiContext.hidden = anySel;
   }
 
   // Provenance flag in the Area Summary head. Three cases, most specific first:
@@ -5688,8 +5698,6 @@ function renderOccupationAreasTable() {
     return asc ? vA - vB : vB - vA;
   });
 
-  document.getElementById("browseDrilldownCounter").textContent =
-    regionFilter ? `${rows.length} areas in region` : `${rows.length} reporting areas`;
 
   const tbody = document.getElementById("occupationAreasTableBody");
   tbody.innerHTML = "";
@@ -5757,6 +5765,8 @@ async function openOccupationAreaBreakdown(soc, title) {
   state.drilldownRegion = "ALL";
   populateDrilldownRegionFilter();
 
+  const ddWage = document.getElementById("drilldownWageMetric");
+  if (ddWage) ddWage.value = state.browseWageMetric;
   syncWageColHeaders();
 
   const tableAreas = document.getElementById("occupationAreasTable");
@@ -5790,19 +5800,21 @@ function setupEventListeners() {
   document.getElementById("browseEduFilter").addEventListener("change", renderBrowseTable);
   document.getElementById("browseGroupFilter").addEventListener("change", renderBrowseTable);
 
-  // Wage metric selector (in the filter bar, next to the sector filter). It only
-  // swaps which wage the single Wage column shows; that column still sorts
-  // low↔high on click like Density.
-  const wageSel = document.getElementById("browseWageMetric");
-  if (wageSel) {
-    wageSel.value = state.browseWageMetric;
-    wageSel.addEventListener("change", () => {
-      state.browseWageMetric = wageSel.value;
+  // Wage metric selector — two copies (filter bar + occupation drilldown bar)
+  // kept in sync. Swaps which wage the single Wage column shows.
+  const wageSels = ["browseWageMetric", "drilldownWageMetric"]
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  wageSels.forEach(sel => {
+    sel.value = state.browseWageMetric;
+    sel.addEventListener("change", () => {
+      state.browseWageMetric = sel.value;
+      wageSels.forEach(s => { if (s !== sel) s.value = sel.value; });
       syncWageColHeaders();
       if (state.drilldownSoc) renderOccupationAreasTable();
       else renderBrowseTable();
     });
-  }
+  });
   syncWageColHeaders();
 
   // Browse Table Sort Headers
