@@ -74,6 +74,7 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 .tabular {
@@ -583,14 +584,30 @@ body {
 /* ========================================================= */
 .map-layout-grid {
   display: grid;
-  grid-template-columns: 210px 1fr;
+  grid-template-columns: 210px minmax(0, 1fr) 250px;
   gap: 16px;
   align-items: start;
+  width: min(calc(100% + 490px), calc(100vw - 48px));
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+@media (max-width: 1100px) {
+  .map-layout-grid {
+    width: 100%;
+    left: 0;
+    transform: none;
+    grid-template-columns: 190px minmax(0, 1fr) 230px;
+    gap: 12px;
+  }
 }
 @media (max-width: 900px) {
   .map-layout-grid {
+    width: 100%;
+    left: 0;
+    transform: none;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 14px;
   }
 }
 .map-sidebar-controls {
@@ -682,6 +699,80 @@ body {
   font-size: 12px;
   font-weight: 600;
   line-height: 1.35;
+}
+
+/* Right Sidebar: Occupation Statistics */
+.map-sidebar-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+@media (max-width: 900px) {
+  .map-sidebar-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .map-sidebar-stats .map-control-group {
+    grid-column: 1 / -1;
+  }
+  .map-sidebar-stats .map-stat-block {
+    border-top: none;
+    padding-top: 0;
+  }
+}
+@media (max-width: 580px) {
+  .map-sidebar-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.map-stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 13px;
+  border-top: 1px solid var(--border-subtle);
+}
+.map-stat-block:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+.map-stat-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.map-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  line-height: 1.35;
+  word-break: break-word;
+}
+.map-stat-value {
+  font-family: var(--font-mono);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.25;
+  margin-top: 1px;
+  word-break: break-word;
+}
+.map-stat-footnote {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  line-height: 1.35;
+  opacity: 0.85;
 }
 
 /* Map Card & SVG */
@@ -1747,13 +1838,26 @@ body {
   border: 1px solid #cbd5e1;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
 }
+[data-theme="light"] .map-sidebar-controls,
+[data-theme="light"] .map-sidebar-stats {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
 [data-theme="light"] .map-sidebar {
   background: #ffffff;
   border-right: 1px solid #e2e8f0;
 }
-[data-theme="light"] .map-control-label {
+[data-theme="light"] .map-control-label,
+[data-theme="light"] .map-stat-label {
   color: #334155;
   font-weight: 700;
+}
+[data-theme="light"] .map-stat-value {
+  color: #0f172a;
+}
+[data-theme="light"] .map-stat-footnote {
+  color: #64748b;
 }
 [data-theme="light"] .segmented-control {
   background: #f1f5f9;
@@ -1961,45 +2065,6 @@ body {
     </div>
   </section>
 
-  <!-- Regional KPI Cards -->
-  <section class="metrics-grid" id="kpiBar">
-    <div class="metric-card">
-      <div class="metric-header">
-        <span class="metric-label" id="kpiEmpLabel">Total Employment</span>
-        <span class="metric-badge" id="kpiEmpShare">Workforce</span>
-      </div>
-      <div class="metric-value" id="kpiTotalEmp">—</div>
-      <div class="metric-footnote" id="kpiEmpFootnote">Cross-industry total</div>
-    </div>
-
-    <div class="metric-card">
-      <div class="metric-header">
-        <span class="metric-label" id="kpiMedianLabel">Annual Median Wage</span>
-        <span class="metric-badge" id="kpiMedianDelta">—</span>
-      </div>
-      <div class="metric-value" id="kpiMedianWage">—</div>
-      <div class="metric-footnote" id="kpiMedianFootnote">50th percentile worker earnings</div>
-    </div>
-
-    <div class="metric-card">
-      <div class="metric-header">
-        <span class="metric-label" id="kpiMeanLabel">Annual Mean Wage</span>
-        <span class="metric-badge" id="kpiMeanBadge">All Occupations</span>
-      </div>
-      <div class="metric-value" id="kpiMeanWage">—</div>
-      <div class="metric-footnote" id="kpiMeanFootnote">Average annual compensation</div>
-    </div>
-
-    <div class="metric-card">
-      <div class="metric-header">
-        <span class="metric-label" id="kpiTopLqLabel">Top Sector Concentration</span>
-        <span class="metric-badge pos" id="kpiTopLqBadge">LQ</span>
-      </div>
-      <div class="metric-value" style="font-size: 19px; line-height: 1.25; min-height: 48px; display: flex; align-items: center;" id="kpiTopLqSector">—</div>
-      <div class="metric-footnote" id="kpiTopLqFootnote">Relative to national baseline</div>
-    </div>
-  </section>
-
   <!-- Navigation Tabs -->
   <nav class="tabs-container" role="tablist" aria-label="Wage Explorer Views">
     <button id="tab-btn-map" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-map" data-tab="map">Metro Wage Map</button>
@@ -2131,7 +2196,52 @@ body {
       </div>
     </div>
   </div>
-</section>
+
+      <!-- Right Sidebar: Occupation Statistics -->
+      <aside class="map-sidebar-stats" id="kpiBar">
+        <div class="map-control-group">
+          <label class="map-control-label">Occupation Statistics</label>
+          <div class="sidebar-info-value" id="sidebarStatsJobTitle">All Occupations</div>
+        </div>
+
+        <div class="map-stat-block">
+          <div class="map-stat-header">
+            <span class="map-stat-label" id="kpiEmpLabel">Total Employment</span>
+            <span class="metric-badge" id="kpiEmpShare">Workforce</span>
+          </div>
+          <div class="map-stat-value tabular" id="kpiTotalEmp">—</div>
+          <div class="map-stat-footnote" id="kpiEmpFootnote">Cross-industry total</div>
+        </div>
+
+        <div class="map-stat-block">
+          <div class="map-stat-header">
+            <span class="map-stat-label" id="kpiMedianLabel">Annual Median Wage</span>
+            <span class="metric-badge" id="kpiMedianDelta">—</span>
+          </div>
+          <div class="map-stat-value tabular" id="kpiMedianWage">—</div>
+          <div class="map-stat-footnote" id="kpiMedianFootnote">50th percentile worker earnings</div>
+        </div>
+
+        <div class="map-stat-block">
+          <div class="map-stat-header">
+            <span class="map-stat-label" id="kpiMeanLabel">Annual Mean Wage</span>
+            <span class="metric-badge" id="kpiMeanBadge">All Occupations</span>
+          </div>
+          <div class="map-stat-value tabular" id="kpiMeanWage">—</div>
+          <div class="map-stat-footnote" id="kpiMeanFootnote">Average annual compensation</div>
+        </div>
+
+        <div class="map-stat-block">
+          <div class="map-stat-header">
+            <span class="map-stat-label" id="kpiTopLqLabel">Top Sector Concentration</span>
+            <span class="metric-badge pos" id="kpiTopLqBadge">LQ</span>
+          </div>
+          <div class="map-stat-value" id="kpiTopLqSector">—</div>
+          <div class="map-stat-footnote" id="kpiTopLqFootnote">Relative to national baseline</div>
+        </div>
+      </aside>
+    </div>
+  </section>
 
   <!-- TAB 1: Wage Spread (Percentiles P10-P90) -->
   <section id="tab-spread" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-spread">
@@ -2879,6 +2989,10 @@ async function loadMapJob(soc) {
   const sidebarJobTitle = document.getElementById("sidebarActiveJobTitle");
   if (sidebarJobTitle) {
     sidebarJobTitle.textContent = occMeta.title;
+  }
+  const sidebarStatsTitle = document.getElementById("sidebarStatsJobTitle");
+  if (sidebarStatsTitle) {
+    sidebarStatsTitle.textContent = occMeta.title;
   }
 
   if (soc === "00-0000") {
@@ -4132,6 +4246,17 @@ function renderHeroAndKPIs() {
   document.getElementById("areaSearchInput").value = "";
   document.getElementById("areaSearchInput").placeholder = data.name;
 
+  const statsJobTitle = document.getElementById("sidebarStatsJobTitle");
+  if (statsJobTitle) {
+    statsJobTitle.textContent = isAllJobs ? "All Occupations" : occTitle;
+  }
+  const sidebarJobTitle = document.getElementById("sidebarActiveJobTitle");
+  if (sidebarJobTitle) {
+    sidebarJobTitle.textContent = isAllJobs ? "All Occupations" : occTitle;
+  }
+
+  const shortOcc = (occTitle && occTitle.length > 28) ? occTitle.slice(0, 26) + "…" : occTitle;
+
   // -------------------------------------------------------------
   // KPI 1: Employment
   // -------------------------------------------------------------
@@ -4141,7 +4266,10 @@ function renderHeroAndKPIs() {
   const kpiEmpFootnote = document.getElementById("kpiEmpFootnote");
 
   if (!isAllJobs) {
-    if (kpiEmpLabel) kpiEmpLabel.textContent = `${occTitle} Employment`;
+    if (kpiEmpLabel) {
+      kpiEmpLabel.textContent = `${shortOcc} Employment`;
+      kpiEmpLabel.title = `${occTitle} Employment`;
+    }
     kpiEmpVal.textContent = (occEmp !== null && occEmp > 0) ? fmt.number(occEmp) : "Withheld / N/A";
 
     if (occEmp && natJobEmp && natJobEmp > 0) {
@@ -4180,7 +4308,10 @@ function renderHeroAndKPIs() {
   const kpiMedFootnote = document.getElementById("kpiMedianFootnote");
 
   if (!isAllJobs) {
-    if (kpiMedLabel) kpiMedLabel.textContent = `${occTitle} Median Wage`;
+    if (kpiMedLabel) {
+      kpiMedLabel.textContent = `${shortOcc} Median Wage`;
+      kpiMedLabel.title = `${occTitle} Median Wage`;
+    }
     if (occMedian !== null && occMedian > 0) {
       kpiMedVal.textContent = fmt.currency(occMedian);
       if (natJobMedian && data.id !== "99") {
@@ -4229,7 +4360,10 @@ function renderHeroAndKPIs() {
   const kpiMeanFootnote = document.getElementById("kpiMeanFootnote");
 
   if (!isAllJobs) {
-    if (kpiMeanLabel) kpiMeanLabel.textContent = `${occTitle} Mean Wage`;
+    if (kpiMeanLabel) {
+      kpiMeanLabel.textContent = `${shortOcc} Mean Wage`;
+      kpiMeanLabel.title = `${occTitle} Mean Wage`;
+    }
     if (occMean !== null && occMean > 0) {
       kpiMeanVal.textContent = fmt.currency(occMean);
       if (kpiMeanBadge) {
@@ -4277,7 +4411,10 @@ function renderHeroAndKPIs() {
   const kpiLqFootnote = document.getElementById("kpiTopLqFootnote");
 
   if (!isAllJobs) {
-    if (kpiLqLabel) kpiLqLabel.textContent = `${occTitle} Concentration`;
+    if (kpiLqLabel) {
+      kpiLqLabel.textContent = `${shortOcc} Concentration`;
+      kpiLqLabel.title = `${occTitle} Concentration`;
+    }
     if (data.id === "99") {
       kpiLqVal.textContent = "1.00× National Baseline";
       kpiLqBadge.textContent = "1.00× Baseline";
