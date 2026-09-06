@@ -149,6 +149,26 @@ def parse_num(v, default=None):
     except ValueError:
         return default
 
+# Annual estimate from an OES hourly cell. BLS suppresses annual wages ('*')
+# for occupations whose workers typically don't work year-round full time
+# (actors, dancers, musicians, athletes...), but still publishes hourly ones.
+# The standard OES annualisation is hourly x 2080 (40h x 52w); '#' is the
+# hourly top code ($115.00/hr).
+HOURS_PER_YEAR = 2080
+
+def hourly_to_annual(v, default=None):
+    if not v:
+        return default
+    v = v.strip().replace(',', '')
+    if v in ('#', '#.0', '#.00'):
+        return 115.0 * HOURS_PER_YEAR
+    if v in ('*', '**', '-', 'N/A', 'NA', ''):
+        return default
+    try:
+        return round(float(v) * HOURS_PER_YEAR)
+    except ValueError:
+        return default
+
 def main(year='2025'):
     year = str(year)
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -278,9 +298,26 @@ def main(year='2025'):
                                 p90 = parse_num(cells.get('AD'))
                                 lq = parse_num(cells.get('O'), 1.0 if area_id == '99' else None)
 
+                                # If BLS withheld the annual wage but published an
+                                # hourly one, annualise it (hourly x 2080) and mark
+                                # the row so the UI can label it. R=H_MEAN, W=H_MEDIAN,
+                                # U/V/X/Y = H_PCT10/25/75/90.
+                                hourly_flag = 0
+                                if mean is None and median is None:
+                                    h_mean = hourly_to_annual(cells.get('R'))
+                                    h_median = hourly_to_annual(cells.get('W'))
+                                    if h_mean is not None or h_median is not None:
+                                        hourly_flag = 1
+                                        mean = h_mean
+                                        median = h_median
+                                        p10 = hourly_to_annual(cells.get('U'))
+                                        p25 = hourly_to_annual(cells.get('V'))
+                                        p75 = hourly_to_annual(cells.get('X'))
+                                        p90 = hourly_to_annual(cells.get('Y'))
+
                                 # Only include if we have at least median wage or mean wage or employment
                                 if median is not None or mean is not None or emp is not None:
-                                    area_occs[area_id].append([
+                                    row = [
                                         soc,
                                         title,
                                         grp_idx,
@@ -293,7 +330,10 @@ def main(year='2025'):
                                         p75,
                                         p90,
                                         lq
-                                    ])
+                                    ]
+                                    if hourly_flag:
+                                        row.append(1)   # row[12] = annualised-from-hourly
+                                    area_occs[area_id].append(row)
 
                     elem.clear()
 

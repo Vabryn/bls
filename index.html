@@ -1255,8 +1255,8 @@ body {
   transition: fill 0.2s ease, stroke 0.15s ease, opacity 0.25s ease;
 }
 [data-theme="light"] .area-boundary-shape {
-  stroke: rgba(255, 255, 255, 0.85);
-  stroke-width: 0.75px;
+  stroke: rgba(30, 41, 59, 0.35);
+  stroke-width: 0.6px;
 }
 .area-boundary-shape:hover, .area-boundary-shape.hovered {
   stroke: #ffffff !important;
@@ -2650,6 +2650,8 @@ const state = {
   drilldownRegion: "ALL",
   browseWageMetric: "median",   // 'median' | 'mean' | 'p25' | 'p75' — shared by both browse tables
   jobDataYear: null,            // year the active occupation's data actually came from (fallback when the selected year is incomplete)
+  jobPrior: new Map(),         // soc -> { "2024": payload, "2023": payload, "2022": payload } for per-field gap-fill
+  _priorLoading: new Set(),
   drilldownTitle: "",
   areaTableSort: { col: "wage", asc: false },
 
@@ -3175,6 +3177,71 @@ function payloadHasWages(p) {
     }
   }
   return false;
+}
+
+// Prior release years, newest first — used to backfill individual gaps.
+const PRIOR_YEARS = () =>
+  DATA_YEARS.filter(y => Number(y) < Number(state.year)).sort((a, b) => b - a);
+
+// One occupation's stats for one area out of a job payload.
+// Metro rows are [emp, mean, median, p25, p75, lq]; area 99 uses `nat`.
+function occAreaStats(payload, areaId) {
+  if (!payload) return null;
+  if (areaId === "99") {
+    const n = payload.nat || {};
+    return { emp: n.emp, mean: n.mean, median: n.median, p25: n.p25, p75: n.p75, lq: 1.0, hourly: !!payload.hourly };
+  }
+  const r = payload.metros && payload.metros[areaId];
+  if (!r) return null;
+  return { emp: r[0], mean: r[1], median: r[2], p25: r[3], p75: r[4], lq: r[5], hourly: !!(payload.hourly || r[6]) };
+}
+
+// Lazily pull the prior years' job files for a SOC so gaps can be filled in.
+async function ensurePriorJobYears(soc) {
+  if (state.jobPrior.has(soc) || state._priorLoading.has(soc)) return;
+  state._priorLoading.add(soc);
+  const bag = {};
+  await Promise.all(PRIOR_YEARS().map(async y => {
+    try {
+      const r = await fetch(`data/${y}/jobs/${soc}.json`);
+      if (r.ok) bag[y] = await r.json();
+    } catch (e) { /* a missing year just can't contribute */ }
+  }));
+  state.jobPrior.set(soc, bag);
+  state._priorLoading.delete(soc);
+  if (state.activeMapSoc === soc) renderHeroAndKPIs();
+}
+
+// Resolve one area's figures for the active occupation, filling any hole from
+// the most recent earlier release that has it. Returns the values plus a
+// { field: year } map of what was backfilled and whether any figure is an
+// hourly-derived annual estimate.
+function resolveOccAreaFigures(soc, areaId, currentStats) {
+  // The headline figures the Area Summary shows; LQ is derived and not flagged.
+  const fields = ["emp", "mean", "median"];
+  const out = Object.assign({ emp: null, mean: null, median: null, lq: null }, currentStats || {});
+  const backfill = {};
+  let hourly = !!(currentStats && currentStats.hourly);
+
+  const holes = fields.filter(f => !(out[f] > 0));
+  if (holes.length) {
+    const bag = state.jobPrior.get(soc);
+    if (!bag) {
+      ensurePriorJobYears(soc);          // fire-and-forget; re-renders when ready
+    } else {
+      for (const y of PRIOR_YEARS()) {
+        const s = occAreaStats(bag[y], areaId);
+        if (!s) continue;
+        for (const f of fields) {
+          if (!(out[f] > 0) && s[f] > 0) { out[f] = s[f]; backfill[f] = y; if (s.hourly) hourly = true; }
+        }
+        if (fields.every(f => out[f] > 0)) break;
+      }
+    }
+  }
+  out.backfill = backfill;
+  out.hourly = hourly;
+  return out;
 }
 
 // =============================================================
@@ -4422,19 +4489,23 @@ function renderHeroAndKPIs() {
   let natJobMedian = null;
   let natJobMean = null;
 
+  let occBackfill = {};        // { field: year } — figures pulled from an earlier release
+  let occHourly = false;       // any figure is an hourly-derived annual estimate
+
   if (!isAllJobs) {
-    // 1. Check current area occupations array
+    let occRow = null;
+    // 1. This area's own occupation row (richest: p10/p90/lq too)
     if (data.occupations) {
-      const row = data.occupations.find(r => r[0] === state.activeMapSoc);
-      if (row) {
-        occTitle = row[1];
-        occEmp = row[4];
-        occMean = row[5];
-        occMedian = row[6];
-        occLq = row[11];
+      occRow = data.occupations.find(r => r[0] === state.activeMapSoc) || null;
+      if (occRow) {
+        occTitle = occRow[1];
+        occEmp = occRow[4];
+        occMean = occRow[5];
+        occMedian = occRow[6];
+        occLq = occRow[11];
       }
     }
-    // 2. Check activeJobPayload
+    // 2. The job payload (title, national figures, and this area's metro row)
     if (payload && payload.soc === state.activeMapSoc) {
       if (!occTitle) occTitle = payload.title;
       if (payload.nat) {
@@ -4442,19 +4513,24 @@ function renderHeroAndKPIs() {
         natJobMedian = payload.nat.median;
         natJobMean = payload.nat.mean;
       }
-      if (data.id === "99") {
-        if (occEmp === null && payload.nat) occEmp = payload.nat.emp;
-        if (occMean === null && payload.nat) occMean = payload.nat.mean;
-        if (occMedian === null && payload.nat) occMedian = payload.nat.median;
-        occLq = 1.0;
-      } else if (payload.metros && payload.metros[data.id]) {
-        const mRow = payload.metros[data.id];
-        if (occEmp === null) occEmp = mRow[0];
-        if (occMean === null) occMean = mRow[1];
-        if (occMedian === null) occMedian = mRow[2];
-        if (occLq === null) occLq = mRow[5];
+      const cur = occAreaStats(payload, data.id);
+      if (cur) {
+        if (!(occEmp > 0)) occEmp = cur.emp;
+        if (!(occMean > 0)) occMean = cur.mean;
+        if (!(occMedian > 0)) occMedian = cur.median;
+        if (occLq === null) occLq = cur.lq;
+        if (cur.hourly) occHourly = true;
       }
     }
+    // 3. Fill any remaining gap from the most recent earlier release.
+    const resolved = resolveOccAreaFigures(state.activeMapSoc, data.id, {
+      emp: occEmp, mean: occMean, median: occMedian, lq: occLq, hourly: occHourly
+    });
+    occEmp = resolved.emp; occMean = resolved.mean; occMedian = resolved.median;
+    if (resolved.lq > 0) occLq = resolved.lq;
+    occBackfill = resolved.backfill;
+    occHourly = resolved.hourly;
+
     if (!occTitle && state.mapData && state.mapData.occupations) {
       const meta = state.mapData.occupations.find(o => o.soc === state.activeMapSoc);
       if (meta) occTitle = meta.title;
@@ -4477,18 +4553,29 @@ function renderHeroAndKPIs() {
     kpiContext.textContent = `${cleanAreaTitle}  ·  ${scope}`;
   }
 
-  // Fallback-year flag: shown when the active occupation had no wage data for
-  // the selected year and we're temporarily showing an earlier release.
+  // Provenance flag in the Area Summary head. Three cases, most specific first:
+  //  1. some figures are annualised from BLS hourly wages (actors, dancers…)
+  //  2. some figures were filled from an earlier release (a hole this year)
+  //  3. the whole occupation fell back to an earlier release
   const dataYearNote = document.getElementById("kpiDataYearNote");
   if (dataYearNote) {
-    const usingFallback = !isAllJobs && state.jobDataYear && state.jobDataYear !== state.year;
-    if (usingFallback) {
-      dataYearNote.textContent = `${state.jobDataYear} data · ${state.year} incomplete ?`;
-      dataYearNote.title = `The Bureau of Labor Statistics has not published complete wage data for ${occTitle} in the May ${state.year} release. Showing the most recent year with data (${state.jobDataYear}).`;
-      dataYearNote.hidden = false;
-    } else {
-      dataYearNote.hidden = true;
+    const backYears = Array.from(new Set(Object.values(occBackfill))).sort((a, b) => b - a);
+    let text = "", tip = "";
+    if (!isAllJobs && occHourly) {
+      text = "annualized from hourly wages ?";
+      tip = `BLS withholds annual wages for ${occTitle} (workers who don't typically work year-round). Figures shown are the published hourly wages × 2,080 hours.`;
+    } else if (!isAllJobs && backYears.length) {
+      const flds = Object.keys(occBackfill)
+        .map(f => ({ emp: "employment", mean: "mean wage", median: "median wage", p25: "25th pct", p75: "75th pct", lq: "concentration" }[f] || f));
+      text = `${backYears.join(" / ")} data ?`;
+      tip = `BLS didn't publish ${flds.join(", ")} for ${occTitle} here in May ${state.year}. Those figures come from the most recent earlier release (${backYears.join(", ")}).`;
+    } else if (!isAllJobs && state.jobDataYear && state.jobDataYear !== state.year) {
+      text = `${state.jobDataYear} data · ${state.year} incomplete ?`;
+      tip = `BLS has not published data for ${occTitle} in the May ${state.year} release. Showing the most recent year with data (${state.jobDataYear}).`;
     }
+    dataYearNote.textContent = text;
+    dataYearNote.title = tip;
+    dataYearNote.hidden = !text;
   }
 
   // Hero area title

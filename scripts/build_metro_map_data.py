@@ -33,7 +33,8 @@ def main(year='2025'):
 
     nat_occ_map = {}
     for row in nat_data.get('occupations', []):
-        soc, title, grp_idx, edu_lvl, emp, mean, median, p10, p25, p75, p90, lq = row
+        soc, title, grp_idx, edu_lvl, emp, mean, median, p10, p25, p75, p90, lq = row[:12]
+        hourly = row[12] if len(row) > 12 else 0
         nat_occ_map[soc] = {
             'emp': emp,
             'mean': mean,
@@ -41,7 +42,8 @@ def main(year='2025'):
             'p25': p25,
             'p75': p75,
             'p10': p10,
-            'p90': p90
+            'p90': p90,
+            'hourly': bool(hourly),
         }
 
     # 4. Read each area's detailed JSON
@@ -78,14 +80,20 @@ def main(year='2025'):
         })
 
         for row in a_data.get('occupations', []):
-            soc, title, grp_idx, edu_lvl, emp, mean, median, p10, p25, p75, p90, lq = row
+            soc, title, grp_idx, edu_lvl, emp, mean, median, p10, p25, p75, p90, lq = row[:12]
+            hourly = row[12] if len(row) > 12 else 0
             entry = job_aggregates[soc]
             if not entry['title']:
                 entry['title'] = title
                 entry['grp'] = grp_idx
+            if hourly:
+                entry['hourly'] = True
 
             if median is not None or mean is not None or emp is not None:
-                entry['metros'][aid] = [emp, mean, median, p25, p75, lq]
+                mrow = [emp, mean, median, p25, p75, lq]
+                if hourly:
+                    mrow.append(1)   # metro row [6] = annualised-from-hourly
+                entry['metros'][aid] = mrow
 
     print(f"Compiled stats for {len(metro_list)} statistical areas and {len(job_aggregates)} distinct occupations.")
 
@@ -122,6 +130,8 @@ def main(year='2025'):
                 }),
                 'metros': data['metros']
             }
+            if data.get('hourly') or nat_occ_map.get(soc, {}).get('hourly'):
+                job_payload['hourly'] = True
 
             job_file = os.path.join(jobs_dir, f"{soc}.json")
             with open(job_file, 'w', encoding='utf-8') as out_f:
