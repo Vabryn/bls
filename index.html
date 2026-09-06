@@ -2806,7 +2806,10 @@ const state = {
   jobCache: new Map(),
   activeJobPayload: null,
   mapZoom: { scale: 1, x: 0, y: 0 },
-  dragSuppressedClick: false
+  dragSuppressedClick: false,
+  _areaLoadToken: 0,
+  _areaEls: null,
+  _mapCtx: null
 };
 
 // Formatters
@@ -3804,67 +3807,96 @@ function renderMetroMap() {
 // -------------------------------------------------------------
 // MODE 1: STATISTICAL AREAS LAYER (Polygons & Continuous Fill)
 // -------------------------------------------------------------
+// The ~510 area polygons and metro bubbles are built once and then only have
+// their fill / state classes updated on each render. Hover, move and click are
+// handled by a single delegated listener per layer rather than 4 per element.
+function bindMapLayerDelegation(layer, selector, kind) {
+  if (layer._delegated) return;
+  layer._delegated = true;
+  let hovered = null;
+
+  layer.addEventListener("mouseover", (e) => {
+    const el = e.target.closest(selector);
+    if (!el || el === hovered) return;
+    hovered = el;
+    el.classList.add("hovered");
+    const ctx = state._mapCtx;
+    if (!ctx) return;
+    const aid = el.dataset.id;
+    const jobStats = ctx.payload.metros[aid];
+    const val = jobStats ? (ctx.isEmploymentMapping ? jobStats[0] : jobStats[ctx.metricIdx]) : null;
+    const rank = ctx.rankByAid.get(aid);
+    const rankText = rank ? `#${rank} of ${ctx.validCount}` : "Unreported";
+    const meta = kind === "area"
+      ? state.metroShapes[aid]
+      : (state.mapData.metros.find(m => m.id === aid) || { name: aid });
+    showMetroTooltip(e, meta, ctx.payload, jobStats, ctx.metricName, val, rankText, ctx.natVal, ctx.isEmploymentMapping);
+  });
+
+  layer.addEventListener("mousemove", (e) => {
+    if (e.target.closest(selector)) moveTooltip(e);
+  });
+
+  layer.addEventListener("mouseout", (e) => {
+    const el = e.target.closest(selector);
+    if (!el) return;
+    if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+    el.classList.remove("hovered");
+    if (hovered === el) hovered = null;
+    hideTooltip();
+  });
+
+  layer.addEventListener("click", (e) => {
+    const el = e.target.closest(selector);
+    if (!el || state.dragSuppressedClick) return;
+    e.stopPropagation();
+    loadArea(el.dataset.id, true);
+  });
+}
+
 function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping = false) {
   const areasLayer = document.getElementById("areasLayer");
   if (!areasLayer || !state.metroShapes) return;
-  areasLayer.innerHTML = "";
 
-  const fragment = document.createDocumentFragment();
+  const rankByAid = new Map();
+  validMetros.forEach((v, i) => rankByAid.set(v.metro.id, i + 1));
+  state._mapCtx = { payload, metricIdx, metricName, natVal, isEmploymentMapping, rankByAid, validCount: validMetros.length };
+  bindMapLayerDelegation(areasLayer, ".area-boundary-shape", "area");
 
-  Object.keys(state.metroShapes).forEach(aid => {
+  // Build the polygon elements once; reuse thereafter.
+  if (!state._areaEls) {
+    state._areaEls = new Map();
+    const frag = document.createDocumentFragment();
+    Object.keys(state.metroShapes).forEach(aid => {
+      const shape = state.metroShapes[aid];
+      if (!shape || !shape.d) return;
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("class", "area-boundary-shape");
+      path.setAttribute("d", shape.d);
+      path.setAttribute("data-id", aid);
+      path.setAttribute("data-state", shape.state || "");
+      path.setAttribute("data-type", shape.type || "msa");
+      frag.appendChild(path);
+      state._areaEls.set(aid, path);
+    });
+    areasLayer.appendChild(frag);
+  }
+
+  const subAreaSelected = state.currentAreaId && String(state.currentAreaId).length > 2;
+  state._areaEls.forEach((path, aid) => {
     const shape = state.metroShapes[aid];
-    if (!shape || !shape.d) return;
-
     const jobStats = payload.metros[aid];
     const val = jobStats ? (isEmploymentMapping ? jobStats[0] : jobStats[metricIdx]) : null;
-    const fill = getChoroplethFill(val, minVal, maxVal, isDark, isEmploymentMapping);
-
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("class", "area-boundary-shape");
-    path.setAttribute("d", shape.d);
-    path.setAttribute("fill", fill);
-    path.setAttribute("data-id", aid);
-    path.setAttribute("data-state", shape.state || "");
-    path.setAttribute("data-type", shape.type || "msa");
-
-    if (state.currentAreaId === aid) {
-      path.classList.add("selected");
-    }
-
+    path.setAttribute("fill", getChoroplethFill(val, minVal, maxVal, isDark, isEmploymentMapping));
+    path.classList.toggle("selected", state.currentAreaId === aid);
     if (state.focusedState) {
       const inState = shape.state === state.focusedState;
-      // Grey a sibling region only when a specific sub-area is the active selection.
-      const subAreaSelected = state.currentAreaId && String(state.currentAreaId).length > 2;
       path.classList.toggle("area-focused", inState && subAreaSelected && aid !== state.currentAreaId);
       path.classList.toggle("area-dimmed", !inState);
+    } else if (path.classList.contains("area-focused") || path.classList.contains("area-dimmed")) {
+      path.classList.remove("area-focused", "area-dimmed");
     }
-
-    const rankIdx = validMetros.findIndex(v => v.metro.id === aid);
-    const rankText = rankIdx !== -1 ? `#${rankIdx + 1} of ${validMetros.length}` : "Unreported";
-
-    path.addEventListener("mouseenter", (e) => {
-      showMetroTooltip(e, shape, payload, jobStats, metricName, val, rankText, natVal, isEmploymentMapping);
-      path.classList.add("hovered");
-    });
-
-    path.addEventListener("mousemove", moveTooltip);
-
-    path.addEventListener("mouseleave", () => {
-      hideTooltip();
-      path.classList.remove("hovered");
-    });
-
-    // Clicking the area selects that area and zooms in
-    path.addEventListener("click", (e) => {
-      if (state.dragSuppressedClick) return;
-      e.stopPropagation();
-      loadArea(aid, true);
-    });
-
-    fragment.appendChild(path);
   });
-
-  areasLayer.appendChild(fragment);
 }
 
 // -------------------------------------------------------------
@@ -3874,6 +3906,11 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
   const bubblesLayer = document.getElementById("bubblesLayer");
   if (!bubblesLayer || !state.mapData) return;
   bubblesLayer.innerHTML = "";
+
+  const rankByAid = new Map();
+  validMetros.forEach((v, i) => rankByAid.set(v.metro.id, i + 1));
+  state._mapCtx = { payload, metricIdx, metricName, natVal, isEmploymentMapping, rankByAid, validCount: validMetros.length };
+  bindMapLayerDelegation(bubblesLayer, ".metro-bubble", "bubble");
 
   const placed = []; // { circle, cx, cy, r } — positions finalised after spiderfy
 
@@ -3924,25 +3961,6 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
       circle.classList.toggle("bubble-focused", inState);
       circle.classList.toggle("bubble-dimmed", !inState);
     }
-
-    const rankIdx = validMetros.findIndex(v => v.metro.id === m.id);
-    const rankText = rankIdx !== -1 ? `#${rankIdx + 1} of ${validMetros.length}` : "Unreported";
-
-    circle.addEventListener("mouseenter", (e) => {
-      showMetroTooltip(e, m, payload, jobStats, metricName, val, rankText, natVal, isEmploymentMapping);
-      circle.classList.add("hovered");
-    });
-    circle.addEventListener("mousemove", moveTooltip);
-    circle.addEventListener("mouseleave", () => {
-      hideTooltip();
-      circle.classList.remove("hovered");
-    });
-
-    circle.addEventListener("click", (e) => {
-      if (state.dragSuppressedClick) return;
-      e.stopPropagation();
-      loadArea(m.id, true);
-    });
 
     placed.push({ circle, cx, cy, r });
   });
@@ -4617,6 +4635,8 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
 // AREA DATA ENGINE
 // -------------------------------------------------------------
 async function loadArea(areaId, shouldZoom = true) {
+  // Ignore no-op reselects (rapid clicks on the already-active area).
+  if (areaId === state.currentAreaId && state.areaData && !shouldZoom) return;
   state.currentAreaId = areaId;
 
   const url = new URL(window.location);
@@ -4640,10 +4660,13 @@ async function loadArea(areaId, shouldZoom = true) {
   const sc = document.getElementById("spreadCounter");
   if (sc) sc.textContent = "Loading area data...";
 
+  // Token guard: during rapid clicking only the most recent fetch may render.
+  const token = ++state._areaLoadToken;
   try {
     const res = await fetch(`${yb()}/areas/${areaId}.json`);
     const data = await res.json();
     state.areaCache.set(areaId, data);
+    if (token !== state._areaLoadToken) return;
     state.areaData = data;
     renderAll(shouldZoom);
   } catch (err) {
@@ -4651,13 +4674,22 @@ async function loadArea(areaId, shouldZoom = true) {
   }
 }
 
+// Collapse bursts of renderAll() calls (rapid clicks) into one frame.
+let _renderAllQueued = false;
+let _renderAllZoom = false;
 function renderAll(shouldZoom = false) {
-  renderHeroAndKPIs();
-  renderBrowseTable();
-  if (state.activeJobPayload) {
-    renderMetroMap();
-  }
-  renderMetroShapeOverlay(state.currentAreaId, shouldZoom);
+  _renderAllZoom = _renderAllZoom || shouldZoom;
+  if (_renderAllQueued) return;
+  _renderAllQueued = true;
+  requestAnimationFrame(() => {
+    const zoom = _renderAllZoom;
+    _renderAllQueued = false;
+    _renderAllZoom = false;
+    renderHeroAndKPIs();
+    renderBrowseTable();
+    if (state.activeJobPayload) renderMetroMap();
+    renderMetroShapeOverlay(state.currentAreaId, zoom);
+  });
 }
 
 function renderHeroAndKPIs() {
@@ -5447,7 +5479,7 @@ function applyTheme(isDark) {
     if (sunIcon) sunIcon.style.display = "none";
     if (moonIcon) moonIcon.style.display = "";
   }
-  if (state && state.activeTab === "map" && typeof renderMetroMap === "function" && state.activeJobPayload) {
+  if (typeof renderMetroMap === "function" && state && state.activeJobPayload) {
     renderMetroMap();
   }
 }
