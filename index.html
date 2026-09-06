@@ -1270,22 +1270,20 @@ body {
   fill-opacity: 0.95 !important;
   vector-effect: non-scaling-stroke;
 }
-/* Selected region — a STATIC glow only. Animating filter: drop-shadow on an
-   SVG polygon re-rasterizes every frame forever and pins a core; the pulse
-   isn't worth it. Emphasis comes from stroke weight + a one-time shadow. */
+/* Selected region — a bright, heavier stroke and nothing else. No filter
+   (drop-shadow on an SVG polygon is a per-frame rasterization cost), no
+   animation. */
 .area-boundary-shape.selected {
   stroke: rgba(56, 189, 248, 0.95) !important;
-  stroke-width: 2.75px !important;
+  stroke-width: 3px !important;
   fill-opacity: 0.95 !important;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.45));
 }
 [data-theme="light"] .area-boundary-shape.selected {
   stroke: #0284c7 !important;
-  stroke-width: 2.75px !important;
+  stroke-width: 3px !important;
   fill-opacity: 1 !important;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 5px rgba(2, 132, 199, 0.5));
 }
 /* When a specific region is selected, its surroundings stay on the map with
    their choropleth colour but dimmed back, so the selected region (glowing,
@@ -1314,7 +1312,6 @@ body {
   vector-effect: non-scaling-stroke;
   pointer-events: none;
   transition: opacity 0.2s ease;
-  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.4));
 }
 [data-theme="light"] .metro-overlay-path {
   fill: rgba(2, 132, 199, 0.14);
@@ -1323,7 +1320,6 @@ body {
   stroke-linejoin: round;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 5px rgba(2, 132, 199, 0.4));
 }
 .county-overlay-path {
   fill: transparent;
@@ -1360,9 +1356,8 @@ body {
 }
 .metro-bubble:hover, .metro-bubble.highlighted {
   stroke: rgba(56, 189, 248, 0.95) !important;
-  stroke-width: 2.2px !important;
-  fill-opacity: 0.94 !important;
-  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 1.0)) brightness(1.15);
+  stroke-width: 2.6px !important;
+  fill-opacity: 1 !important;
 }
 .metro-bubble.bubble-dimmed {
   opacity: 0.15;
@@ -1380,8 +1375,7 @@ body {
 }
 [data-theme="light"] .metro-bubble:hover, [data-theme="light"] .metro-bubble.highlighted {
   stroke: #0284c7 !important;
-  fill-opacity: 0.92 !important;
-  filter: drop-shadow(0 0 7px rgba(2, 132, 199, 0.75)) brightness(1.1);
+  fill-opacity: 1 !important;
 }
 
 
