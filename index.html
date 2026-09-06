@@ -652,12 +652,12 @@ body {
   width: 18px;
   height: 46px;
   background: var(--bg-surface);
-  border: 1px solid var(--border-medium);
+  border: 1.5px solid var(--border-medium);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), 0 0 7px -2px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
   position: relative;
   z-index: 2;
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
@@ -789,17 +789,18 @@ body {
   align-items: center;
   max-width: 100%;
   min-width: 0;
-  padding: 2px 9px;
+  padding: 3px 11px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent-cyan) 14%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-cyan) 42%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--accent-cyan) 50%, transparent);
   color: var(--accent-cyan);
   font-weight: 600;
-  font-size: 11.5px;
+  font-size: 12.5px;
   line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  box-shadow: 0 0 7px -2px color-mix(in srgb, var(--accent-cyan) 45%, transparent);
 }
 .pill-token.wrap {
   white-space: normal;
@@ -809,6 +810,15 @@ body {
   margin-left: 6px;
 }
 .pill-token[hidden] { display: none; }
+/* Hover-card pills stay flat and compact — the glow/size bump is for the
+   persistent pucks only. */
+.custom-tooltip .pill-token {
+  padding: 2px 9px;
+  font-size: 11.5px;
+  border-width: 1px;
+  border-color: color-mix(in srgb, var(--accent-cyan) 42%, transparent);
+  box-shadow: none;
+}
 
 /* Map Card Controls Bar (Wage Metric & Map Style directly above the map) */
 .map-card-controls-bar {
@@ -924,8 +934,10 @@ body {
   .area-summary { flex: 0 0 auto; min-height: 0; overflow: visible; }
 }
 .area-summary-head {
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 8px 12px;
   padding: 13px 24px 12px;
@@ -947,8 +959,10 @@ body {
   text-overflow: ellipsis;
 }
 .data-year-flag {
+  position: absolute;
+  right: 24px;
+  top: 12px;
   flex-shrink: 0;
-  margin-left: auto;
   font-size: 11px;
   font-weight: 500;
   white-space: nowrap;
@@ -1106,15 +1120,16 @@ body {
   min-width: 0;
   max-width: 62%;
   margin: 3px 0;
-  padding: 2px 4px 2px 9px;
+  padding: 3px 5px 3px 11px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent-cyan) 14%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-cyan) 42%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--accent-cyan) 50%, transparent);
   color: var(--accent-cyan);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 12.5px;
   line-height: 1.2;
   white-space: nowrap;
+  box-shadow: 0 0 7px -2px color-mix(in srgb, var(--accent-cyan) 45%, transparent);
 }
 .sel-chip .sel-chip-label {
   overflow: hidden;
