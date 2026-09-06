@@ -1,6 +1,7 @@
 .git
 .gitignore
 .assetsignore
+.wrangler
 wrangler.jsonc
 bls.py
 Learning bls
