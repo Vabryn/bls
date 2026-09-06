@@ -3941,7 +3941,11 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
   // constant on-screen size instead of ballooning and overlapping. Value is
   // still encoded by relative size; the whole set just shrinks when zoomed.
   const zScale = (state.mapZoom && state.mapZoom.scale) || 1;
-  const zoomComp = 1 / Math.pow(zScale, 0.82);
+  // Counter-scale so bubbles stay a stable on-screen size across zoom levels.
+  // A softer exponent lands between "no compensation" (first-click look) and
+  // full compensation, so zoomed-in bubbles read a touch larger and match no
+  // matter the click order.
+  const zoomComp = 1 / Math.pow(zScale, 0.72);
 
   state.mapData.metros.forEach(m => {
     const shape = state.metroShapes ? state.metroShapes[m.id] : null;
@@ -4551,6 +4555,25 @@ function closeMapJobDropdown() {
   if (dropdown) dropdown.classList.remove("open");
 }
 
+// Commit the zoom transform for an area up front (used before the map re-render
+// so the bubble layer can size against the final scale). renderMetroShapeOverlay
+// recomputes the same values when it runs — this just gets them in early.
+function precommitAreaZoom(areaId) {
+  const shape = state.metroShapes && state.metroShapes[areaId];
+  if (!shape || !shape.bounds || shape.bounds.length !== 2) return;
+  const [[x0, y0], [x1, y1]] = shape.bounds;
+  const dx = Math.max(18, x1 - x0);
+  const dy = Math.max(18, y1 - y0);
+  const cx = (x0 + x1) / 2;
+  const cy = (y0 + y1) / 2;
+  const scale = Math.min(5.2, Math.max(1.6, 0.72 / Math.max(dx / 975, dy / 610)));
+  const tx = Math.round(975 / 2 - scale * cx);
+  const ty = Math.round(610 / 2 - scale * cy);
+  state.mapZoom = { scale, x: tx, y: ty };
+  const zoomGroup = document.getElementById("mapZoomGroup");
+  if (zoomGroup) zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
+}
+
 // -------------------------------------------------------------
 // METRO & STATISTICAL AREA BACKGROUND SHAPE OVERLAY
 // -------------------------------------------------------------
@@ -4779,6 +4802,10 @@ function renderAll(shouldZoom = false) {
     _renderAllZoom = false;
     renderHeroAndKPIs();
     renderBrowseTable();
+    // Commit the target zoom before the map renders so the bubble layer sizes
+    // against the final scale. Otherwise the first click after a zoom draws
+    // bubbles at the old (larger) scale until a later render corrects them.
+    if (zoom) precommitAreaZoom(state.currentAreaId);
     if (state.activeJobPayload) renderMetroMap();
     renderMetroShapeOverlay(state.currentAreaId, zoom);
   });
