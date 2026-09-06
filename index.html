@@ -528,6 +528,18 @@ body {
 }
 .control-select:focus { border-color: var(--accent-blue); }
 
+/* Browse filter row: Education / Sectors / Median Wage. */
+#browseControlBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+#browseControlBar > .control-select { flex: 0 1 150px; min-width: 96px; }
+
 /* Segmented Control */
 .segmented-control {
   display: inline-flex;
@@ -1403,10 +1415,6 @@ body {
   color: var(--accent-blue);
 }
 @media (max-width: 760px) {
-  .map-card-toolbar,
-  .browse-card-toolbar {
-    padding: 10px 14px;
-  }
   .map-zoom-btn {
     min-width: 36px;
     height: 36px;
@@ -1417,18 +1425,37 @@ body {
     max-width: none;
     min-width: 0;
   }
-  /* Stack the card header vertically on phones so nothing overflows sideways. */
+  /* Search field + Reset stay on one line; the search flexes, Reset doesn't. */
   .map-card-toolbar,
   .browse-card-toolbar {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 10px 12px;
   }
-  .card-search { flex: 0 0 auto; width: 100%; min-width: 0; }
-  .hud-metro-counties { display: none; }
-  .map-toolbar-area-info { width: 100%; flex-wrap: wrap; }
-  .sel-chip { max-width: 100%; }
+  .card-search { flex: 1 1 auto; min-width: 0; width: auto; }
+  .map-toolbar-area-info,
+  .hud-metro-counties { display: none; }   /* the area chip already sits in the field */
+  .sel-chip { max-width: 60%; }
   #hudResetBtn,
-  #browseResetBtn { align-self: flex-start; }
+  #browseResetBtn { flex-shrink: 0; align-self: auto; }
+
+  /* Education / Sectors / Median Wage — one row, sharing the width evenly. */
+  #browseControlBar {
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding: 8px 12px;
+  }
+  #browseControlBar > .control-select {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 12px;
+    padding-left: 8px; padding-right: 20px;
+  }
+
+  /* Trim the browse panel's vertical footprint on phones (~40%). */
+  #browseTableResponsive { max-height: 36vh; }
 }
 
 .map-svg-container {
@@ -2628,8 +2655,8 @@ body {
             </div>
 
             <!-- Browse Filter Controls Bar -->
-            <div class="control-bar" id="browseControlBar" style="padding: 10px 14px; border-bottom: 1px solid var(--border-subtle); display: flex; gap: 8px; align-items: center; background: var(--bg-surface); flex-wrap: wrap;">
-              <select id="browseEduFilter" class="control-select" style="flex: 0 1 140px; min-width: 96px;">
+            <div class="control-bar" id="browseControlBar">
+              <select id="browseEduFilter" class="control-select">
                 <option value="-1">Education</option>
                 <option value="0">No Formal Requirement</option>
                 <option value="1">High School / GED</option>
@@ -2639,10 +2666,10 @@ body {
                 <option value="5">Master's Degree</option>
                 <option value="6">Doctoral / Professional</option>
               </select>
-              <select id="browseGroupFilter" class="control-select" style="flex: 0 1 150px; min-width: 100px;">
+              <select id="browseGroupFilter" class="control-select">
                 <option value="-1">Sectors</option>
               </select>
-              <select id="browseWageMetric" class="control-select" style="flex: 0 1 130px; min-width: 96px;" aria-label="Wage metric shown">
+              <select id="browseWageMetric" class="control-select" aria-label="Wage metric shown">
                 <option value="median">Median Wage</option>
                 <option value="mean">Mean Wage</option>
                 <option value="p25">Bottom 25%</option>
