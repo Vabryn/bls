@@ -3242,7 +3242,8 @@ const OCC_SYNONYMS = {
   driver: "driver/sales workers", electrician: "electricians", plumber: "plumbers",
   welder: "welders", carpenter: "carpenters", mechanic: "mechanics",
   cook: "cooks", chef: "chefs and head cooks", bartender: "bartenders", server: "waiters and waitresses",
-  waiter: "waiters and waitresses", cashier: "cashiers", barista: "baristas",
+  waiter: "waiters and waitresses", cashier: "cashiers",
+  barista: "fast food and counter workers", "coffee shop": "fast food and counter workers",
   pilot: "airline pilots", vet: "veterinarians", dentist: "dentists", pharmacist: "pharmacists",
   therapist: "therapists", counselor: "counselors", psychologist: "psychologists",
   "social worker": "social workers", cop: "police and sheriff", "police officer": "police and sheriff",
@@ -3284,8 +3285,11 @@ function editDistance(a, b, cap = 2) {
 }
 function tokenMatches(queryTok, targetTok) {
   const q = stemToken(queryTok), t = stemToken(targetTok);
+  if (q.length < 3 || t.length < 3) return q === t;
   if (t.startsWith(q) || q.startsWith(t)) return true;
-  if (q.length >= 4 && t.length >= 4 && editDistance(q, t, 1) <= 1) return true;
+  // one-typo tolerance, but only for tokens long enough that an edit can't
+  // collapse two unrelated short words (e.g. "lawy" vs "lawn").
+  if (q.length >= 5 && t.length >= 5 && editDistance(q, t, 1) <= 1) return true;
   return false;
 }
 
@@ -3294,22 +3298,38 @@ function scoreOccupation(title, soc, rawQuery) {
   const q = normSearch(rawQuery);
   if (!q) return 1;
   const t = normSearch(title);
+  const tTokAll = t.split(" ").filter(Boolean);
+  // Shorter, more canonical titles win ties ("Software Developers" over
+  // "Training and Development Specialists" for "dev").
+  const brevity = Math.max(0, 40 - tTokAll.length * 6);
+  const wholeWord = (" " + t + " ").includes(" " + q + " ");
+
+  const syn = OCC_SYNONYMS[q] && normSearch(OCC_SYNONYMS[q]);
+
   const digits = q.replace(/\D/g, "");
   if (digits.length >= 3 && soc && soc.replace(/\D/g, "").includes(digits)) return 950;
   if (t === q) return 1000;
-  if (t.startsWith(q)) return 800;
-  if ((" " + t).includes(" " + q)) return 650;      // word-start substring
-  if (t.includes(q)) return 500;
-  const syn = OCC_SYNONYMS[q];
-  if (syn && t.includes(syn)) return 520;
-  if (syn && syn.split(" ").every(w => t.includes(w))) return 460;
+  if (t.startsWith(q + " ") || t.startsWith(q + ",")) return 880 + brevity;
+  if (t.startsWith(q)) return 780 + brevity;
+  // A synonym whose target IS this title outranks a mere substring hit
+  // elsewhere ("truck driver" -> the tractor-trailer role, not "Light Truck").
+  if (syn && (t === syn || t.startsWith(syn + " "))) return 760 + brevity;
+  if (wholeWord) return 700 + brevity;              // query is a standalone word in the title
+  if (q.length >= 4 && t.includes(q)) return 520 + brevity;   // substring, but only for non-trivial queries
+
+  if (syn) {
+    if ((" " + t + " ").includes(" " + syn + " ")) return 560 + brevity;
+    if (syn.split(" ").every(w => (" " + t + " ").includes(" " + w + " "))) return 460 + brevity;
+  }
 
   const qTok = q.split(" ").filter(Boolean);
-  const tTok = t.split(" ").filter(Boolean);
   let matched = 0;
-  for (const w of qTok) if (tTok.some(tw => tokenMatches(w, tw))) matched++;
-  if (qTok.length && matched === qTok.length) return 300 + matched * 12;
-  if (matched >= 1) return 90 + matched * 25;
+  for (const w of qTok) if (tTokAll.some(tw => tokenMatches(w, tw))) matched++;
+  // Every query word has to land somewhere in the title. (Partial credit is
+  // how "lawyer" used to surface "...Landscaping..." — one loose word match
+  // was enough.) Long titles get one word of slack for connective filler.
+  if (qTok.length && matched === qTok.length) return 300 + matched * 12 + brevity;
+  if (qTok.length >= 4 && matched >= qTok.length - 1) return 180 + matched * 10;
   return 0;
 }
 
