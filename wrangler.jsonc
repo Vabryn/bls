@@ -1,0 +1,15 @@
+{
+  // Static deploy of BLS Wage Explorer. No Worker script — just assets.
+  // https://developers.cloudflare.com/workers/static-assets/
+  "name": "bls",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "."
+  },
+  "routes": [
+    {
+      "pattern": "bls.riverakarom.com",
+      "custom_domain": true
+    }
+  ]
+}
