@@ -702,15 +702,76 @@ body {
   background: var(--bg-elevated);
   font-size: 12.5px;
 }
-.map-summary-text {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-secondary);
+.map-toolbar-area-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   flex: 1;
   min-width: 0;
+}
+.map-toolbar-area-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 6px var(--accent-cyan);
+  flex-shrink: 0;
+}
+.hud-metro-title {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.hud-metro-counties {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+[data-theme="light"] .hud-metro-counties {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+.hud-reset-btn {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid var(--accent-cyan);
+  border-radius: var(--radius-sm);
+  color: var(--accent-cyan);
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  padding: 4px 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+.hud-reset-btn:hover {
+  background: var(--accent-cyan);
+  color: #000;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}
+[data-theme="light"] .hud-reset-btn {
+  background: rgba(2, 132, 199, 0.08);
+  border-color: #0284c7;
+  color: #0284c7;
+}
+[data-theme="light"] .hud-reset-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
 }
 .map-toolbar-right {
   display: flex;
@@ -949,49 +1010,7 @@ body {
   fill-opacity: 0.9 !important;
 }
 
-/* Floating Selected Metro HUD Banner */
-.map-selected-hud {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  background: var(--bg-surface);
-  border: 1px solid var(--accent-cyan);
-  border-radius: var(--radius-md);
-  padding: 8px 14px;
-  display: none;
-  align-items: center;
-  gap: 12px;
-  box-shadow: var(--shadow-md);
-  z-index: 20;
-  backdrop-filter: blur(8px);
-}
-.map-selected-hud.active { display: flex; }
-.hud-metro-title {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-.hud-metro-counties {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-muted);
-}
-.hud-reset-btn {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  color: var(--accent-cyan);
-  font-size: 11px;
-  font-family: var(--font-mono);
-  padding: 3px 8px;
-  cursor: pointer;
-  transition: all 0.12s ease;
-}
-.hud-reset-btn:hover {
-  background: var(--accent-cyan);
-  color: #000;
-}
+
 
 /* County Search Match Hint in Hero Combobox */
 .area-opt-county-hint {
@@ -1660,28 +1679,22 @@ body {
       <div class="map-canvas-column">
         <div class="map-card">
           <div class="map-card-toolbar">
-            <div class="map-summary-text" id="mapSummaryStats">
-              Loading 393 Metropolitan Statistical Areas...
+            <div class="map-toolbar-area-info" id="mapToolbarAreaInfo">
+              <span class="map-toolbar-area-dot"></span>
+              <span class="hud-metro-title" id="hudMetroTitle">United States</span>
+              <span class="hud-metro-counties" id="hudMetroCounties">National View</span>
+              <button class="hud-reset-btn" id="hudResetBtn" title="Reset map zoom to National view" style="display: none;">Reset Zoom ⟲</button>
             </div>
             <div class="map-toolbar-right">
               <div class="map-zoom-buttons">
-                <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in">+</button>
-                <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out">−</button>
-                <button class="map-zoom-btn" id="mapZoomReset" aria-label="Reset zoom">⟲</button>
+                <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+                <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
               </div>
             </div>
           </div>
 
       <!-- Responsive SVG Viewport (Albers USA 975x610) -->
       <div class="map-svg-container" id="mapSvgContainer">
-        <!-- Floating Selected Metro HUD Banner -->
-        <div class="map-selected-hud" id="mapSelectedHud">
-          <div>
-            <div class="hud-metro-title" id="hudMetroTitle">Statistical Area</div>
-            <div class="hud-metro-counties" id="hudMetroCounties">Statistical Wage Area</div>
-          </div>
-          <button class="hud-reset-btn" id="hudResetBtn" title="Clear metro shape and reset zoom">Reset Zoom ⟲</button>
-        </div>
 
         <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
           <g id="mapZoomGroup" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
@@ -2382,19 +2395,19 @@ function zoomToState(stateIdOrCode) {
     }
   });
 
-  // 5. Update HUD Banner
-  const hud = document.getElementById("mapSelectedHud");
-  if (hud) {
-    document.getElementById("hudMetroTitle").textContent = stateMeta.name;
-    const subtitle = nonmetroCount > 0
-      ? `${metroCount} Metropolitan & ${nonmetroCount} Non-Metro Statistical Areas`
-      : `${metroCount} Metropolitan Statistical Areas`;
-    document.getElementById("hudMetroCounties").textContent = subtitle;
-    hud.classList.add("active");
-  }
+  // 5. Update Toolbar Area Info
+  const titleEl = document.getElementById("hudMetroTitle");
+  const subEl = document.getElementById("hudMetroCounties");
+  const resetBtn = document.getElementById("hudResetBtn");
+  if (titleEl) titleEl.textContent = stateMeta.name;
+  const subtitle = nonmetroCount > 0
+    ? `${metroCount} Metropolitan & ${nonmetroCount} Non-Metro Areas`
+    : `${metroCount} Metropolitan Areas`;
+  if (subEl) subEl.textContent = subtitle;
+  if (resetBtn) resetBtn.style.display = "inline-flex";
 
   // 6. Update Explorer Data for the State
-  loadArea(stFips);
+  loadArea(stFips, false);
 }
 
 function resetMapZoom() {
@@ -2409,19 +2422,30 @@ function resetMapZoom() {
     p.classList.remove("state-focused", "state-dimmed");
   });
   document.querySelectorAll(".area-boundary-shape").forEach(p => {
-    p.classList.remove("area-focused", "area-dimmed");
+    p.classList.remove("area-focused", "area-dimmed", "selected");
+  });
+  document.querySelectorAll(".metro-bubble").forEach(c => {
+    c.classList.remove("bubble-focused", "bubble-dimmed", "highlighted");
+  });
+  document.querySelectorAll(".metro-3d-bar").forEach(g => {
+    g.classList.remove("bar-focused", "bar-dimmed", "hovered");
   });
 
   const layer = document.getElementById("metroOverlayLayer");
   if (layer) layer.innerHTML = "";
 
-  const hud = document.getElementById("mapSelectedHud");
-  if (hud) hud.classList.remove("active");
+  const titleEl = document.getElementById("hudMetroTitle");
+  const subEl = document.getElementById("hudMetroCounties");
+  const resetBtn = document.getElementById("hudResetBtn");
+  if (titleEl) titleEl.textContent = "United States";
+  if (subEl) subEl.textContent = "National View";
+  if (resetBtn) resetBtn.style.display = "none";
 
-  const mapMetroInput = document.getElementById("mapMetroSearchInput");
-  if (mapMetroInput) mapMetroInput.value = "";
-  const mapMetroClear = document.getElementById("mapMetroSearchClear");
-  if (mapMetroClear) mapMetroClear.style.display = "none";
+  renderHeroAreaMapBadge("99");
+
+  if (state.currentAreaId && state.currentAreaId !== "99") {
+    loadArea("99", false);
+  }
 }
 
 function populateMapJobDropdown() {
@@ -2555,14 +2579,7 @@ function renderMetroMap() {
   const minVal = validMetros.length ? validMetros[validMetros.length - 1].val : (isEmploymentMapping ? 10 : 30000);
   const natVal = payload.nat ? (isEmploymentMapping ? payload.nat.emp : payload.nat[metric]) : null;
 
-  // Update Toolbar Summary Text
-  if (isEmploymentMapping) {
-    document.getElementById("mapSummaryStats").textContent =
-      `${validMetros.length} of ${metros.length} Areas reporting · Employment: ${fmt.number(minVal)} to ${fmt.number(maxVal)}${natVal ? ` · U.S. Total: ${fmt.number(natVal)}` : ""} · (Hourly wage schedule in BLS)`;
-  } else {
-    document.getElementById("mapSummaryStats").textContent =
-      `${validMetros.length} of ${metros.length} Areas reporting · ${metricName} Range: ${fmt.currency(minVal)} to ${fmt.currency(maxVal)}${natVal ? ` · U.S. National: ${fmt.currency(natVal)}` : ""}`;
-  }
+
 
   // Update Legend Labels
   if (isEmploymentMapping) {
@@ -2657,11 +2674,11 @@ function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, m
       path.classList.remove("hovered");
     });
 
-    // Clicking the area itself selects that area without jarring camera zoom
+    // Clicking the area selects that area and zooms in
     path.addEventListener("click", (e) => {
       if (state.dragSuppressedClick) return;
       e.stopPropagation();
-      loadArea(aid, false);
+      loadArea(aid, true);
     });
 
     fragment.appendChild(path);
@@ -2738,7 +2755,7 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
     circle.addEventListener("click", (e) => {
       if (state.dragSuppressedClick) return;
       e.stopPropagation();
-      loadArea(m.id, false);
+      loadArea(m.id, true);
     });
 
     fragment.appendChild(circle);
@@ -2858,7 +2875,7 @@ function renderBarsLayer(payload, validMetros, metricIdx, metricName, minVal, ma
     g.addEventListener("click", (e) => {
       if (state.dragSuppressedClick) return;
       e.stopPropagation();
-      loadArea(m.id, false);
+      loadArea(m.id, true);
     });
 
     fragment.appendChild(g);
@@ -3179,7 +3196,8 @@ function setupMapControls() {
     updateTransform();
   });
 
-  document.getElementById("mapZoomReset").addEventListener("click", resetMapZoom);
+  const mzr = document.getElementById("mapZoomReset");
+  if (mzr) mzr.addEventListener("click", resetMapZoom);
 
   const hudResetBtn = document.getElementById("hudResetBtn");
   if (hudResetBtn) {
@@ -3233,13 +3251,10 @@ function closeMapJobDropdown() {
 }
 
 // -------------------------------------------------------------
-// METRO & COUNTY BACKGROUND SHAPE OVERLAY
+// METRO & STATISTICAL AREA BACKGROUND SHAPE OVERLAY
 // -------------------------------------------------------------
-function renderMetroShapeOverlay(areaId, shouldZoom = false) {
+function renderMetroShapeOverlay(areaId, shouldZoom = true) {
   const layer = document.getElementById("metroOverlayLayer");
-  const hud = document.getElementById("mapSelectedHud");
-  const mapMetroInput = document.getElementById("mapMetroSearchInput");
-  const mapMetroClear = document.getElementById("mapMetroSearchClear");
   if (!layer) return;
 
   layer.innerHTML = "";
@@ -3254,20 +3269,18 @@ function renderMetroShapeOverlay(areaId, shouldZoom = false) {
     const shape = state.metroShapes[areaId];
     const metroMeta = state.manifest.find(a => a.id === areaId) || { name: "Statistical Area" };
 
-    if (mapMetroInput) {
-      mapMetroInput.value = metroMeta.name;
-      if (mapMetroClear) mapMetroClear.style.display = "block";
-    }
-
-    // Update HUD Banner
-    if (hud) {
-      document.getElementById("hudMetroTitle").textContent = metroMeta.name;
+    // Update Toolbar Area Info
+    const titleEl = document.getElementById("hudMetroTitle");
+    const subEl = document.getElementById("hudMetroCounties");
+    const resetBtn = document.getElementById("hudResetBtn");
+    if (titleEl) titleEl.textContent = metroMeta.name;
+    if (subEl) {
       const typeLabel = shape.type === "nonmetro"
         ? "Nonmetropolitan Statistical Area"
         : (shape.type === "state" ? "Statewide Area" : "Metropolitan Statistical Area");
-      document.getElementById("hudMetroCounties").textContent = typeLabel;
-      hud.classList.add("active");
+      subEl.textContent = typeLabel;
     }
+    if (resetBtn) resetBtn.style.display = "inline-flex";
 
     // Render unified outer statistical wage area boundary polygon
     if (shape.d) {
@@ -3288,7 +3301,7 @@ function renderMetroShapeOverlay(areaId, shouldZoom = false) {
     // Update Hero Area Map Badge next to main area header
     renderHeroAreaMapBadge(areaId);
 
-    // Smooth Auto-Zoom to Metro Bounding Box (only when explicitly requested)
+    // Smooth Auto-Zoom to Metro Bounding Box
     if (shouldZoom && shape.bounds && shape.bounds.length === 2) {
       const [[x0, y0], [x1, y1]] = shape.bounds;
       const dx = Math.max(18, x1 - x0);
@@ -3300,12 +3313,10 @@ function renderMetroShapeOverlay(areaId, shouldZoom = false) {
       const tx = Math.round(975 / 2 - scale * cx);
       const ty = Math.round(610 / 2 - scale * cy);
 
-      if (Math.abs(state.mapZoom.scale - scale) > 0.01 || Math.abs(state.mapZoom.x - tx) > 1 || Math.abs(state.mapZoom.y - ty) > 1) {
-        state.mapZoom = { scale, x: tx, y: ty };
-        const zoomGroup = document.getElementById("mapZoomGroup");
-        if (zoomGroup) {
-          zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
-        }
+      state.mapZoom = { scale, x: tx, y: ty };
+      const zoomGroup = document.getElementById("mapZoomGroup");
+      if (zoomGroup) {
+        zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
       }
     }
   }
@@ -3313,11 +3324,6 @@ function renderMetroShapeOverlay(areaId, shouldZoom = false) {
   else if (state.statesById && state.statesById[areaId]) {
     const stateObj = state.statesById[areaId];
     const stateMeta = state.manifest.find(a => a.id === areaId) || { name: stateObj.name, state: "" };
-
-    if (mapMetroInput) {
-      mapMetroInput.value = stateMeta.name;
-      if (mapMetroClear) mapMetroClear.style.display = "block";
-    }
 
     // Render outer state boundary path
     if (stateObj.d) {
@@ -3362,27 +3368,29 @@ function renderMetroShapeOverlay(areaId, shouldZoom = false) {
       const tx = Math.round(975 / 2 - scale * cx);
       const ty = Math.round(610 / 2 - scale * cy);
 
-      if (Math.abs(state.mapZoom.scale - scale) > 0.01 || Math.abs(state.mapZoom.x - tx) > 1 || Math.abs(state.mapZoom.y - ty) > 1) {
-        state.mapZoom = { scale, x: tx, y: ty };
-        const zoomGroup = document.getElementById("mapZoomGroup");
-        if (zoomGroup) {
-          zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
-        }
+      state.mapZoom = { scale, x: tx, y: ty };
+      const zoomGroup = document.getElementById("mapZoomGroup");
+      if (zoomGroup) {
+        zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
       }
     }
 
-    if (hud) {
-      document.getElementById("hudMetroTitle").textContent = stateMeta.name;
-      document.getElementById("hudMetroCounties").textContent =
-        `${countInState} Metropolitan Statistical Areas in ${stateMeta.name}`;
-      hud.classList.add("active");
-    }
+    const titleEl = document.getElementById("hudMetroTitle");
+    const subEl = document.getElementById("hudMetroCounties");
+    const resetBtn = document.getElementById("hudResetBtn");
+    if (titleEl) titleEl.textContent = stateMeta.name;
+    if (subEl) subEl.textContent = `${countInState} Statistical Areas in ${stateMeta.name}`;
+    if (resetBtn) resetBtn.style.display = "inline-flex";
   }
   // 3. National benchmark or reset
   else {
-    if (hud) hud.classList.remove("active");
-    if (mapMetroInput) mapMetroInput.value = "";
-    if (mapMetroClear) mapMetroClear.style.display = "none";
+    const titleEl = document.getElementById("hudMetroTitle");
+    const subEl = document.getElementById("hudMetroCounties");
+    const resetBtn = document.getElementById("hudResetBtn");
+    if (titleEl) titleEl.textContent = "United States";
+    if (subEl) subEl.textContent = "National View";
+    if (resetBtn) resetBtn.style.display = "none";
+
     document.querySelectorAll(".area-boundary-shape").forEach(p => {
       p.classList.remove("area-focused", "area-dimmed", "selected");
     });
@@ -3406,7 +3414,7 @@ function renderMetroShapeOverlay(areaId, shouldZoom = false) {
 // -------------------------------------------------------------
 // AREA DATA ENGINE
 // -------------------------------------------------------------
-async function loadArea(areaId, shouldZoom = false) {
+async function loadArea(areaId, shouldZoom = true) {
   state.currentAreaId = areaId;
 
   const url = new URL(window.location);
