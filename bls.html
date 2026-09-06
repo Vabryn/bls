@@ -1144,7 +1144,7 @@ body {
 
 /* Map Legend */
 .map-legend-container {
-  padding: 10px 18px 12px;
+  padding: 8px 18px 10px;
   background: var(--bg-elevated);
   border-top: 1px solid var(--border-subtle);
   position: relative;
@@ -1153,18 +1153,63 @@ body {
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
 }
-
-/* Dynamic Arrow Puck Track positioned above the bar */
+.map-legend-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+.legend-edge-wage {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 58px;
+}
+#legendMinLabel {
+  text-align: right;
+}
+#legendMaxLabel {
+  text-align: left;
+}
+[data-theme="light"] .legend-edge-wage {
+  color: #64748b;
+  font-weight: 500;
+}
+.map-legend-center-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+}
 .map-legend-puck-track {
   position: relative;
   width: 100%;
-  height: 28px;
-  margin-bottom: 4px;
+  height: 24px;
   pointer-events: none;
 }
-.map-legend-puck {
+.map-legend-puck-track-top {
+  margin-bottom: 2px;
+}
+.map-legend-puck-track-bottom {
+  margin-top: 2px;
+}
+.map-legend-puck-top {
   position: absolute;
   bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: left;
+  pointer-events: auto;
+  z-index: 5;
+}
+.map-legend-puck-bottom {
+  position: absolute;
+  top: 0;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
@@ -1177,14 +1222,14 @@ body {
 .legend-puck-badge {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   background: var(--bg-surface);
   border: 1px solid var(--border-medium);
-  padding: 3px 9px;
+  padding: 2.5px 8px;
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 11px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
   line-height: 1.2;
 }
@@ -1196,7 +1241,7 @@ body {
 .puck-area-name {
   color: var(--text-secondary);
   font-weight: 500;
-  max-width: 220px;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1238,7 +1283,7 @@ body {
   color: var(--text-muted);
   background: var(--bg-hover);
 }
-.legend-puck-arrow {
+.legend-puck-arrow-down {
   width: 0;
   height: 0;
   border-left: 4.5px solid transparent;
@@ -1246,8 +1291,19 @@ body {
   border-top: 5px solid var(--border-medium);
   margin-top: -1px;
 }
-[data-theme="light"] .legend-puck-arrow {
+[data-theme="light"] .legend-puck-arrow-down {
   border-top-color: #cbd5e1;
+}
+.legend-puck-arrow-up {
+  width: 0;
+  height: 0;
+  border-left: 4.5px solid transparent;
+  border-right: 4.5px solid transparent;
+  border-bottom: 5px solid var(--border-medium);
+  margin-bottom: -1px;
+}
+[data-theme="light"] .legend-puck-arrow-up {
+  border-bottom-color: #cbd5e1;
 }
 
 /* Slimmed Down Gradient Color Bar Track */
@@ -1263,44 +1319,6 @@ body {
   height: 100%;
   border-radius: 3px;
   background: linear-gradient(90deg, #312e81 0%, #0284c7 25%, #0d9488 50%, #10b981 75%, #fbbf24 100%);
-}
-
-/* U.S. Benchmark Notch Tick on the bar */
-.legend-us-notch {
-  position: absolute;
-  top: -3px;
-  bottom: -3px;
-  width: 2px;
-  transform: translateX(-50%);
-  display: none;
-  pointer-events: none;
-  z-index: 2;
-}
-.legend-us-notch-line {
-  width: 2px;
-  height: 12px;
-  background: #ffffff;
-  border-radius: 1px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.85);
-}
-[data-theme="light"] .legend-us-notch-line {
-  background: #0f172a;
-  box-shadow: 0 0 2px rgba(255, 255, 255, 0.85);
-}
-
-/* Wages Row: Min on Left, Max on Right */
-.map-legend-wages-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 5px;
-}
-[data-theme="light"] .map-legend-wages-row {
-  color: #64748b;
-  font-weight: 500;
 }
 
 /* Tooltip overlay */
@@ -2072,30 +2090,43 @@ body {
 
       <!-- Continuous Color Scale Legend -->
       <div class="map-legend-container">
-        <!-- Dynamic Arrow Puck Track positioned cleanly above the bar -->
-        <div class="map-legend-puck-track">
-          <div class="map-legend-puck" id="mapLegendPuck">
-            <div class="legend-puck-badge" id="legendPuckBadge">
-              <span class="puck-area-name" id="puckAreaName">U.S. National</span>
-              <span class="puck-value tabular" id="puckValue">$0</span>
-              <span class="puck-comparison tabular" id="puckComparison" style="display: none;"></span>
+        <div class="map-legend-wrapper">
+          <!-- Min Wage on the Left -->
+          <span id="legendMinLabel" class="tabular legend-edge-wage">$0</span>
+
+          <!-- Center Column with Two Pucks (Area Above, US Below) and Color Bar in the middle -->
+          <div class="map-legend-center-col">
+            <!-- Selected Area Puck (Above line, arrow points down ▼) -->
+            <div class="map-legend-puck-track map-legend-puck-track-top">
+              <div class="map-legend-puck map-legend-puck-top" id="mapLegendAreaPuck" style="display: none;">
+                <div class="legend-puck-badge" id="legendAreaPuckBadge">
+                  <span class="puck-area-name" id="puckAreaName">Border Region of Texas</span>
+                  <span class="puck-value tabular" id="puckAreaValue">$0</span>
+                  <span class="puck-comparison tabular" id="puckAreaComparison"></span>
+                </div>
+                <div class="legend-puck-arrow-down" id="legendAreaPuckArrow"></div>
+              </div>
             </div>
-            <div class="legend-puck-arrow" id="legendPuckArrow"></div>
-          </div>
-        </div>
 
-        <!-- Slimmed Down Color Bar Track -->
-        <div class="map-legend-gradient-track">
-          <div class="map-legend-gradient-bar"></div>
-          <div class="legend-us-notch" id="legendUsNotch" title="U.S. National Benchmark">
-            <div class="legend-us-notch-line"></div>
-          </div>
-        </div>
+            <!-- Slimmed Down Color Bar Track -->
+            <div class="map-legend-gradient-track">
+              <div class="map-legend-gradient-bar"></div>
+            </div>
 
-        <!-- Wages row: Min on Left, Max on Right -->
-        <div class="map-legend-wages-row">
-          <span id="legendMinLabel" class="tabular">$0</span>
-          <span id="legendMaxLabel" class="tabular">$250,000+</span>
+            <!-- U.S. Puck (Below line, arrow points up ▲) -->
+            <div class="map-legend-puck-track map-legend-puck-track-bottom">
+              <div class="map-legend-puck map-legend-puck-bottom" id="mapLegendUsPuck">
+                <div class="legend-puck-arrow-up" id="legendUsPuckArrow"></div>
+                <div class="legend-puck-badge" id="legendUsPuckBadge">
+                  <span class="puck-area-name" id="puckUsName">U.S. National Median</span>
+                  <span class="puck-value tabular" id="puckUsValue">$0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Max Wage on the Right -->
+          <span id="legendMaxLabel" class="tabular legend-edge-wage">$250,000+</span>
         </div>
       </div>
     </div>
@@ -2896,7 +2927,20 @@ async function loadMapJob(soc) {
 }
 
 // -------------------------------------------------------------
-// DYNAMIC MAP LEGEND & AREA COMPARISON PUCK
+// CLEAN AREA NAME FORMATTER
+// Removes suffixes like "nonmetropolitan area", "metropolitan statistical area", etc.
+// -------------------------------------------------------------
+function formatAreaName(name) {
+  if (!name) return "";
+  return name
+    .replace(/\s+nonmetropolitan\s+area.*$/gi, "")
+    .replace(/\s+metropolitan\s+statistical\s+area.*$/gi, "")
+    .replace(/\s+micropolitan\s+statistical\s+area.*$/gi, "")
+    .trim();
+}
+
+// -------------------------------------------------------------
+// DYNAMIC MAP LEGEND: TWO PUCKS (AREA ABOVE, US BELOW)
 // -------------------------------------------------------------
 function updateMapLegend() {
   const payload = state.activeJobPayload;
@@ -2904,115 +2948,128 @@ function updateMapLegend() {
 
   const { minVal, maxVal, natVal, isEmploymentMapping, metricName, metricIdx, metric } = state.mapLegendScale;
 
-  // 1. Minimum and Maximum wages (edges)
+  // 1. Min and Max wage labels on left and right edges
   const minEl = document.getElementById("legendMinLabel");
   const maxEl = document.getElementById("legendMaxLabel");
   if (minEl) minEl.textContent = isEmploymentMapping ? fmt.number(minVal) : fmt.currency(minVal);
   if (maxEl) maxEl.textContent = isEmploymentMapping ? fmt.number(maxVal) : fmt.currency(maxVal);
 
-  // 2. U.S. Benchmark Notch on the bar
-  const usNotch = document.getElementById("legendUsNotch");
-  if (usNotch) {
-    if (!isEmploymentMapping && natVal && natVal >= minVal && natVal <= maxVal) {
-      const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal || 1)) * 100));
-      usNotch.style.left = `${natPct}%`;
-      usNotch.style.display = "block";
-      usNotch.title = `U.S. National ${metricName}: ${fmt.currency(natVal)}`;
+  // 2. U.S. Puck (Below line, arrow points up ▲)
+  const usPuck = document.getElementById("mapLegendUsPuck");
+  const usNameEl = document.getElementById("puckUsName");
+  const usValEl = document.getElementById("puckUsValue");
+  const usArrow = document.getElementById("legendUsPuckArrow");
+
+  if (usPuck && usNameEl && usValEl && natVal && natVal > 0 && maxVal > minVal) {
+    const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal)) * 100));
+    usPuck.style.left = `${natPct}%`;
+    usPuck.style.display = "flex";
+
+    usNameEl.textContent = isEmploymentMapping ? "U.S. National Total" : `U.S. National ${metricName}`;
+    usValEl.textContent = isEmploymentMapping ? fmt.number(natVal) : fmt.currency(natVal);
+
+    // Edge clamping so badge does not clip off container boundaries
+    if (natPct < 12) {
+      usPuck.style.transform = "translateX(0%)";
+      if (usArrow) {
+        usArrow.style.alignSelf = "flex-start";
+        usArrow.style.marginLeft = "12px";
+        usArrow.style.marginRight = "0";
+      }
+    } else if (natPct > 88) {
+      usPuck.style.transform = "translateX(-100%)";
+      if (usArrow) {
+        usArrow.style.alignSelf = "flex-end";
+        usArrow.style.marginRight = "12px";
+        usArrow.style.marginLeft = "0";
+      }
     } else {
-      usNotch.style.display = "none";
+      usPuck.style.transform = "translateX(-50%)";
+      if (usArrow) {
+        usArrow.style.alignSelf = "center";
+        usArrow.style.marginLeft = "0";
+        usArrow.style.marginRight = "0";
+      }
     }
+  } else if (usPuck) {
+    usPuck.style.display = "none";
   }
 
-  // 3. Dynamic Area / National Arrow Puck
-  const puck = document.getElementById("mapLegendPuck");
+  // 3. Selected Area Puck (Above line, arrow points down ▼)
+  const areaPuck = document.getElementById("mapLegendAreaPuck");
   const areaNameEl = document.getElementById("puckAreaName");
-  const valEl = document.getElementById("puckValue");
-  const compEl = document.getElementById("puckComparison");
-  const arrowEl = document.getElementById("legendPuckArrow");
+  const areaValEl = document.getElementById("puckAreaValue");
+  const areaCompEl = document.getElementById("puckAreaComparison");
+  const areaArrow = document.getElementById("legendAreaPuckArrow");
 
-  if (!puck || !areaNameEl || !valEl || !compEl) return;
+  if (!areaPuck || !areaNameEl || !areaValEl || !areaCompEl) return;
 
   const curAreaId = state.currentAreaId;
   const isSpecificArea = curAreaId && curAreaId !== "99";
 
-  let displayVal = null;
-  let displayName = "";
-  let diffPct = null;
-  let diffVal = 0;
-
   if (isSpecificArea && payload.metros && payload.metros[curAreaId]) {
     const areaStats = payload.metros[curAreaId];
-    displayVal = isEmploymentMapping ? areaStats[0] : areaStats[metricIdx];
+    const displayVal = isEmploymentMapping ? areaStats[0] : areaStats[metricIdx];
     const areaMeta = state.manifest ? state.manifest.find(a => a.id === curAreaId) : null;
-    displayName = areaMeta ? areaMeta.name : "Selected Area";
+    const rawName = areaMeta ? areaMeta.name : "Selected Area";
+    const cleanName = formatAreaName(rawName);
 
-    if (natVal && displayVal && !isEmploymentMapping && natVal > 0) {
-      diffVal = displayVal - natVal;
-      diffPct = ((displayVal - natVal) / natVal) * 100;
-    }
-  } else if (!isSpecificArea && natVal) {
-    displayVal = natVal;
-    displayName = `U.S. National ${metricName}`;
-  }
+    if (displayVal && displayVal > 0 && maxVal > minVal) {
+      const pct = Math.max(0, Math.min(100, ((displayVal - minVal) / (maxVal - minVal)) * 100));
+      areaPuck.style.left = `${pct}%`;
+      areaPuck.style.display = "flex";
 
-  if (displayVal && displayVal > 0 && maxVal > minVal) {
-    const pct = Math.max(0, Math.min(100, ((displayVal - minVal) / (maxVal - minVal)) * 100));
-    puck.style.left = `${pct}%`;
-    puck.style.display = "flex";
+      areaNameEl.textContent = cleanName;
+      areaValEl.textContent = isEmploymentMapping ? fmt.number(displayVal) : fmt.currency(displayVal);
 
-    areaNameEl.textContent = displayName;
-    valEl.textContent = isEmploymentMapping ? fmt.number(displayVal) : fmt.currency(displayVal);
-
-    if (diffPct !== null && isSpecificArea) {
-      compEl.style.display = "inline-block";
-      const sign = diffPct >= 0 ? "+" : "";
-      compEl.textContent = `${sign}${diffPct.toFixed(1)}% vs U.S.`;
-      compEl.className = "puck-comparison tabular " + (Math.abs(diffPct) < 0.2 ? "neutral" : (diffPct > 0 ? "pos" : "neg"));
-      compEl.title = `U.S. ${metricName}: ${fmt.currency(natVal)} (Diff: ${sign}${fmt.currency(diffVal)})`;
-    } else {
-      compEl.style.display = "none";
-    }
-
-    // Edge clamping so badge does not clip off container boundaries
-    if (pct < 14) {
-      puck.style.transform = "translateX(0%)";
-      if (arrowEl) {
-        arrowEl.style.alignSelf = "flex-start";
-        arrowEl.style.marginLeft = "14px";
-        arrowEl.style.marginRight = "0";
+      if (natVal && !isEmploymentMapping && natVal > 0) {
+        const diffVal = displayVal - natVal;
+        const diffPct = ((displayVal - natVal) / natVal) * 100;
+        const sign = diffPct >= 0 ? "+" : "";
+        areaCompEl.style.display = "inline-block";
+        areaCompEl.textContent = `${sign}${diffPct.toFixed(1)}% vs U.S.`;
+        areaCompEl.className = "puck-comparison tabular " + (Math.abs(diffPct) < 0.2 ? "neutral" : (diffPct > 0 ? "pos" : "neg"));
+        areaCompEl.title = `U.S. ${metricName}: ${fmt.currency(natVal)} (Diff: ${sign}${fmt.currency(diffVal)})`;
+      } else {
+        areaCompEl.style.display = "none";
       }
-    } else if (pct > 86) {
-      puck.style.transform = "translateX(-100%)";
-      if (arrowEl) {
-        arrowEl.style.alignSelf = "flex-end";
-        arrowEl.style.marginRight = "14px";
-        arrowEl.style.marginLeft = "0";
+
+      // Edge clamping so badge does not clip off container boundaries
+      if (pct < 12) {
+        areaPuck.style.transform = "translateX(0%)";
+        if (areaArrow) {
+          areaArrow.style.alignSelf = "flex-start";
+          areaArrow.style.marginLeft = "12px";
+          areaArrow.style.marginRight = "0";
+        }
+      } else if (pct > 88) {
+        areaPuck.style.transform = "translateX(-100%)";
+        if (areaArrow) {
+          areaArrow.style.alignSelf = "flex-end";
+          areaArrow.style.marginRight = "12px";
+          areaArrow.style.marginLeft = "0";
+        }
+      } else {
+        areaPuck.style.transform = "translateX(-50%)";
+        if (areaArrow) {
+          areaArrow.style.alignSelf = "center";
+          areaArrow.style.marginLeft = "0";
+          areaArrow.style.marginRight = "0";
+        }
       }
     } else {
-      puck.style.transform = "translateX(-50%)";
-      if (arrowEl) {
-        arrowEl.style.alignSelf = "center";
-        arrowEl.style.marginLeft = "0";
-        arrowEl.style.marginRight = "0";
-      }
-    }
-  } else if (isSpecificArea) {
-    // Area is selected, but no wage data for this specific occupation in this area
-    const areaMeta = state.manifest ? state.manifest.find(a => a.id === curAreaId) : null;
-    const areaName = areaMeta ? areaMeta.name : "Selected Area";
-    if (natVal) {
-      const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal || 1)) * 100));
-      puck.style.left = `${natPct}%`;
-      puck.style.display = "flex";
-      areaNameEl.textContent = areaName;
-      valEl.textContent = "Data Suppressed";
-      compEl.style.display = "none";
-      puck.style.transform = "translateX(-50%)";
-    } else {
-      puck.style.display = "none";
+      // Area selected, but data suppressed
+      const pct = natVal && maxVal > minVal ? Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal)) * 100)) : 50;
+      areaPuck.style.left = `${pct}%`;
+      areaPuck.style.display = "flex";
+      areaNameEl.textContent = cleanName;
+      areaValEl.textContent = "Data Suppressed";
+      areaCompEl.style.display = "none";
+      areaPuck.style.transform = "translateX(-50%)";
     }
   } else {
-    puck.style.display = "none";
+    // When in National view (no area selected), hide the top area puck
+    areaPuck.style.display = "none";
   }
 }
 
@@ -3381,7 +3438,7 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
 
   tooltip.innerHTML = `
     <div style="font-weight: 700; font-size: 13.5px; color: var(--text-primary); margin-bottom: 2px;">
-      ${metro.name}
+      ${formatAreaName(metro.name)}
     </div>
     <div style="font-size: 11.5px; color: var(--accent-cyan); font-weight: 600; margin-bottom: 8px;">
       ${jobPayload.title}
@@ -3755,10 +3812,10 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     const titleEl = document.getElementById("hudMetroTitle");
     const subEl = document.getElementById("hudMetroCounties");
     const resetBtn = document.getElementById("hudResetBtn");
-    if (titleEl) titleEl.textContent = metroMeta.name;
+    if (titleEl) titleEl.textContent = formatAreaName(metroMeta.name);
     if (subEl) {
       const typeLabel = shape.type === "nonmetro"
-        ? "Nonmetropolitan Statistical Area"
+        ? "Nonmetropolitan Region"
         : (shape.type === "state" ? "Statewide Area" : "Metropolitan Statistical Area");
       subEl.textContent = typeLabel;
     }
@@ -4031,14 +4088,15 @@ function renderHeroAndKPIs() {
   }
 
   // Update Page Title
+  const cleanAreaTitle = formatAreaName(data.name);
   if (!isAllJobs) {
-    document.title = `${occTitle} in ${data.name} · Wage Explorer · BLS OEWS 2025`;
+    document.title = `${occTitle} in ${cleanAreaTitle} · Wage Explorer · BLS OEWS 2025`;
   } else {
-    document.title = `${data.name} Wage Explorer · BLS OEWS 2025`;
+    document.title = `${cleanAreaTitle} Wage Explorer · BLS OEWS 2025`;
   }
 
   // Hero Area Title & Badges
-  document.getElementById("heroAreaTitle").textContent = data.name;
+  document.getElementById("heroAreaTitle").textContent = cleanAreaTitle;
   renderHeroAreaMapBadge(data.id);
   const typeMap = {
     national: "National Benchmark",
@@ -4336,7 +4394,7 @@ function populateAreaDropdown() {
       opt.dataset.state = (item.state || "").toLowerCase();
 
       opt.innerHTML = `
-        <span class="area-opt-name">${item.name}</span>
+        <span class="area-opt-name">${formatAreaName(item.name)}</span>
         <span class="area-opt-meta">${fmt.compact(item.emp)} jobs</span>
       `;
 
@@ -4463,7 +4521,7 @@ function filterAreaDropdown(query) {
     zipBanner.style.display = "flex";
     zipBanner.dataset.id = matchedArea.id;
     zipBanner.innerHTML = `
-      <span class="area-opt-name" style="font-weight:600; color:var(--text-accent);">📍 ZIP ${q} → ${matchedArea.name}</span>
+      <span class="area-opt-name" style="font-weight:600; color:var(--text-accent);">📍 ZIP ${q} → ${formatAreaName(matchedArea.name)}</span>
       <span class="area-opt-meta" style="color:var(--text-accent); font-weight:600;">Direct Jump ↵</span>
     `;
     zipBanner.onclick = () => {
