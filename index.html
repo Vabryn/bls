@@ -858,9 +858,17 @@ body {
   stroke-width: 1.2px;
 }
 .state-boundary.state-focused {
-  stroke: var(--accent-cyan);
-  stroke-width: 1.2px;
+  stroke: #38bdf8 !important;
+  stroke-width: 2.2px !important;
   vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.85));
+  opacity: 1 !important;
+}
+[data-theme="light"] .state-boundary.state-focused {
+  stroke: #0284c7 !important;
+  stroke-width: 2.2px !important;
+  filter: drop-shadow(0 0 5px rgba(2, 132, 199, 0.7));
+  opacity: 1 !important;
 }
 .state-boundary.state-dimmed {
   opacity: 0.25;
@@ -882,60 +890,62 @@ body {
 }
 .area-boundary-shape:hover, .area-boundary-shape.hovered {
   stroke: #ffffff !important;
-  stroke-width: 1.2px !important;
-  fill-opacity: 0.7 !important;
-  filter: drop-shadow(0 0 2px rgba(56, 189, 248, 0.4));
+  stroke-width: 1.6px !important;
+  fill-opacity: 0.95 !important;
+  filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.6));
   vector-effect: non-scaling-stroke;
 }
 [data-theme="light"] .area-boundary-shape:hover, [data-theme="light"] .area-boundary-shape.hovered {
   stroke: #0f172a !important;
-  stroke-width: 1.5px !important;
+  stroke-width: 1.8px !important;
   fill-opacity: 1 !important;
-  filter: drop-shadow(0 1px 3px rgba(15, 23, 42, 0.35));
+  filter: drop-shadow(0 1px 4px rgba(15, 23, 42, 0.4));
 }
 .area-boundary-shape.selected {
-  stroke: var(--accent-cyan) !important;
-  stroke-width: 1.3px !important;
-  fill-opacity: 0.85 !important;
+  stroke: #ffffff !important;
+  stroke-width: 2px !important;
+  fill-opacity: 0.95 !important;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.9)) !important;
   vector-effect: non-scaling-stroke;
 }
 [data-theme="light"] .area-boundary-shape.selected {
   stroke: #0284c7 !important;
-  stroke-width: 1.6px !important;
+  stroke-width: 2.2px !important;
   fill-opacity: 0.95 !important;
-  filter: drop-shadow(0 0 4px rgba(2, 132, 199, 0.5));
+  filter: drop-shadow(0 0 5px rgba(2, 132, 199, 0.6));
 }
 .area-boundary-shape.area-focused {
   stroke: rgba(255, 255, 255, 0.45);
   stroke-width: 0.8px;
+  opacity: 1 !important;
   vector-effect: non-scaling-stroke;
 }
 [data-theme="light"] .area-boundary-shape.area-focused {
   stroke: rgba(15, 23, 42, 0.45);
   stroke-width: 0.85px;
+  opacity: 1 !important;
 }
 .area-boundary-shape.area-dimmed {
   opacity: 0.16;
 }
 
-
-/* Metro & County Shape Overlay - Refined, understated highlight */
+/* Metro & Statistical Area Shape Overlay - Nice glowing highlight */
 .metro-overlay-path {
-  fill: rgba(56, 189, 248, 0.08);
-  stroke: rgba(56, 189, 248, 0.85);
-  stroke-width: 1.2px;
+  fill: rgba(56, 189, 248, 0.22);
+  stroke: #ffffff;
+  stroke-width: 2px;
   stroke-linejoin: round;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 2px rgba(56, 189, 248, 0.3));
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.9));
   pointer-events: none;
   transition: opacity 0.25s ease;
 }
 [data-theme="light"] .metro-overlay-path {
-  fill: rgba(2, 132, 199, 0.06);
+  fill: rgba(2, 132, 199, 0.18);
   stroke: #0284c7;
-  stroke-width: 1.1px;
-  filter: none;
+  stroke-width: 2.4px;
+  filter: drop-shadow(0 0 5px rgba(2, 132, 199, 0.6));
 }
 .county-overlay-path {
   fill: transparent;
@@ -3521,6 +3531,30 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     }
     if (resetBtn) resetBtn.style.display = "inline-flex";
 
+    // Highlight parent state in glowing cyan & focus in-state areas
+    if (shape.state) {
+      document.querySelectorAll(".state-boundary").forEach(p => {
+        const isParent = p.dataset.state === shape.state;
+        p.classList.toggle("state-focused", isParent);
+        p.classList.toggle("state-dimmed", !isParent);
+      });
+      document.querySelectorAll(".area-boundary-shape").forEach(p => {
+        const inState = p.dataset.state === shape.state;
+        p.classList.toggle("area-focused", inState && p.dataset.id !== areaId);
+        p.classList.toggle("area-dimmed", !inState);
+      });
+      document.querySelectorAll(".metro-bubble").forEach(c => {
+        const inState = c.dataset.state === shape.state;
+        c.classList.toggle("bubble-focused", inState);
+        c.classList.toggle("bubble-dimmed", !inState);
+      });
+      document.querySelectorAll(".metro-3d-bar").forEach(g => {
+        const inState = g.dataset.state === shape.state;
+        g.classList.toggle("bar-focused", inState);
+        g.classList.toggle("bar-dimmed", !inState);
+      });
+    }
+
     // Render unified outer statistical wage area boundary polygon
     if (shape.d) {
       const outerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -3698,10 +3732,10 @@ function renderAll(shouldZoom = false) {
   } else if (state.activeTab === "toppay") {
     renderTopPaying();
   }
-  renderMetroShapeOverlay(state.currentAreaId, shouldZoom);
   if (state.activeJobPayload) {
     renderMetroMap();
   }
+  renderMetroShapeOverlay(state.currentAreaId, shouldZoom);
 }
 
 function renderHeroAndKPIs() {
