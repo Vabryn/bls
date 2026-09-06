@@ -1270,29 +1270,22 @@ body {
   fill-opacity: 0.95 !important;
   vector-effect: non-scaling-stroke;
 }
+/* Selected region — a STATIC glow only. Animating filter: drop-shadow on an
+   SVG polygon re-rasterizes every frame forever and pins a core; the pulse
+   isn't worth it. Emphasis comes from stroke weight + a one-time shadow. */
 .area-boundary-shape.selected {
   stroke: rgba(56, 189, 248, 0.95) !important;
-  stroke-width: 2.5px !important;
+  stroke-width: 2.75px !important;
   fill-opacity: 0.95 !important;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.28)) brightness(1.06);
-  animation: glass-pulse 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.45));
 }
 [data-theme="light"] .area-boundary-shape.selected {
   stroke: #0284c7 !important;
-  stroke-width: 2.5px !important;
+  stroke-width: 2.75px !important;
   fill-opacity: 1 !important;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 3px rgba(2, 132, 199, 0.5)) drop-shadow(0 0 9px rgba(2, 132, 199, 0.28)) saturate(1.08);
-  animation: glass-pulse-light 2.5s ease-in-out infinite;
-}
-@keyframes glass-pulse {
-  0%, 100% { filter: drop-shadow(0 0 3px rgba(56, 189, 248, 0.25)) brightness(1.05); }
-  50%       { filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.45)) brightness(1.09); }
-}
-@keyframes glass-pulse-light {
-  0%, 100% { filter: drop-shadow(0 0 3px rgba(2, 132, 199, 0.45)) drop-shadow(0 0 7px rgba(2, 132, 199, 0.22)) saturate(1.05); }
-  50%      { filter: drop-shadow(0 0 4px rgba(2, 132, 199, 0.55)) drop-shadow(0 0 12px rgba(2, 132, 199, 0.32)) saturate(1.1); }
+  filter: drop-shadow(0 0 5px rgba(2, 132, 199, 0.5));
 }
 /* When a specific region is selected, its surroundings stay on the map with
    their choropleth colour but dimmed back, so the selected region (glowing,
@@ -1321,12 +1314,7 @@ body {
   vector-effect: non-scaling-stroke;
   pointer-events: none;
   transition: opacity 0.2s ease;
-  filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.26));
-  animation: overlay-glow 3s ease-in-out infinite;
-}
-@keyframes overlay-glow {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.2)); }
-  50%       { filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4)); }
+  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.4));
 }
 [data-theme="light"] .metro-overlay-path {
   fill: rgba(2, 132, 199, 0.14);
@@ -1335,12 +1323,7 @@ body {
   stroke-linejoin: round;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 3px rgba(2, 132, 199, 0.42)) drop-shadow(0 0 9px rgba(2, 132, 199, 0.24));
-  animation: overlay-glow-light 3s ease-in-out infinite;
-}
-@keyframes overlay-glow-light {
-  0%, 100% { filter: drop-shadow(0 0 2px rgba(2, 132, 199, 0.4)) drop-shadow(0 0 6px rgba(2, 132, 199, 0.2)); }
-  50%       { filter: drop-shadow(0 0 4px rgba(2, 132, 199, 0.5)) drop-shadow(0 0 12px rgba(2, 132, 199, 0.32)); }
+  filter: drop-shadow(0 0 5px rgba(2, 132, 199, 0.4));
 }
 .county-overlay-path {
   fill: transparent;
