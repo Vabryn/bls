@@ -987,6 +987,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 .sel-chip .sel-chip-x {
   display: inline-flex;
@@ -1249,13 +1250,18 @@ body {
     max-width: none;
     min-width: 0;
   }
-  /* Stack the card-header search onto its own full-width line on phones so the
-     label + reset button don't overflow. */
-  .card-search { flex-basis: 100%; }
+  /* Stack the card header vertically on phones so nothing overflows sideways. */
+  .map-card-toolbar,
+  .browse-card-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .card-search { flex: 0 0 auto; width: 100%; min-width: 0; }
   .hud-metro-counties { display: none; }
-  .map-toolbar-area-info { flex: 1 1 auto; flex-wrap: wrap; }
+  .map-toolbar-area-info { width: 100%; flex-wrap: wrap; }
   .sel-chip { max-width: 100%; }
-  #hudResetBtn { margin-left: auto; }
+  #hudResetBtn,
+  #browseResetBtn { align-self: flex-start; }
 }
 
 .map-svg-container {
