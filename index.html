@@ -148,23 +148,30 @@ body {
   .source-label { display: block; }
 }
 .theme-toggle {
-  background: none;
-  border: none;
-  color: var(--text-muted);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
   cursor: pointer;
-  padding: 4px;
+  padding: 5px 10px;
   display: inline-flex;
   align-items: center;
-  gap: 0;
-  font-size: 0;
-  transition: color 0.15s ease;
-  opacity: 0.5;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  transition: all 0.15s ease;
 }
 .theme-toggle:hover {
   color: var(--text-primary);
-  opacity: 1;
+  border-color: var(--accent-blue);
+  background: var(--bg-subtle);
 }
-.theme-toggle svg { width: 15px; height: 15px; }
+.theme-toggle svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
 
 /* Page Container */
 .page-container {
@@ -1489,7 +1496,10 @@ body {
           <line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>
           <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
         </svg>
-        <span id="themeLabel">Theme</span>
+        <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <span id="themeLabel">Light Mode</span>
       </button>
     </div>
   </div>
@@ -4104,41 +4114,38 @@ function setupEventListeners() {
 function setupTheme() {
   const saved = localStorage.getItem("bls-theme");
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const isDark = saved ? saved === "dark" : prefersDark;
+  const shouldBeDark = saved ? (saved === "dark") : prefersDark;
 
-  applyTheme(isDark);
+  applyTheme(shouldBeDark);
 
-  document.getElementById("themeToggleBtn").addEventListener("click", () => {
-    const current = document.documentElement.getAttribute("data-theme") === "light";
-    applyTheme(!current);
-  });
+  const toggleBtn = document.getElementById("themeToggleBtn");
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      const isCurrentlyDark = document.documentElement.getAttribute("data-theme") !== "light";
+      applyTheme(!isCurrentlyDark);
+    });
+  }
 }
 
 function applyTheme(isDark) {
+  const sunIcon = document.getElementById("themeIconSun");
+  const moonIcon = document.getElementById("themeIconMoon");
+  const label = document.getElementById("themeLabel");
+
   if (isDark) {
     document.documentElement.removeAttribute("data-theme");
-    document.getElementById("themeLabel").textContent = "Light Mode";
+    if (label) label.textContent = "Light Mode";
     localStorage.setItem("bls-theme", "dark");
-    // Show sun icon (click to switch to light)
-    document.getElementById("themeIconSun").style.display = "";
-    const moonEl = document.getElementById("themeIconMoon");
-    if (moonEl) moonEl.style.display = "none";
+    if (sunIcon) sunIcon.style.display = "";
+    if (moonIcon) moonIcon.style.display = "none";
   } else {
     document.documentElement.setAttribute("data-theme", "light");
-    document.getElementById("themeLabel").textContent = "Dark Mode";
+    if (label) label.textContent = "Dark Mode";
     localStorage.setItem("bls-theme", "light");
-    // Show moon icon (click to switch to dark)
-    document.getElementById("themeIconSun").style.display = "none";
-    let moonEl = document.getElementById("themeIconMoon");
-    if (!moonEl) {
-      moonEl = document.getElementById("themeIconSun").cloneNode(false);
-      moonEl.id = "themeIconMoon";
-      moonEl.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
-      document.getElementById("themeToggleBtn").insertBefore(moonEl, document.getElementById("themeLabel"));
-    }
-    moonEl.style.display = "";
+    if (sunIcon) sunIcon.style.display = "none";
+    if (moonIcon) moonIcon.style.display = "";
   }
-  if (state.activeTab === "map") {
+  if (state && state.activeTab === "map" && typeof renderMetroMap === "function" && state.activeJobPayload) {
     renderMetroMap();
   }
 }
