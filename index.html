@@ -810,13 +810,9 @@ body {
   margin-left: 6px;
 }
 .pill-token[hidden] { display: none; }
-/* Hover-card pills stay flat and compact — the glow/size bump is for the
-   persistent pucks only. */
+/* Hover-card pills match the Summary pills in size; just drop the ambient glow
+   so it doesn't smear inside the small tooltip. */
 .custom-tooltip .pill-token {
-  padding: 2px 9px;
-  font-size: 11.5px;
-  border-width: 1px;
-  border-color: color-mix(in srgb, var(--accent-cyan) 42%, transparent);
   box-shadow: none;
 }
 
@@ -950,6 +946,13 @@ body {
   color: var(--text-primary);
   white-space: nowrap;
 }
+.area-summary-conn {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.area-summary-conn[hidden] { display: none; }
 .area-summary-context {
   font-size: 12px;
   letter-spacing: 0;
@@ -2683,8 +2686,10 @@ body {
         <div class="area-summary" id="kpiBar">
           <div class="area-summary-head">
                 <span class="area-summary-eyebrow">Summary</span>
-                <span class="pill-token" id="kpiAreaPill" hidden></span>
+                <span class="area-summary-conn" id="kpiConnOf" hidden>of</span>
                 <span class="pill-token" id="kpiJobPill" hidden></span>
+                <span class="area-summary-conn" id="kpiConnIn" hidden>in</span>
+                <span class="pill-token" id="kpiAreaPill" hidden></span>
                 <span class="area-summary-context" id="kpiContext">National Reference · BLS OEWS</span>
                 <span class="data-year-flag" id="kpiDataYearNote" hidden></span>
               </div>
@@ -4101,8 +4106,8 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
 
   tooltip.innerHTML = `
     <div style="display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; margin-bottom: 8px;">
-      <span class="pill-token" style="flex: 0 1 auto; min-width: 0;">${formatAreaName(metro.name)}</span>
       <span class="pill-token" style="flex: 0 1 auto; min-width: 0;">${jobPayload.title}</span>
+      <span class="pill-token" style="flex: 0 1 auto; min-width: 0;">${formatAreaName(metro.name)}</span>
     </div>
 
     <div style="background: var(--bg-elevated); padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 8px;">
@@ -4912,24 +4917,29 @@ function renderHeroAndKPIs() {
     document.title = `${cleanAreaTitle} Wage Explorer · BLS OEWS ${state.year}`;
   }
 
-  // Summary panel head: selection pills + fallback context line
-  const kpiAreaPill = document.getElementById("kpiAreaPill");
-  if (kpiAreaPill) {
-    kpiAreaPill.textContent = cleanAreaTitle;
-    kpiAreaPill.hidden = (data.id === "99");
-  }
+  // Summary panel head: reads "Summary of <occupation> in <area>".
+  const isSpecificArea = data.id !== "99";
   const kpiJobPill = document.getElementById("kpiJobPill");
   if (kpiJobPill) {
     kpiJobPill.textContent = occTitle;
     kpiJobPill.hidden = isAllJobs;
   }
+  const kpiAreaPill = document.getElementById("kpiAreaPill");
+  if (kpiAreaPill) {
+    kpiAreaPill.textContent = cleanAreaTitle;
+    kpiAreaPill.hidden = !isSpecificArea;
+  }
+  // "of" leads whichever pill comes first; "in" only joins a second pill.
+  const kpiConnOf = document.getElementById("kpiConnOf");
+  if (kpiConnOf) kpiConnOf.hidden = !(!isAllJobs || isSpecificArea);
+  const kpiConnIn = document.getElementById("kpiConnIn");
+  if (kpiConnIn) kpiConnIn.hidden = !(!isAllJobs && isSpecificArea);
   const kpiContext = document.getElementById("kpiContext");
   if (kpiContext) {
     const scope = isAllJobs ? "All occupations" : occTitle;
     kpiContext.textContent = `${cleanAreaTitle}  ·  ${scope}`;
-    // The pills carry this when a selection is active; keep the line only as a
-    // fallback for the all-occupations / national baseline view.
-    kpiContext.hidden = !(data.id === "99" && isAllJobs);
+    // Plain context line only when nothing is picked at all.
+    kpiContext.hidden = !(isAllJobs && !isSpecificArea);
   }
 
   // Provenance flag in the Area Summary head. Three cases, most specific first:
