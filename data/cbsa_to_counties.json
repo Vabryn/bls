@@ -1,0 +1,9532 @@
+{
+  "10100": [
+    {
+      "fips": "46013",
+      "name": "Brown County"
+    },
+    {
+      "fips": "46045",
+      "name": "Edmunds County"
+    }
+  ],
+  "10140": [
+    {
+      "fips": "53027",
+      "name": "Grays Harbor County"
+    }
+  ],
+  "10180": [
+    {
+      "fips": "48059",
+      "name": "Callahan County"
+    },
+    {
+      "fips": "48253",
+      "name": "Jones County"
+    },
+    {
+      "fips": "48441",
+      "name": "Taylor County"
+    }
+  ],
+  "10220": [
+    {
+      "fips": "40123",
+      "name": "Pontotoc County"
+    }
+  ],
+  "10300": [
+    {
+      "fips": "26091",
+      "name": "Lenawee County"
+    }
+  ],
+  "10380": [
+    {
+      "fips": "72003",
+      "name": "Aguada Municipio"
+    },
+    {
+      "fips": "72005",
+      "name": "Aguadilla Municipio"
+    },
+    {
+      "fips": "72011",
+      "name": "A\u00f1asco Municipio"
+    },
+    {
+      "fips": "72071",
+      "name": "Isabela Municipio"
+    },
+    {
+      "fips": "72099",
+      "name": "Moca Municipio"
+    },
+    {
+      "fips": "72117",
+      "name": "Rinc\u00f3n Municipio"
+    },
+    {
+      "fips": "72131",
+      "name": "San Sebasti\u00e1n Municipio"
+    }
+  ],
+  "10420": [
+    {
+      "fips": "39133",
+      "name": "Portage County"
+    },
+    {
+      "fips": "39153",
+      "name": "Summit County"
+    }
+  ],
+  "10460": [
+    {
+      "fips": "35035",
+      "name": "Otero County"
+    }
+  ],
+  "10480": [
+    {
+      "fips": "08003",
+      "name": "Alamosa County"
+    },
+    {
+      "fips": "08021",
+      "name": "Conejos County"
+    },
+    {
+      "fips": "08023",
+      "name": "Costilla County"
+    }
+  ],
+  "10500": [
+    {
+      "fips": "13095",
+      "name": "Dougherty County"
+    },
+    {
+      "fips": "13177",
+      "name": "Lee County"
+    },
+    {
+      "fips": "13273",
+      "name": "Terrell County"
+    },
+    {
+      "fips": "13321",
+      "name": "Worth County"
+    }
+  ],
+  "10540": [
+    {
+      "fips": "41043",
+      "name": "Linn County"
+    }
+  ],
+  "10580": [
+    {
+      "fips": "36001",
+      "name": "Albany County"
+    },
+    {
+      "fips": "36083",
+      "name": "Rensselaer County"
+    },
+    {
+      "fips": "36091",
+      "name": "Saratoga County"
+    },
+    {
+      "fips": "36093",
+      "name": "Schenectady County"
+    },
+    {
+      "fips": "36095",
+      "name": "Schoharie County"
+    }
+  ],
+  "10620": [
+    {
+      "fips": "37167",
+      "name": "Stanly County"
+    }
+  ],
+  "10660": [
+    {
+      "fips": "27047",
+      "name": "Freeborn County"
+    }
+  ],
+  "10700": [
+    {
+      "fips": "01095",
+      "name": "Marshall County"
+    }
+  ],
+  "10740": [
+    {
+      "fips": "35001",
+      "name": "Bernalillo County"
+    },
+    {
+      "fips": "35043",
+      "name": "Sandoval County"
+    },
+    {
+      "fips": "35057",
+      "name": "Torrance County"
+    },
+    {
+      "fips": "35061",
+      "name": "Valencia County"
+    }
+  ],
+  "10760": [
+    {
+      "fips": "01123",
+      "name": "Tallapoosa County"
+    }
+  ],
+  "10780": [
+    {
+      "fips": "22043",
+      "name": "Grant Parish"
+    },
+    {
+      "fips": "22079",
+      "name": "Rapides Parish"
+    }
+  ],
+  "10820": [
+    {
+      "fips": "27041",
+      "name": "Douglas County"
+    }
+  ],
+  "10860": [
+    {
+      "fips": "48047",
+      "name": "Brooks County"
+    },
+    {
+      "fips": "48249",
+      "name": "Jim Wells County"
+    }
+  ],
+  "10900": [
+    {
+      "fips": "34041",
+      "name": "Warren County"
+    },
+    {
+      "fips": "42025",
+      "name": "Carbon County"
+    },
+    {
+      "fips": "42077",
+      "name": "Lehigh County"
+    },
+    {
+      "fips": "42095",
+      "name": "Northampton County"
+    }
+  ],
+  "10940": [
+    {
+      "fips": "26057",
+      "name": "Gratiot County"
+    }
+  ],
+  "10980": [
+    {
+      "fips": "26007",
+      "name": "Alpena County"
+    }
+  ],
+  "11020": [
+    {
+      "fips": "42013",
+      "name": "Blair County"
+    }
+  ],
+  "11060": [
+    {
+      "fips": "40065",
+      "name": "Jackson County"
+    }
+  ],
+  "11100": [
+    {
+      "fips": "48011",
+      "name": "Armstrong County"
+    },
+    {
+      "fips": "48065",
+      "name": "Carson County"
+    },
+    {
+      "fips": "48359",
+      "name": "Oldham County"
+    },
+    {
+      "fips": "48375",
+      "name": "Potter County"
+    },
+    {
+      "fips": "48381",
+      "name": "Randall County"
+    }
+  ],
+  "11140": [
+    {
+      "fips": "13249",
+      "name": "Schley County"
+    },
+    {
+      "fips": "13261",
+      "name": "Sumter County"
+    }
+  ],
+  "11180": [
+    {
+      "fips": "19015",
+      "name": "Boone County"
+    },
+    {
+      "fips": "19169",
+      "name": "Story County"
+    }
+  ],
+  "11200": [
+    {
+      "fips": "25015",
+      "name": "Hampshire County"
+    }
+  ],
+  "11220": [
+    {
+      "fips": "36057",
+      "name": "Montgomery County"
+    }
+  ],
+  "11260": [
+    {
+      "fips": "02020",
+      "name": "Anchorage Municipality"
+    },
+    {
+      "fips": "02170",
+      "name": "Matanuska-Susitna Borough"
+    }
+  ],
+  "11360": [
+    {
+      "fips": "37085",
+      "name": "Harnett County"
+    }
+  ],
+  "11380": [
+    {
+      "fips": "48003",
+      "name": "Andrews County"
+    }
+  ],
+  "11420": [
+    {
+      "fips": "18151",
+      "name": "Steuben County"
+    }
+  ],
+  "11460": [
+    {
+      "fips": "26161",
+      "name": "Washtenaw County"
+    }
+  ],
+  "11500": [
+    {
+      "fips": "01015",
+      "name": "Calhoun County"
+    }
+  ],
+  "11540": [
+    {
+      "fips": "55015",
+      "name": "Calumet County"
+    },
+    {
+      "fips": "55087",
+      "name": "Outagamie County"
+    }
+  ],
+  "11580": [
+    {
+      "fips": "12027",
+      "name": "DeSoto County"
+    }
+  ],
+  "11620": [
+    {
+      "fips": "40019",
+      "name": "Carter County"
+    }
+  ],
+  "11640": [
+    {
+      "fips": "72013",
+      "name": "Arecibo Municipio"
+    },
+    {
+      "fips": "72027",
+      "name": "Camuy Municipio"
+    },
+    {
+      "fips": "72065",
+      "name": "Hatillo Municipio"
+    },
+    {
+      "fips": "72115",
+      "name": "Quebradillas Municipio"
+    }
+  ],
+  "11660": [
+    {
+      "fips": "05019",
+      "name": "Clark County"
+    }
+  ],
+  "11680": [
+    {
+      "fips": "20035",
+      "name": "Cowley County"
+    }
+  ],
+  "11700": [
+    {
+      "fips": "37021",
+      "name": "Buncombe County"
+    },
+    {
+      "fips": "37089",
+      "name": "Henderson County"
+    },
+    {
+      "fips": "37115",
+      "name": "Madison County"
+    }
+  ],
+  "11740": [
+    {
+      "fips": "39005",
+      "name": "Ashland County"
+    }
+  ],
+  "11820": [
+    {
+      "fips": "41007",
+      "name": "Clatsop County"
+    }
+  ],
+  "11860": [
+    {
+      "fips": "20005",
+      "name": "Atchison County"
+    }
+  ],
+  "11900": [
+    {
+      "fips": "39009",
+      "name": "Athens County"
+    }
+  ],
+  "11940": [
+    {
+      "fips": "47107",
+      "name": "McMinn County"
+    },
+    {
+      "fips": "47121",
+      "name": "Meigs County"
+    }
+  ],
+  "11980": [
+    {
+      "fips": "48213",
+      "name": "Henderson County"
+    }
+  ],
+  "12020": [
+    {
+      "fips": "13059",
+      "name": "Clarke County"
+    },
+    {
+      "fips": "13195",
+      "name": "Madison County"
+    },
+    {
+      "fips": "13219",
+      "name": "Oconee County"
+    },
+    {
+      "fips": "13221",
+      "name": "Oglethorpe County"
+    }
+  ],
+  "12060": [
+    {
+      "fips": "13013",
+      "name": "Barrow County"
+    },
+    {
+      "fips": "13035",
+      "name": "Butts County"
+    },
+    {
+      "fips": "13045",
+      "name": "Carroll County"
+    },
+    {
+      "fips": "13063",
+      "name": "Clayton County"
+    },
+    {
+      "fips": "13077",
+      "name": "Coweta County"
+    },
+    {
+      "fips": "13085",
+      "name": "Dawson County"
+    },
+    {
+      "fips": "13089",
+      "name": "DeKalb County"
+    },
+    {
+      "fips": "13097",
+      "name": "Douglas County"
+    },
+    {
+      "fips": "13113",
+      "name": "Fayette County"
+    },
+    {
+      "fips": "13117",
+      "name": "Forsyth County"
+    },
+    {
+      "fips": "13121",
+      "name": "Fulton County"
+    },
+    {
+      "fips": "13135",
+      "name": "Gwinnett County"
+    },
+    {
+      "fips": "13149",
+      "name": "Heard County"
+    },
+    {
+      "fips": "13151",
+      "name": "Henry County"
+    },
+    {
+      "fips": "13159",
+      "name": "Jasper County"
+    },
+    {
+      "fips": "13187",
+      "name": "Lumpkin County"
+    },
+    {
+      "fips": "13199",
+      "name": "Meriwether County"
+    },
+    {
+      "fips": "13211",
+      "name": "Morgan County"
+    },
+    {
+      "fips": "13217",
+      "name": "Newton County"
+    },
+    {
+      "fips": "13227",
+      "name": "Pickens County"
+    },
+    {
+      "fips": "13231",
+      "name": "Pike County"
+    },
+    {
+      "fips": "13247",
+      "name": "Rockdale County"
+    },
+    {
+      "fips": "13255",
+      "name": "Spalding County"
+    },
+    {
+      "fips": "13297",
+      "name": "Walton County"
+    },
+    {
+      "fips": "13015",
+      "name": "Bartow County"
+    },
+    {
+      "fips": "13057",
+      "name": "Cherokee County"
+    },
+    {
+      "fips": "13067",
+      "name": "Cobb County"
+    },
+    {
+      "fips": "13143",
+      "name": "Haralson County"
+    },
+    {
+      "fips": "13223",
+      "name": "Paulding County"
+    }
+  ],
+  "12100": [
+    {
+      "fips": "34001",
+      "name": "Atlantic County"
+    },
+    {
+      "fips": "34009",
+      "name": "Cape May County"
+    }
+  ],
+  "12140": [
+    {
+      "fips": "18033",
+      "name": "DeKalb County"
+    }
+  ],
+  "12180": [
+    {
+      "fips": "36011",
+      "name": "Cayuga County"
+    }
+  ],
+  "12220": [
+    {
+      "fips": "01081",
+      "name": "Lee County"
+    },
+    {
+      "fips": "01087",
+      "name": "Macon County"
+    }
+  ],
+  "12260": [
+    {
+      "fips": "13033",
+      "name": "Burke County"
+    },
+    {
+      "fips": "13073",
+      "name": "Columbia County"
+    },
+    {
+      "fips": "13181",
+      "name": "Lincoln County"
+    },
+    {
+      "fips": "13189",
+      "name": "McDuffie County"
+    },
+    {
+      "fips": "13245",
+      "name": "Richmond County"
+    },
+    {
+      "fips": "45003",
+      "name": "Aiken County"
+    },
+    {
+      "fips": "45037",
+      "name": "Edgefield County"
+    }
+  ],
+  "12300": [
+    {
+      "fips": "23011",
+      "name": "Kennebec County"
+    }
+  ],
+  "12380": [
+    {
+      "fips": "27099",
+      "name": "Mower County"
+    }
+  ],
+  "12420": [
+    {
+      "fips": "48021",
+      "name": "Bastrop County"
+    },
+    {
+      "fips": "48055",
+      "name": "Caldwell County"
+    },
+    {
+      "fips": "48209",
+      "name": "Hays County"
+    },
+    {
+      "fips": "48453",
+      "name": "Travis County"
+    },
+    {
+      "fips": "48491",
+      "name": "Williamson County"
+    }
+  ],
+  "12460": [
+    {
+      "fips": "13087",
+      "name": "Decatur County"
+    }
+  ],
+  "12520": [
+    {
+      "fips": "41001",
+      "name": "Baker County"
+    }
+  ],
+  "12540": [
+    {
+      "fips": "06029",
+      "name": "Kern County"
+    }
+  ],
+  "12580": [
+    {
+      "fips": "24003",
+      "name": "Anne Arundel County"
+    },
+    {
+      "fips": "24005",
+      "name": "Baltimore County"
+    },
+    {
+      "fips": "24013",
+      "name": "Carroll County"
+    },
+    {
+      "fips": "24025",
+      "name": "Harford County"
+    },
+    {
+      "fips": "24027",
+      "name": "Howard County"
+    },
+    {
+      "fips": "24035",
+      "name": "Queen Anne's County"
+    },
+    {
+      "fips": "24510",
+      "name": "Baltimore city"
+    }
+  ],
+  "12620": [
+    {
+      "fips": "23019",
+      "name": "Penobscot County"
+    }
+  ],
+  "12660": [
+    {
+      "fips": "55111",
+      "name": "Sauk County"
+    }
+  ],
+  "12700": [
+    {
+      "fips": "25001",
+      "name": "Barnstable County"
+    }
+  ],
+  "12740": [
+    {
+      "fips": "50023",
+      "name": "Washington County"
+    }
+  ],
+  "12780": [
+    {
+      "fips": "40147",
+      "name": "Washington County"
+    }
+  ],
+  "12860": [
+    {
+      "fips": "36037",
+      "name": "Genesee County"
+    }
+  ],
+  "12900": [
+    {
+      "fips": "05063",
+      "name": "Independence County"
+    }
+  ],
+  "12940": [
+    {
+      "fips": "22005",
+      "name": "Ascension Parish"
+    },
+    {
+      "fips": "22007",
+      "name": "Assumption Parish"
+    },
+    {
+      "fips": "22033",
+      "name": "East Baton Rouge Parish"
+    },
+    {
+      "fips": "22037",
+      "name": "East Feliciana Parish"
+    },
+    {
+      "fips": "22047",
+      "name": "Iberville Parish"
+    },
+    {
+      "fips": "22063",
+      "name": "Livingston Parish"
+    },
+    {
+      "fips": "22077",
+      "name": "Pointe Coupee Parish"
+    },
+    {
+      "fips": "22091",
+      "name": "St. Helena Parish"
+    },
+    {
+      "fips": "22121",
+      "name": "West Baton Rouge Parish"
+    },
+    {
+      "fips": "22125",
+      "name": "West Feliciana Parish"
+    }
+  ],
+  "12980": [
+    {
+      "fips": "26025",
+      "name": "Calhoun County"
+    }
+  ],
+  "13020": [
+    {
+      "fips": "26017",
+      "name": "Bay County"
+    }
+  ],
+  "13060": [
+    {
+      "fips": "48321",
+      "name": "Matagorda County"
+    }
+  ],
+  "13100": [
+    {
+      "fips": "31067",
+      "name": "Gage County"
+    }
+  ],
+  "13140": [
+    {
+      "fips": "48199",
+      "name": "Hardin County"
+    },
+    {
+      "fips": "48245",
+      "name": "Jefferson County"
+    },
+    {
+      "fips": "48361",
+      "name": "Orange County"
+    }
+  ],
+  "13180": [
+    {
+      "fips": "55027",
+      "name": "Dodge County"
+    }
+  ],
+  "13220": [
+    {
+      "fips": "54019",
+      "name": "Fayette County"
+    },
+    {
+      "fips": "54081",
+      "name": "Raleigh County"
+    }
+  ],
+  "13260": [
+    {
+      "fips": "18093",
+      "name": "Lawrence County"
+    }
+  ],
+  "13300": [
+    {
+      "fips": "48025",
+      "name": "Bee County"
+    }
+  ],
+  "13340": [
+    {
+      "fips": "39091",
+      "name": "Logan County"
+    }
+  ],
+  "13380": [
+    {
+      "fips": "53073",
+      "name": "Whatcom County"
+    }
+  ],
+  "13420": [
+    {
+      "fips": "27007",
+      "name": "Beltrami County"
+    }
+  ],
+  "13460": [
+    {
+      "fips": "41013",
+      "name": "Crook County"
+    },
+    {
+      "fips": "41017",
+      "name": "Deschutes County"
+    },
+    {
+      "fips": "41031",
+      "name": "Jefferson County"
+    }
+  ],
+  "13540": [
+    {
+      "fips": "50003",
+      "name": "Bennington County"
+    }
+  ],
+  "13660": [
+    {
+      "fips": "26107",
+      "name": "Mecosta County"
+    }
+  ],
+  "13700": [
+    {
+      "fips": "48227",
+      "name": "Howard County"
+    }
+  ],
+  "13740": [
+    {
+      "fips": "30009",
+      "name": "Carbon County"
+    },
+    {
+      "fips": "30095",
+      "name": "Stillwater County"
+    },
+    {
+      "fips": "30111",
+      "name": "Yellowstone County"
+    }
+  ],
+  "13780": [
+    {
+      "fips": "36007",
+      "name": "Broome County"
+    },
+    {
+      "fips": "36107",
+      "name": "Tioga County"
+    }
+  ],
+  "13820": [
+    {
+      "fips": "01007",
+      "name": "Bibb County"
+    },
+    {
+      "fips": "01009",
+      "name": "Blount County"
+    },
+    {
+      "fips": "01021",
+      "name": "Chilton County"
+    },
+    {
+      "fips": "01073",
+      "name": "Jefferson County"
+    },
+    {
+      "fips": "01115",
+      "name": "St. Clair County"
+    },
+    {
+      "fips": "01117",
+      "name": "Shelby County"
+    },
+    {
+      "fips": "01127",
+      "name": "Walker County"
+    }
+  ],
+  "13860": [
+    {
+      "fips": "06027",
+      "name": "Inyo County"
+    }
+  ],
+  "13900": [
+    {
+      "fips": "38015",
+      "name": "Burleigh County"
+    },
+    {
+      "fips": "38059",
+      "name": "Morton County"
+    },
+    {
+      "fips": "38065",
+      "name": "Oliver County"
+    }
+  ],
+  "13940": [
+    {
+      "fips": "16011",
+      "name": "Bingham County"
+    }
+  ],
+  "13980": [
+    {
+      "fips": "51063",
+      "name": "Floyd County"
+    },
+    {
+      "fips": "51071",
+      "name": "Giles County"
+    },
+    {
+      "fips": "51121",
+      "name": "Montgomery County"
+    },
+    {
+      "fips": "51155",
+      "name": "Pulaski County"
+    },
+    {
+      "fips": "51750",
+      "name": "Radford city"
+    }
+  ],
+  "14010": [
+    {
+      "fips": "17113",
+      "name": "McLean County"
+    }
+  ],
+  "14020": [
+    {
+      "fips": "18105",
+      "name": "Monroe County"
+    },
+    {
+      "fips": "18119",
+      "name": "Owen County"
+    }
+  ],
+  "14100": [
+    {
+      "fips": "42037",
+      "name": "Columbia County"
+    }
+  ],
+  "14140": [
+    {
+      "fips": "51185",
+      "name": "Tazewell County"
+    },
+    {
+      "fips": "54055",
+      "name": "Mercer County"
+    }
+  ],
+  "14180": [
+    {
+      "fips": "05093",
+      "name": "Mississippi County"
+    }
+  ],
+  "14220": [
+    {
+      "fips": "22117",
+      "name": "Washington Parish"
+    }
+  ],
+  "14260": [
+    {
+      "fips": "16001",
+      "name": "Ada County"
+    },
+    {
+      "fips": "16015",
+      "name": "Boise County"
+    },
+    {
+      "fips": "16027",
+      "name": "Canyon County"
+    },
+    {
+      "fips": "16045",
+      "name": "Gem County"
+    },
+    {
+      "fips": "16073",
+      "name": "Owyhee County"
+    }
+  ],
+  "14300": [
+    {
+      "fips": "48147",
+      "name": "Fannin County"
+    }
+  ],
+  "14380": [
+    {
+      "fips": "37189",
+      "name": "Watauga County"
+    }
+  ],
+  "14420": [
+    {
+      "fips": "48233",
+      "name": "Hutchinson County"
+    }
+  ],
+  "14460": [
+    {
+      "fips": "25021",
+      "name": "Norfolk County"
+    },
+    {
+      "fips": "25023",
+      "name": "Plymouth County"
+    },
+    {
+      "fips": "25025",
+      "name": "Suffolk County"
+    },
+    {
+      "fips": "25009",
+      "name": "Essex County"
+    },
+    {
+      "fips": "25017",
+      "name": "Middlesex County"
+    },
+    {
+      "fips": "33015",
+      "name": "Rockingham County"
+    },
+    {
+      "fips": "33017",
+      "name": "Strafford County"
+    }
+  ],
+  "14500": [
+    {
+      "fips": "08013",
+      "name": "Boulder County"
+    }
+  ],
+  "14540": [
+    {
+      "fips": "21003",
+      "name": "Allen County"
+    },
+    {
+      "fips": "21031",
+      "name": "Butler County"
+    },
+    {
+      "fips": "21061",
+      "name": "Edmonson County"
+    },
+    {
+      "fips": "21227",
+      "name": "Warren County"
+    }
+  ],
+  "14580": [
+    {
+      "fips": "30031",
+      "name": "Gallatin County"
+    }
+  ],
+  "14620": [
+    {
+      "fips": "42083",
+      "name": "McKean County"
+    }
+  ],
+  "14660": [
+    {
+      "fips": "27021",
+      "name": "Cass County"
+    },
+    {
+      "fips": "27035",
+      "name": "Crow Wing County"
+    }
+  ],
+  "14700": [
+    {
+      "fips": "29213",
+      "name": "Taney County"
+    }
+  ],
+  "14710": [
+    {
+      "fips": "50025",
+      "name": "Windham County"
+    }
+  ],
+  "14720": [
+    {
+      "fips": "08065",
+      "name": "Lake County"
+    },
+    {
+      "fips": "08117",
+      "name": "Summit County"
+    }
+  ],
+  "14740": [
+    {
+      "fips": "53035",
+      "name": "Kitsap County"
+    }
+  ],
+  "14780": [
+    {
+      "fips": "48477",
+      "name": "Washington County"
+    }
+  ],
+  "14820": [
+    {
+      "fips": "37175",
+      "name": "Transylvania County"
+    }
+  ],
+  "14860": [
+    {
+      "fips": "09120",
+      "name": "Greater Bridgeport Planning Region"
+    },
+    {
+      "fips": "09190",
+      "name": "Western Connecticut Planning Region"
+    }
+  ],
+  "14940": [
+    {
+      "fips": "16071",
+      "name": "Oneida County"
+    },
+    {
+      "fips": "49003",
+      "name": "Box Elder County"
+    }
+  ],
+  "15020": [
+    {
+      "fips": "28085",
+      "name": "Lincoln County"
+    }
+  ],
+  "15060": [
+    {
+      "fips": "41015",
+      "name": "Curry County"
+    }
+  ],
+  "15100": [
+    {
+      "fips": "46011",
+      "name": "Brookings County"
+    }
+  ],
+  "15180": [
+    {
+      "fips": "48061",
+      "name": "Cameron County"
+    }
+  ],
+  "15220": [
+    {
+      "fips": "48049",
+      "name": "Brown County"
+    }
+  ],
+  "15260": [
+    {
+      "fips": "13025",
+      "name": "Brantley County"
+    },
+    {
+      "fips": "13127",
+      "name": "Glynn County"
+    },
+    {
+      "fips": "13191",
+      "name": "McIntosh County"
+    }
+  ],
+  "15340": [
+    {
+      "fips": "39033",
+      "name": "Crawford County"
+    }
+  ],
+  "15380": [
+    {
+      "fips": "36029",
+      "name": "Erie County"
+    },
+    {
+      "fips": "36063",
+      "name": "Niagara County"
+    }
+  ],
+  "15420": [
+    {
+      "fips": "16031",
+      "name": "Cassia County"
+    },
+    {
+      "fips": "16067",
+      "name": "Minidoka County"
+    }
+  ],
+  "15460": [
+    {
+      "fips": "17071",
+      "name": "Henderson County"
+    },
+    {
+      "fips": "19057",
+      "name": "Des Moines County"
+    }
+  ],
+  "15500": [
+    {
+      "fips": "37001",
+      "name": "Alamance County"
+    }
+  ],
+  "15540": [
+    {
+      "fips": "50007",
+      "name": "Chittenden County"
+    },
+    {
+      "fips": "50011",
+      "name": "Franklin County"
+    },
+    {
+      "fips": "50013",
+      "name": "Grand Isle County"
+    }
+  ],
+  "15580": [
+    {
+      "fips": "30093",
+      "name": "Silver Bow County"
+    }
+  ],
+  "15620": [
+    {
+      "fips": "26113",
+      "name": "Missaukee County"
+    },
+    {
+      "fips": "26165",
+      "name": "Wexford County"
+    }
+  ],
+  "15660": [
+    {
+      "fips": "13129",
+      "name": "Gordon County"
+    }
+  ],
+  "15700": [
+    {
+      "fips": "24019",
+      "name": "Dorchester County"
+    }
+  ],
+  "15740": [
+    {
+      "fips": "39059",
+      "name": "Guernsey County"
+    }
+  ],
+  "15780": [
+    {
+      "fips": "05013",
+      "name": "Calhoun County"
+    },
+    {
+      "fips": "05103",
+      "name": "Ouachita County"
+    }
+  ],
+  "15820": [
+    {
+      "fips": "21087",
+      "name": "Green County"
+    },
+    {
+      "fips": "21217",
+      "name": "Taylor County"
+    }
+  ],
+  "15860": [
+    {
+      "fips": "08043",
+      "name": "Fremont County"
+    }
+  ],
+  "15900": [
+    {
+      "fips": "17057",
+      "name": "Fulton County"
+    }
+  ],
+  "15940": [
+    {
+      "fips": "39019",
+      "name": "Carroll County"
+    },
+    {
+      "fips": "39151",
+      "name": "Stark County"
+    }
+  ],
+  "15980": [
+    {
+      "fips": "12071",
+      "name": "Lee County"
+    }
+  ],
+  "16020": [
+    {
+      "fips": "17003",
+      "name": "Alexander County"
+    },
+    {
+      "fips": "29017",
+      "name": "Bollinger County"
+    },
+    {
+      "fips": "29031",
+      "name": "Cape Girardeau County"
+    }
+  ],
+  "16060": [
+    {
+      "fips": "17077",
+      "name": "Jackson County"
+    }
+  ],
+  "16100": [
+    {
+      "fips": "35015",
+      "name": "Eddy County"
+    }
+  ],
+  "16140": [
+    {
+      "fips": "19027",
+      "name": "Carroll County"
+    }
+  ],
+  "16180": [
+    {
+      "fips": "32510",
+      "name": "Carson City"
+    }
+  ],
+  "16220": [
+    {
+      "fips": "56025",
+      "name": "Natrona County"
+    }
+  ],
+  "16260": [
+    {
+      "fips": "49021",
+      "name": "Iron County"
+    }
+  ],
+  "16300": [
+    {
+      "fips": "19011",
+      "name": "Benton County"
+    },
+    {
+      "fips": "19105",
+      "name": "Jones County"
+    },
+    {
+      "fips": "19113",
+      "name": "Linn County"
+    }
+  ],
+  "16340": [
+    {
+      "fips": "13233",
+      "name": "Polk County"
+    }
+  ],
+  "16380": [
+    {
+      "fips": "39107",
+      "name": "Mercer County"
+    }
+  ],
+  "16460": [
+    {
+      "fips": "17121",
+      "name": "Marion County"
+    }
+  ],
+  "16500": [
+    {
+      "fips": "53041",
+      "name": "Lewis County"
+    }
+  ],
+  "16540": [
+    {
+      "fips": "42055",
+      "name": "Franklin County"
+    }
+  ],
+  "16580": [
+    {
+      "fips": "17019",
+      "name": "Champaign County"
+    },
+    {
+      "fips": "17053",
+      "name": "Ford County"
+    },
+    {
+      "fips": "17147",
+      "name": "Piatt County"
+    }
+  ],
+  "16620": [
+    {
+      "fips": "54005",
+      "name": "Boone County"
+    },
+    {
+      "fips": "54015",
+      "name": "Clay County"
+    },
+    {
+      "fips": "54039",
+      "name": "Kanawha County"
+    }
+  ],
+  "16660": [
+    {
+      "fips": "17029",
+      "name": "Coles County"
+    }
+  ],
+  "16700": [
+    {
+      "fips": "45015",
+      "name": "Berkeley County"
+    },
+    {
+      "fips": "45019",
+      "name": "Charleston County"
+    },
+    {
+      "fips": "45035",
+      "name": "Dorchester County"
+    }
+  ],
+  "16740": [
+    {
+      "fips": "37007",
+      "name": "Anson County"
+    },
+    {
+      "fips": "37025",
+      "name": "Cabarrus County"
+    },
+    {
+      "fips": "37071",
+      "name": "Gaston County"
+    },
+    {
+      "fips": "37097",
+      "name": "Iredell County"
+    },
+    {
+      "fips": "37109",
+      "name": "Lincoln County"
+    },
+    {
+      "fips": "37119",
+      "name": "Mecklenburg County"
+    },
+    {
+      "fips": "37159",
+      "name": "Rowan County"
+    },
+    {
+      "fips": "37179",
+      "name": "Union County"
+    },
+    {
+      "fips": "45023",
+      "name": "Chester County"
+    },
+    {
+      "fips": "45057",
+      "name": "Lancaster County"
+    },
+    {
+      "fips": "45091",
+      "name": "York County"
+    }
+  ],
+  "16820": [
+    {
+      "fips": "51003",
+      "name": "Albemarle County"
+    },
+    {
+      "fips": "51065",
+      "name": "Fluvanna County"
+    },
+    {
+      "fips": "51079",
+      "name": "Greene County"
+    },
+    {
+      "fips": "51125",
+      "name": "Nelson County"
+    },
+    {
+      "fips": "51540",
+      "name": "Charlottesville city"
+    }
+  ],
+  "16860": [
+    {
+      "fips": "13047",
+      "name": "Catoosa County"
+    },
+    {
+      "fips": "13083",
+      "name": "Dade County"
+    },
+    {
+      "fips": "13295",
+      "name": "Walker County"
+    },
+    {
+      "fips": "47065",
+      "name": "Hamilton County"
+    },
+    {
+      "fips": "47115",
+      "name": "Marion County"
+    },
+    {
+      "fips": "47153",
+      "name": "Sequatchie County"
+    }
+  ],
+  "16940": [
+    {
+      "fips": "56021",
+      "name": "Laramie County"
+    }
+  ],
+  "16980": [
+    {
+      "fips": "17031",
+      "name": "Cook County"
+    },
+    {
+      "fips": "17043",
+      "name": "DuPage County"
+    },
+    {
+      "fips": "17063",
+      "name": "Grundy County"
+    },
+    {
+      "fips": "17111",
+      "name": "McHenry County"
+    },
+    {
+      "fips": "17197",
+      "name": "Will County"
+    },
+    {
+      "fips": "17037",
+      "name": "DeKalb County"
+    },
+    {
+      "fips": "17089",
+      "name": "Kane County"
+    },
+    {
+      "fips": "17093",
+      "name": "Kendall County"
+    },
+    {
+      "fips": "17097",
+      "name": "Lake County"
+    },
+    {
+      "fips": "18073",
+      "name": "Jasper County"
+    },
+    {
+      "fips": "18089",
+      "name": "Lake County"
+    },
+    {
+      "fips": "18111",
+      "name": "Newton County"
+    },
+    {
+      "fips": "18127",
+      "name": "Porter County"
+    }
+  ],
+  "17020": [
+    {
+      "fips": "06007",
+      "name": "Butte County"
+    }
+  ],
+  "17060": [
+    {
+      "fips": "39141",
+      "name": "Ross County"
+    }
+  ],
+  "17140": [
+    {
+      "fips": "18029",
+      "name": "Dearborn County"
+    },
+    {
+      "fips": "18047",
+      "name": "Franklin County"
+    },
+    {
+      "fips": "18115",
+      "name": "Ohio County"
+    },
+    {
+      "fips": "21015",
+      "name": "Boone County"
+    },
+    {
+      "fips": "21023",
+      "name": "Bracken County"
+    },
+    {
+      "fips": "21037",
+      "name": "Campbell County"
+    },
+    {
+      "fips": "21077",
+      "name": "Gallatin County"
+    },
+    {
+      "fips": "21081",
+      "name": "Grant County"
+    },
+    {
+      "fips": "21117",
+      "name": "Kenton County"
+    },
+    {
+      "fips": "21191",
+      "name": "Pendleton County"
+    },
+    {
+      "fips": "39015",
+      "name": "Brown County"
+    },
+    {
+      "fips": "39017",
+      "name": "Butler County"
+    },
+    {
+      "fips": "39025",
+      "name": "Clermont County"
+    },
+    {
+      "fips": "39061",
+      "name": "Hamilton County"
+    },
+    {
+      "fips": "39165",
+      "name": "Warren County"
+    }
+  ],
+  "17220": [
+    {
+      "fips": "54017",
+      "name": "Doddridge County"
+    },
+    {
+      "fips": "54033",
+      "name": "Harrison County"
+    },
+    {
+      "fips": "54091",
+      "name": "Taylor County"
+    }
+  ],
+  "17260": [
+    {
+      "fips": "28027",
+      "name": "Coahoma County"
+    }
+  ],
+  "17300": [
+    {
+      "fips": "21047",
+      "name": "Christian County"
+    },
+    {
+      "fips": "21221",
+      "name": "Trigg County"
+    },
+    {
+      "fips": "47125",
+      "name": "Montgomery County"
+    },
+    {
+      "fips": "47161",
+      "name": "Stewart County"
+    }
+  ],
+  "17340": [
+    {
+      "fips": "06033",
+      "name": "Lake County"
+    }
+  ],
+  "17380": [
+    {
+      "fips": "28011",
+      "name": "Bolivar County"
+    }
+  ],
+  "17410": [
+    {
+      "fips": "39007",
+      "name": "Ashtabula County"
+    },
+    {
+      "fips": "39035",
+      "name": "Cuyahoga County"
+    },
+    {
+      "fips": "39055",
+      "name": "Geauga County"
+    },
+    {
+      "fips": "39085",
+      "name": "Lake County"
+    },
+    {
+      "fips": "39093",
+      "name": "Lorain County"
+    },
+    {
+      "fips": "39103",
+      "name": "Medina County"
+    }
+  ],
+  "17420": [
+    {
+      "fips": "47011",
+      "name": "Bradley County"
+    },
+    {
+      "fips": "47139",
+      "name": "Polk County"
+    }
+  ],
+  "17500": [
+    {
+      "fips": "12043",
+      "name": "Glades County"
+    },
+    {
+      "fips": "12051",
+      "name": "Hendry County"
+    }
+  ],
+  "17540": [
+    {
+      "fips": "19045",
+      "name": "Clinton County"
+    }
+  ],
+  "17580": [
+    {
+      "fips": "35009",
+      "name": "Curry County"
+    },
+    {
+      "fips": "35041",
+      "name": "Roosevelt County"
+    }
+  ],
+  "17620": [
+    {
+      "fips": "72043",
+      "name": "Coamo Municipio"
+    },
+    {
+      "fips": "72133",
+      "name": "Santa Isabel Municipio"
+    }
+  ],
+  "17640": [
+    {
+      "fips": "72123",
+      "name": "Salinas Municipio"
+    }
+  ],
+  "17650": [
+    {
+      "fips": "56029",
+      "name": "Park County"
+    }
+  ],
+  "17660": [
+    {
+      "fips": "16055",
+      "name": "Kootenai County"
+    }
+  ],
+  "17740": [
+    {
+      "fips": "26023",
+      "name": "Branch County"
+    }
+  ],
+  "17780": [
+    {
+      "fips": "48041",
+      "name": "Brazos County"
+    },
+    {
+      "fips": "48051",
+      "name": "Burleson County"
+    },
+    {
+      "fips": "48395",
+      "name": "Robertson County"
+    }
+  ],
+  "17820": [
+    {
+      "fips": "08041",
+      "name": "El Paso County"
+    },
+    {
+      "fips": "08119",
+      "name": "Teller County"
+    }
+  ],
+  "17860": [
+    {
+      "fips": "29019",
+      "name": "Boone County"
+    },
+    {
+      "fips": "29053",
+      "name": "Cooper County"
+    },
+    {
+      "fips": "29089",
+      "name": "Howard County"
+    }
+  ],
+  "17900": [
+    {
+      "fips": "45017",
+      "name": "Calhoun County"
+    },
+    {
+      "fips": "45039",
+      "name": "Fairfield County"
+    },
+    {
+      "fips": "45055",
+      "name": "Kershaw County"
+    },
+    {
+      "fips": "45063",
+      "name": "Lexington County"
+    },
+    {
+      "fips": "45079",
+      "name": "Richland County"
+    },
+    {
+      "fips": "45081",
+      "name": "Saluda County"
+    }
+  ],
+  "17980": [
+    {
+      "fips": "01113",
+      "name": "Russell County"
+    },
+    {
+      "fips": "13053",
+      "name": "Chattahoochee County"
+    },
+    {
+      "fips": "13145",
+      "name": "Harris County"
+    },
+    {
+      "fips": "13197",
+      "name": "Marion County"
+    },
+    {
+      "fips": "13215",
+      "name": "Muscogee County"
+    },
+    {
+      "fips": "13259",
+      "name": "Stewart County"
+    },
+    {
+      "fips": "13263",
+      "name": "Talbot County"
+    }
+  ],
+  "18020": [
+    {
+      "fips": "18005",
+      "name": "Bartholomew County"
+    }
+  ],
+  "18060": [
+    {
+      "fips": "28087",
+      "name": "Lowndes County"
+    },
+    {
+      "fips": "28103",
+      "name": "Noxubee County"
+    }
+  ],
+  "18100": [
+    {
+      "fips": "31037",
+      "name": "Colfax County"
+    },
+    {
+      "fips": "31141",
+      "name": "Platte County"
+    }
+  ],
+  "18140": [
+    {
+      "fips": "39041",
+      "name": "Delaware County"
+    },
+    {
+      "fips": "39045",
+      "name": "Fairfield County"
+    },
+    {
+      "fips": "39049",
+      "name": "Franklin County"
+    },
+    {
+      "fips": "39073",
+      "name": "Hocking County"
+    },
+    {
+      "fips": "39089",
+      "name": "Licking County"
+    },
+    {
+      "fips": "39097",
+      "name": "Madison County"
+    },
+    {
+      "fips": "39117",
+      "name": "Morrow County"
+    },
+    {
+      "fips": "39127",
+      "name": "Perry County"
+    },
+    {
+      "fips": "39129",
+      "name": "Pickaway County"
+    },
+    {
+      "fips": "39159",
+      "name": "Union County"
+    }
+  ],
+  "18180": [
+    {
+      "fips": "33013",
+      "name": "Merrimack County"
+    }
+  ],
+  "18220": [
+    {
+      "fips": "18041",
+      "name": "Fayette County"
+    }
+  ],
+  "18260": [
+    {
+      "fips": "47087",
+      "name": "Jackson County"
+    },
+    {
+      "fips": "47133",
+      "name": "Overton County"
+    },
+    {
+      "fips": "47141",
+      "name": "Putnam County"
+    },
+    {
+      "fips": "47185",
+      "name": "White County"
+    }
+  ],
+  "18300": [
+    {
+      "fips": "41011",
+      "name": "Coos County"
+    }
+  ],
+  "18340": [
+    {
+      "fips": "21051",
+      "name": "Clay County"
+    },
+    {
+      "fips": "21121",
+      "name": "Knox County"
+    },
+    {
+      "fips": "21125",
+      "name": "Laurel County"
+    },
+    {
+      "fips": "21235",
+      "name": "Whitley County"
+    }
+  ],
+  "18380": [
+    {
+      "fips": "13081",
+      "name": "Crisp County"
+    }
+  ],
+  "18420": [
+    {
+      "fips": "28003",
+      "name": "Alcorn County"
+    }
+  ],
+  "18460": [
+    {
+      "fips": "13137",
+      "name": "Habersham County"
+    }
+  ],
+  "18500": [
+    {
+      "fips": "36101",
+      "name": "Steuben County"
+    }
+  ],
+  "18580": [
+    {
+      "fips": "48007",
+      "name": "Aransas County"
+    },
+    {
+      "fips": "48355",
+      "name": "Nueces County"
+    },
+    {
+      "fips": "48409",
+      "name": "San Patricio County"
+    }
+  ],
+  "18620": [
+    {
+      "fips": "48349",
+      "name": "Navarro County"
+    }
+  ],
+  "18660": [
+    {
+      "fips": "36023",
+      "name": "Cortland County"
+    }
+  ],
+  "18700": [
+    {
+      "fips": "41003",
+      "name": "Benton County"
+    }
+  ],
+  "18740": [
+    {
+      "fips": "39031",
+      "name": "Coshocton County"
+    }
+  ],
+  "18820": [
+    {
+      "fips": "18107",
+      "name": "Montgomery County"
+    }
+  ],
+  "18860": [
+    {
+      "fips": "06015",
+      "name": "Del Norte County"
+    }
+  ],
+  "18880": [
+    {
+      "fips": "12091",
+      "name": "Okaloosa County"
+    },
+    {
+      "fips": "12131",
+      "name": "Walton County"
+    }
+  ],
+  "18900": [
+    {
+      "fips": "47035",
+      "name": "Cumberland County"
+    }
+  ],
+  "18980": [
+    {
+      "fips": "01043",
+      "name": "Cullman County"
+    }
+  ],
+  "19060": [
+    {
+      "fips": "24001",
+      "name": "Allegany County"
+    },
+    {
+      "fips": "54057",
+      "name": "Mineral County"
+    }
+  ],
+  "19100": [
+    {
+      "fips": "48085",
+      "name": "Collin County"
+    },
+    {
+      "fips": "48113",
+      "name": "Dallas County"
+    },
+    {
+      "fips": "48121",
+      "name": "Denton County"
+    },
+    {
+      "fips": "48139",
+      "name": "Ellis County"
+    },
+    {
+      "fips": "48231",
+      "name": "Hunt County"
+    },
+    {
+      "fips": "48257",
+      "name": "Kaufman County"
+    },
+    {
+      "fips": "48397",
+      "name": "Rockwall County"
+    },
+    {
+      "fips": "48251",
+      "name": "Johnson County"
+    },
+    {
+      "fips": "48367",
+      "name": "Parker County"
+    },
+    {
+      "fips": "48439",
+      "name": "Tarrant County"
+    },
+    {
+      "fips": "48497",
+      "name": "Wise County"
+    }
+  ],
+  "19140": [
+    {
+      "fips": "13213",
+      "name": "Murray County"
+    },
+    {
+      "fips": "13313",
+      "name": "Whitfield County"
+    }
+  ],
+  "19180": [
+    {
+      "fips": "17183",
+      "name": "Vermilion County"
+    }
+  ],
+  "19220": [
+    {
+      "fips": "21021",
+      "name": "Boyle County"
+    },
+    {
+      "fips": "21137",
+      "name": "Lincoln County"
+    }
+  ],
+  "19260": [
+    {
+      "fips": "51143",
+      "name": "Pittsylvania County"
+    },
+    {
+      "fips": "51590",
+      "name": "Danville city"
+    }
+  ],
+  "19300": [
+    {
+      "fips": "01003",
+      "name": "Baldwin County"
+    }
+  ],
+  "19340": [
+    {
+      "fips": "17073",
+      "name": "Henry County"
+    },
+    {
+      "fips": "17131",
+      "name": "Mercer County"
+    },
+    {
+      "fips": "17161",
+      "name": "Rock Island County"
+    },
+    {
+      "fips": "19163",
+      "name": "Scott County"
+    }
+  ],
+  "19430": [
+    {
+      "fips": "39057",
+      "name": "Greene County"
+    },
+    {
+      "fips": "39109",
+      "name": "Miami County"
+    },
+    {
+      "fips": "39113",
+      "name": "Montgomery County"
+    }
+  ],
+  "19460": [
+    {
+      "fips": "01079",
+      "name": "Lawrence County"
+    },
+    {
+      "fips": "01103",
+      "name": "Morgan County"
+    }
+  ],
+  "19500": [
+    {
+      "fips": "17115",
+      "name": "Macon County"
+    }
+  ],
+  "19540": [
+    {
+      "fips": "18001",
+      "name": "Adams County"
+    }
+  ],
+  "19580": [
+    {
+      "fips": "39039",
+      "name": "Defiance County"
+    }
+  ],
+  "19620": [
+    {
+      "fips": "48465",
+      "name": "Val Verde County"
+    }
+  ],
+  "19660": [
+    {
+      "fips": "12035",
+      "name": "Flagler County"
+    },
+    {
+      "fips": "12127",
+      "name": "Volusia County"
+    }
+  ],
+  "19700": [
+    {
+      "fips": "35029",
+      "name": "Luna County"
+    }
+  ],
+  "19740": [
+    {
+      "fips": "08001",
+      "name": "Adams County"
+    },
+    {
+      "fips": "08005",
+      "name": "Arapahoe County"
+    },
+    {
+      "fips": "08014",
+      "name": "Broomfield County"
+    },
+    {
+      "fips": "08019",
+      "name": "Clear Creek County"
+    },
+    {
+      "fips": "08031",
+      "name": "Denver County"
+    },
+    {
+      "fips": "08035",
+      "name": "Douglas County"
+    },
+    {
+      "fips": "08039",
+      "name": "Elbert County"
+    },
+    {
+      "fips": "08047",
+      "name": "Gilpin County"
+    },
+    {
+      "fips": "08059",
+      "name": "Jefferson County"
+    },
+    {
+      "fips": "08093",
+      "name": "Park County"
+    }
+  ],
+  "19760": [
+    {
+      "fips": "22011",
+      "name": "Beauregard Parish"
+    }
+  ],
+  "19780": [
+    {
+      "fips": "19049",
+      "name": "Dallas County"
+    },
+    {
+      "fips": "19077",
+      "name": "Guthrie County"
+    },
+    {
+      "fips": "19099",
+      "name": "Jasper County"
+    },
+    {
+      "fips": "19121",
+      "name": "Madison County"
+    },
+    {
+      "fips": "19153",
+      "name": "Polk County"
+    },
+    {
+      "fips": "19181",
+      "name": "Warren County"
+    }
+  ],
+  "19810": [
+    {
+      "fips": "27005",
+      "name": "Becker County"
+    }
+  ],
+  "19820": [
+    {
+      "fips": "26163",
+      "name": "Wayne County"
+    },
+    {
+      "fips": "26087",
+      "name": "Lapeer County"
+    },
+    {
+      "fips": "26093",
+      "name": "Livingston County"
+    },
+    {
+      "fips": "26099",
+      "name": "Macomb County"
+    },
+    {
+      "fips": "26125",
+      "name": "Oakland County"
+    },
+    {
+      "fips": "26147",
+      "name": "St. Clair County"
+    }
+  ],
+  "19860": [
+    {
+      "fips": "38007",
+      "name": "Billings County"
+    },
+    {
+      "fips": "38025",
+      "name": "Dunn County"
+    },
+    {
+      "fips": "38089",
+      "name": "Stark County"
+    }
+  ],
+  "19940": [
+    {
+      "fips": "17103",
+      "name": "Lee County"
+    }
+  ],
+  "19980": [
+    {
+      "fips": "20057",
+      "name": "Ford County"
+    }
+  ],
+  "20020": [
+    {
+      "fips": "01061",
+      "name": "Geneva County"
+    },
+    {
+      "fips": "01067",
+      "name": "Henry County"
+    },
+    {
+      "fips": "01069",
+      "name": "Houston County"
+    }
+  ],
+  "20060": [
+    {
+      "fips": "13003",
+      "name": "Atkinson County"
+    },
+    {
+      "fips": "13069",
+      "name": "Coffee County"
+    }
+  ],
+  "20100": [
+    {
+      "fips": "10001",
+      "name": "Kent County"
+    }
+  ],
+  "20140": [
+    {
+      "fips": "13167",
+      "name": "Johnson County"
+    },
+    {
+      "fips": "13175",
+      "name": "Laurens County"
+    }
+  ],
+  "20180": [
+    {
+      "fips": "42033",
+      "name": "Clearfield County"
+    }
+  ],
+  "20220": [
+    {
+      "fips": "19061",
+      "name": "Dubuque County"
+    }
+  ],
+  "20260": [
+    {
+      "fips": "27017",
+      "name": "Carlton County"
+    },
+    {
+      "fips": "27137",
+      "name": "St. Louis County"
+    },
+    {
+      "fips": "55031",
+      "name": "Douglas County"
+    }
+  ],
+  "20300": [
+    {
+      "fips": "48341",
+      "name": "Moore County"
+    }
+  ],
+  "20340": [
+    {
+      "fips": "40137",
+      "name": "Stephens County"
+    }
+  ],
+  "20420": [
+    {
+      "fips": "08067",
+      "name": "La Plata County"
+    }
+  ],
+  "20460": [
+    {
+      "fips": "40013",
+      "name": "Bryan County"
+    }
+  ],
+  "20500": [
+    {
+      "fips": "37037",
+      "name": "Chatham County"
+    },
+    {
+      "fips": "37063",
+      "name": "Durham County"
+    },
+    {
+      "fips": "37135",
+      "name": "Orange County"
+    },
+    {
+      "fips": "37145",
+      "name": "Person County"
+    }
+  ],
+  "20540": [
+    {
+      "fips": "47045",
+      "name": "Dyer County"
+    }
+  ],
+  "20580": [
+    {
+      "fips": "48323",
+      "name": "Maverick County"
+    }
+  ],
+  "20660": [
+    {
+      "fips": "24041",
+      "name": "Talbot County"
+    }
+  ],
+  "20700": [
+    {
+      "fips": "42089",
+      "name": "Monroe County"
+    }
+  ],
+  "20740": [
+    {
+      "fips": "55017",
+      "name": "Chippewa County"
+    },
+    {
+      "fips": "55035",
+      "name": "Eau Claire County"
+    }
+  ],
+  "20780": [
+    {
+      "fips": "08037",
+      "name": "Eagle County"
+    }
+  ],
+  "20820": [
+    {
+      "fips": "17035",
+      "name": "Cumberland County"
+    },
+    {
+      "fips": "17049",
+      "name": "Effingham County"
+    }
+  ],
+  "20900": [
+    {
+      "fips": "48481",
+      "name": "Wharton County"
+    }
+  ],
+  "20940": [
+    {
+      "fips": "06025",
+      "name": "Imperial County"
+    }
+  ],
+  "20980": [
+    {
+      "fips": "05139",
+      "name": "Union County"
+    }
+  ],
+  "21020": [
+    {
+      "fips": "37139",
+      "name": "Pasquotank County"
+    }
+  ],
+  "21060": [
+    {
+      "fips": "21093",
+      "name": "Hardin County"
+    },
+    {
+      "fips": "21123",
+      "name": "Larue County"
+    }
+  ],
+  "21120": [
+    {
+      "fips": "40009",
+      "name": "Beckham County"
+    }
+  ],
+  "21140": [
+    {
+      "fips": "18039",
+      "name": "Elkhart County"
+    }
+  ],
+  "21180": [
+    {
+      "fips": "54083",
+      "name": "Randolph County"
+    }
+  ],
+  "21220": [
+    {
+      "fips": "32007",
+      "name": "Elko County"
+    },
+    {
+      "fips": "32011",
+      "name": "Eureka County"
+    }
+  ],
+  "21260": [
+    {
+      "fips": "53037",
+      "name": "Kittitas County"
+    }
+  ],
+  "21300": [
+    {
+      "fips": "36015",
+      "name": "Chemung County"
+    }
+  ],
+  "21340": [
+    {
+      "fips": "48141",
+      "name": "El Paso County"
+    },
+    {
+      "fips": "48229",
+      "name": "Hudspeth County"
+    }
+  ],
+  "21380": [
+    {
+      "fips": "20017",
+      "name": "Chase County"
+    },
+    {
+      "fips": "20111",
+      "name": "Lyon County"
+    }
+  ],
+  "21420": [
+    {
+      "fips": "40047",
+      "name": "Garfield County"
+    }
+  ],
+  "21460": [
+    {
+      "fips": "01031",
+      "name": "Coffee County"
+    }
+  ],
+  "21500": [
+    {
+      "fips": "42049",
+      "name": "Erie County"
+    }
+  ],
+  "21540": [
+    {
+      "fips": "26041",
+      "name": "Delta County"
+    }
+  ],
+  "21580": [
+    {
+      "fips": "35039",
+      "name": "Rio Arriba County"
+    }
+  ],
+  "21640": [
+    {
+      "fips": "01005",
+      "name": "Barbour County"
+    },
+    {
+      "fips": "13239",
+      "name": "Quitman County"
+    }
+  ],
+  "21660": [
+    {
+      "fips": "41039",
+      "name": "Lane County"
+    }
+  ],
+  "21700": [
+    {
+      "fips": "06023",
+      "name": "Humboldt County"
+    }
+  ],
+  "21740": [
+    {
+      "fips": "49033",
+      "name": "Rich County"
+    },
+    {
+      "fips": "56041",
+      "name": "Uinta County"
+    }
+  ],
+  "21780": [
+    {
+      "fips": "18129",
+      "name": "Posey County"
+    },
+    {
+      "fips": "18163",
+      "name": "Vanderburgh County"
+    },
+    {
+      "fips": "18173",
+      "name": "Warrick County"
+    }
+  ],
+  "21820": [
+    {
+      "fips": "02090",
+      "name": "Fairbanks North Star Borough"
+    }
+  ],
+  "21860": [
+    {
+      "fips": "27091",
+      "name": "Martin County"
+    }
+  ],
+  "21900": [
+    {
+      "fips": "54049",
+      "name": "Marion County"
+    }
+  ],
+  "21980": [
+    {
+      "fips": "32001",
+      "name": "Churchill County"
+    }
+  ],
+  "22020": [
+    {
+      "fips": "27027",
+      "name": "Clay County"
+    },
+    {
+      "fips": "38017",
+      "name": "Cass County"
+    }
+  ],
+  "22060": [
+    {
+      "fips": "27131",
+      "name": "Rice County"
+    }
+  ],
+  "22100": [
+    {
+      "fips": "29187",
+      "name": "St. Francois County"
+    }
+  ],
+  "22140": [
+    {
+      "fips": "35045",
+      "name": "San Juan County"
+    }
+  ],
+  "22180": [
+    {
+      "fips": "37051",
+      "name": "Cumberland County"
+    },
+    {
+      "fips": "37093",
+      "name": "Hoke County"
+    }
+  ],
+  "22190": [
+    {
+      "fips": "47103",
+      "name": "Lincoln County"
+    }
+  ],
+  "22220": [
+    {
+      "fips": "05007",
+      "name": "Benton County"
+    },
+    {
+      "fips": "05087",
+      "name": "Madison County"
+    },
+    {
+      "fips": "05143",
+      "name": "Washington County"
+    }
+  ],
+  "22260": [
+    {
+      "fips": "27111",
+      "name": "Otter Tail County"
+    }
+  ],
+  "22300": [
+    {
+      "fips": "39063",
+      "name": "Hancock County"
+    }
+  ],
+  "22340": [
+    {
+      "fips": "13017",
+      "name": "Ben Hill County"
+    }
+  ],
+  "22380": [
+    {
+      "fips": "04005",
+      "name": "Coconino County"
+    }
+  ],
+  "22420": [
+    {
+      "fips": "26049",
+      "name": "Genesee County"
+    }
+  ],
+  "22500": [
+    {
+      "fips": "45031",
+      "name": "Darlington County"
+    },
+    {
+      "fips": "45041",
+      "name": "Florence County"
+    }
+  ],
+  "22520": [
+    {
+      "fips": "01033",
+      "name": "Colbert County"
+    },
+    {
+      "fips": "01077",
+      "name": "Lauderdale County"
+    }
+  ],
+  "22540": [
+    {
+      "fips": "55039",
+      "name": "Fond du Lac County"
+    }
+  ],
+  "22580": [
+    {
+      "fips": "37161",
+      "name": "Rutherford County"
+    }
+  ],
+  "22620": [
+    {
+      "fips": "05123",
+      "name": "St. Francis County"
+    }
+  ],
+  "22660": [
+    {
+      "fips": "08069",
+      "name": "Larimer County"
+    }
+  ],
+  "22700": [
+    {
+      "fips": "19187",
+      "name": "Webster County"
+    }
+  ],
+  "22780": [
+    {
+      "fips": "29169",
+      "name": "Pulaski County"
+    }
+  ],
+  "22800": [
+    {
+      "fips": "19111",
+      "name": "Lee County"
+    }
+  ],
+  "22820": [
+    {
+      "fips": "08087",
+      "name": "Morgan County"
+    }
+  ],
+  "22840": [
+    {
+      "fips": "01049",
+      "name": "DeKalb County"
+    }
+  ],
+  "22900": [
+    {
+      "fips": "05033",
+      "name": "Crawford County"
+    },
+    {
+      "fips": "05131",
+      "name": "Sebastian County"
+    },
+    {
+      "fips": "40135",
+      "name": "Sequoyah County"
+    }
+  ],
+  "23060": [
+    {
+      "fips": "18003",
+      "name": "Allen County"
+    },
+    {
+      "fips": "18179",
+      "name": "Wells County"
+    },
+    {
+      "fips": "18183",
+      "name": "Whitley County"
+    }
+  ],
+  "23140": [
+    {
+      "fips": "18023",
+      "name": "Clinton County"
+    }
+  ],
+  "23180": [
+    {
+      "fips": "21005",
+      "name": "Anderson County"
+    },
+    {
+      "fips": "21073",
+      "name": "Franklin County"
+    }
+  ],
+  "23190": [
+    {
+      "fips": "21213",
+      "name": "Simpson County"
+    }
+  ],
+  "23240": [
+    {
+      "fips": "48171",
+      "name": "Gillespie County"
+    }
+  ],
+  "23300": [
+    {
+      "fips": "17177",
+      "name": "Stephenson County"
+    }
+  ],
+  "23340": [
+    {
+      "fips": "31053",
+      "name": "Dodge County"
+    }
+  ],
+  "23380": [
+    {
+      "fips": "39143",
+      "name": "Sandusky County"
+    }
+  ],
+  "23420": [
+    {
+      "fips": "06019",
+      "name": "Fresno County"
+    },
+    {
+      "fips": "06039",
+      "name": "Madera County"
+    }
+  ],
+  "23460": [
+    {
+      "fips": "01055",
+      "name": "Etowah County"
+    }
+  ],
+  "23500": [
+    {
+      "fips": "45021",
+      "name": "Cherokee County"
+    }
+  ],
+  "23540": [
+    {
+      "fips": "12001",
+      "name": "Alachua County"
+    },
+    {
+      "fips": "12041",
+      "name": "Gilchrist County"
+    },
+    {
+      "fips": "12075",
+      "name": "Levy County"
+    }
+  ],
+  "23580": [
+    {
+      "fips": "13139",
+      "name": "Hall County"
+    }
+  ],
+  "23620": [
+    {
+      "fips": "48097",
+      "name": "Cooke County"
+    }
+  ],
+  "23660": [
+    {
+      "fips": "17095",
+      "name": "Knox County"
+    }
+  ],
+  "23680": [
+    {
+      "fips": "39053",
+      "name": "Gallia County"
+    }
+  ],
+  "23700": [
+    {
+      "fips": "35031",
+      "name": "McKinley County"
+    }
+  ],
+  "23780": [
+    {
+      "fips": "20055",
+      "name": "Finney County"
+    }
+  ],
+  "23820": [
+    {
+      "fips": "06003",
+      "name": "Alpine County"
+    },
+    {
+      "fips": "32005",
+      "name": "Douglas County"
+    }
+  ],
+  "23900": [
+    {
+      "fips": "42001",
+      "name": "Adams County"
+    }
+  ],
+  "23940": [
+    {
+      "fips": "56005",
+      "name": "Campbell County"
+    }
+  ],
+  "23980": [
+    {
+      "fips": "21009",
+      "name": "Barren County"
+    },
+    {
+      "fips": "21169",
+      "name": "Metcalfe County"
+    }
+  ],
+  "24020": [
+    {
+      "fips": "36113",
+      "name": "Warren County"
+    },
+    {
+      "fips": "36115",
+      "name": "Washington County"
+    }
+  ],
+  "24100": [
+    {
+      "fips": "36035",
+      "name": "Fulton County"
+    }
+  ],
+  "24140": [
+    {
+      "fips": "37191",
+      "name": "Wayne County"
+    }
+  ],
+  "24180": [
+    {
+      "fips": "48221",
+      "name": "Hood County"
+    }
+  ],
+  "24220": [
+    {
+      "fips": "27119",
+      "name": "Polk County"
+    },
+    {
+      "fips": "38035",
+      "name": "Grand Forks County"
+    }
+  ],
+  "24260": [
+    {
+      "fips": "31079",
+      "name": "Hall County"
+    },
+    {
+      "fips": "31093",
+      "name": "Howard County"
+    },
+    {
+      "fips": "31121",
+      "name": "Merrick County"
+    }
+  ],
+  "24300": [
+    {
+      "fips": "08077",
+      "name": "Mesa County"
+    }
+  ],
+  "24330": [
+    {
+      "fips": "27061",
+      "name": "Itasca County"
+    }
+  ],
+  "24340": [
+    {
+      "fips": "26015",
+      "name": "Barry County"
+    },
+    {
+      "fips": "26067",
+      "name": "Ionia County"
+    },
+    {
+      "fips": "26081",
+      "name": "Kent County"
+    },
+    {
+      "fips": "26117",
+      "name": "Montcalm County"
+    },
+    {
+      "fips": "26139",
+      "name": "Ottawa County"
+    }
+  ],
+  "24420": [
+    {
+      "fips": "41033",
+      "name": "Josephine County"
+    }
+  ],
+  "24460": [
+    {
+      "fips": "20009",
+      "name": "Barton County"
+    }
+  ],
+  "24500": [
+    {
+      "fips": "30013",
+      "name": "Cascade County"
+    }
+  ],
+  "24540": [
+    {
+      "fips": "08123",
+      "name": "Weld County"
+    }
+  ],
+  "24580": [
+    {
+      "fips": "55009",
+      "name": "Brown County"
+    },
+    {
+      "fips": "55061",
+      "name": "Kewaunee County"
+    },
+    {
+      "fips": "55083",
+      "name": "Oconto County"
+    }
+  ],
+  "24600": [
+    {
+      "fips": "18133",
+      "name": "Putnam County"
+    }
+  ],
+  "24620": [
+    {
+      "fips": "47059",
+      "name": "Greene County"
+    }
+  ],
+  "24640": [
+    {
+      "fips": "25011",
+      "name": "Franklin County"
+    }
+  ],
+  "24660": [
+    {
+      "fips": "37081",
+      "name": "Guilford County"
+    },
+    {
+      "fips": "37151",
+      "name": "Randolph County"
+    },
+    {
+      "fips": "37157",
+      "name": "Rockingham County"
+    }
+  ],
+  "24700": [
+    {
+      "fips": "18031",
+      "name": "Decatur County"
+    }
+  ],
+  "24740": [
+    {
+      "fips": "28151",
+      "name": "Washington County"
+    }
+  ],
+  "24780": [
+    {
+      "fips": "37147",
+      "name": "Pitt County"
+    }
+  ],
+  "24820": [
+    {
+      "fips": "39037",
+      "name": "Darke County"
+    }
+  ],
+  "24860": [
+    {
+      "fips": "45007",
+      "name": "Anderson County"
+    },
+    {
+      "fips": "45045",
+      "name": "Greenville County"
+    },
+    {
+      "fips": "45059",
+      "name": "Laurens County"
+    },
+    {
+      "fips": "45077",
+      "name": "Pickens County"
+    }
+  ],
+  "24900": [
+    {
+      "fips": "28015",
+      "name": "Carroll County"
+    },
+    {
+      "fips": "28083",
+      "name": "Leflore County"
+    }
+  ],
+  "24940": [
+    {
+      "fips": "45001",
+      "name": "Abbeville County"
+    },
+    {
+      "fips": "45047",
+      "name": "Greenwood County"
+    }
+  ],
+  "24980": [
+    {
+      "fips": "28043",
+      "name": "Grenada County"
+    },
+    {
+      "fips": "28097",
+      "name": "Montgomery County"
+    }
+  ],
+  "25020": [
+    {
+      "fips": "72015",
+      "name": "Arroyo Municipio"
+    },
+    {
+      "fips": "72057",
+      "name": "Guayama Municipio"
+    },
+    {
+      "fips": "72109",
+      "name": "Patillas Municipio"
+    }
+  ],
+  "25060": [
+    {
+      "fips": "28045",
+      "name": "Hancock County"
+    },
+    {
+      "fips": "28047",
+      "name": "Harrison County"
+    },
+    {
+      "fips": "28059",
+      "name": "Jackson County"
+    },
+    {
+      "fips": "28131",
+      "name": "Stone County"
+    }
+  ],
+  "25100": [
+    {
+      "fips": "40139",
+      "name": "Texas County"
+    }
+  ],
+  "25180": [
+    {
+      "fips": "24043",
+      "name": "Washington County"
+    },
+    {
+      "fips": "54003",
+      "name": "Berkeley County"
+    },
+    {
+      "fips": "54065",
+      "name": "Morgan County"
+    }
+  ],
+  "25200": [
+    {
+      "fips": "16013",
+      "name": "Blaine County"
+    },
+    {
+      "fips": "16025",
+      "name": "Camas County"
+    },
+    {
+      "fips": "16063",
+      "name": "Lincoln County"
+    }
+  ],
+  "25220": [
+    {
+      "fips": "22105",
+      "name": "Tangipahoa Parish"
+    }
+  ],
+  "25260": [
+    {
+      "fips": "06031",
+      "name": "Kings County"
+    }
+  ],
+  "25300": [
+    {
+      "fips": "29127",
+      "name": "Marion County"
+    },
+    {
+      "fips": "29173",
+      "name": "Ralls County"
+    }
+  ],
+  "25420": [
+    {
+      "fips": "42041",
+      "name": "Cumberland County"
+    },
+    {
+      "fips": "42043",
+      "name": "Dauphin County"
+    },
+    {
+      "fips": "42099",
+      "name": "Perry County"
+    }
+  ],
+  "25460": [
+    {
+      "fips": "05009",
+      "name": "Boone County"
+    },
+    {
+      "fips": "05101",
+      "name": "Newton County"
+    }
+  ],
+  "25500": [
+    {
+      "fips": "51165",
+      "name": "Rockingham County"
+    },
+    {
+      "fips": "51660",
+      "name": "Harrisonburg city"
+    }
+  ],
+  "25540": [
+    {
+      "fips": "09110",
+      "name": "Capitol Planning Region"
+    },
+    {
+      "fips": "09130",
+      "name": "Lower Connecticut River Valley Planning Region"
+    }
+  ],
+  "25580": [
+    {
+      "fips": "31001",
+      "name": "Adams County"
+    },
+    {
+      "fips": "31035",
+      "name": "Clay County"
+    },
+    {
+      "fips": "31181",
+      "name": "Webster County"
+    }
+  ],
+  "25620": [
+    {
+      "fips": "28035",
+      "name": "Forrest County"
+    },
+    {
+      "fips": "28073",
+      "name": "Lamar County"
+    },
+    {
+      "fips": "28111",
+      "name": "Perry County"
+    }
+  ],
+  "25700": [
+    {
+      "fips": "20051",
+      "name": "Ellis County"
+    }
+  ],
+  "25720": [
+    {
+      "fips": "49043",
+      "name": "Summit County"
+    },
+    {
+      "fips": "49051",
+      "name": "Wasatch County"
+    }
+  ],
+  "25740": [
+    {
+      "fips": "30007",
+      "name": "Broadwater County"
+    },
+    {
+      "fips": "30043",
+      "name": "Jefferson County"
+    },
+    {
+      "fips": "30049",
+      "name": "Lewis and Clark County"
+    }
+  ],
+  "25770": [
+    {
+      "fips": "42103",
+      "name": "Pike County"
+    }
+  ],
+  "25775": [
+    {
+      "fips": "21101",
+      "name": "Henderson County"
+    },
+    {
+      "fips": "21233",
+      "name": "Webster County"
+    }
+  ],
+  "25780": [
+    {
+      "fips": "37181",
+      "name": "Vance County"
+    }
+  ],
+  "25820": [
+    {
+      "fips": "48117",
+      "name": "Deaf Smith County"
+    }
+  ],
+  "25840": [
+    {
+      "fips": "41049",
+      "name": "Morrow County"
+    },
+    {
+      "fips": "41059",
+      "name": "Umatilla County"
+    }
+  ],
+  "25850": [
+    {
+      "fips": "42085",
+      "name": "Mercer County"
+    }
+  ],
+  "25860": [
+    {
+      "fips": "37003",
+      "name": "Alexander County"
+    },
+    {
+      "fips": "37023",
+      "name": "Burke County"
+    },
+    {
+      "fips": "37027",
+      "name": "Caldwell County"
+    },
+    {
+      "fips": "37035",
+      "name": "Catawba County"
+    }
+  ],
+  "25880": [
+    {
+      "fips": "26059",
+      "name": "Hillsdale County"
+    }
+  ],
+  "25900": [
+    {
+      "fips": "15001",
+      "name": "Hawaii County"
+    }
+  ],
+  "25940": [
+    {
+      "fips": "45013",
+      "name": "Beaufort County"
+    },
+    {
+      "fips": "45053",
+      "name": "Jasper County"
+    }
+  ],
+  "25980": [
+    {
+      "fips": "13179",
+      "name": "Liberty County"
+    },
+    {
+      "fips": "13183",
+      "name": "Long County"
+    }
+  ],
+  "26020": [
+    {
+      "fips": "35025",
+      "name": "Lea County"
+    }
+  ],
+  "26090": [
+    {
+      "fips": "26005",
+      "name": "Allegan County"
+    }
+  ],
+  "26140": [
+    {
+      "fips": "12017",
+      "name": "Citrus County"
+    }
+  ],
+  "26220": [
+    {
+      "fips": "41027",
+      "name": "Hood River County"
+    }
+  ],
+  "26300": [
+    {
+      "fips": "05051",
+      "name": "Garland County"
+    }
+  ],
+  "26340": [
+    {
+      "fips": "26061",
+      "name": "Houghton County"
+    },
+    {
+      "fips": "26083",
+      "name": "Keweenaw County"
+    }
+  ],
+  "26380": [
+    {
+      "fips": "22057",
+      "name": "Lafourche Parish"
+    },
+    {
+      "fips": "22109",
+      "name": "Terrebonne Parish"
+    }
+  ],
+  "26420": [
+    {
+      "fips": "48015",
+      "name": "Austin County"
+    },
+    {
+      "fips": "48039",
+      "name": "Brazoria County"
+    },
+    {
+      "fips": "48071",
+      "name": "Chambers County"
+    },
+    {
+      "fips": "48157",
+      "name": "Fort Bend County"
+    },
+    {
+      "fips": "48167",
+      "name": "Galveston County"
+    },
+    {
+      "fips": "48201",
+      "name": "Harris County"
+    },
+    {
+      "fips": "48291",
+      "name": "Liberty County"
+    },
+    {
+      "fips": "48339",
+      "name": "Montgomery County"
+    },
+    {
+      "fips": "48407",
+      "name": "San Jacinto County"
+    },
+    {
+      "fips": "48473",
+      "name": "Waller County"
+    }
+  ],
+  "26460": [
+    {
+      "fips": "36021",
+      "name": "Columbia County"
+    }
+  ],
+  "26500": [
+    {
+      "fips": "42061",
+      "name": "Huntingdon County"
+    }
+  ],
+  "26540": [
+    {
+      "fips": "18069",
+      "name": "Huntington County"
+    }
+  ],
+  "26580": [
+    {
+      "fips": "21019",
+      "name": "Boyd County"
+    },
+    {
+      "fips": "21043",
+      "name": "Carter County"
+    },
+    {
+      "fips": "21089",
+      "name": "Greenup County"
+    },
+    {
+      "fips": "21127",
+      "name": "Lawrence County"
+    },
+    {
+      "fips": "39087",
+      "name": "Lawrence County"
+    },
+    {
+      "fips": "54011",
+      "name": "Cabell County"
+    },
+    {
+      "fips": "54079",
+      "name": "Putnam County"
+    },
+    {
+      "fips": "54099",
+      "name": "Wayne County"
+    }
+  ],
+  "26620": [
+    {
+      "fips": "01083",
+      "name": "Limestone County"
+    },
+    {
+      "fips": "01089",
+      "name": "Madison County"
+    }
+  ],
+  "26660": [
+    {
+      "fips": "48471",
+      "name": "Walker County"
+    }
+  ],
+  "26700": [
+    {
+      "fips": "46005",
+      "name": "Beadle County"
+    }
+  ],
+  "26740": [
+    {
+      "fips": "20155",
+      "name": "Reno County"
+    }
+  ],
+  "26780": [
+    {
+      "fips": "27085",
+      "name": "McLeod County"
+    }
+  ],
+  "26820": [
+    {
+      "fips": "16019",
+      "name": "Bonneville County"
+    },
+    {
+      "fips": "16023",
+      "name": "Butte County"
+    },
+    {
+      "fips": "16051",
+      "name": "Jefferson County"
+    }
+  ],
+  "26860": [
+    {
+      "fips": "42063",
+      "name": "Indiana County"
+    }
+  ],
+  "26900": [
+    {
+      "fips": "18011",
+      "name": "Boone County"
+    },
+    {
+      "fips": "18013",
+      "name": "Brown County"
+    },
+    {
+      "fips": "18057",
+      "name": "Hamilton County"
+    },
+    {
+      "fips": "18059",
+      "name": "Hancock County"
+    },
+    {
+      "fips": "18063",
+      "name": "Hendricks County"
+    },
+    {
+      "fips": "18081",
+      "name": "Johnson County"
+    },
+    {
+      "fips": "18095",
+      "name": "Madison County"
+    },
+    {
+      "fips": "18097",
+      "name": "Marion County"
+    },
+    {
+      "fips": "18109",
+      "name": "Morgan County"
+    },
+    {
+      "fips": "18145",
+      "name": "Shelby County"
+    },
+    {
+      "fips": "18159",
+      "name": "Tipton County"
+    }
+  ],
+  "26980": [
+    {
+      "fips": "19103",
+      "name": "Johnson County"
+    },
+    {
+      "fips": "19183",
+      "name": "Washington County"
+    }
+  ],
+  "27020": [
+    {
+      "fips": "26043",
+      "name": "Dickinson County"
+    },
+    {
+      "fips": "55037",
+      "name": "Florence County"
+    }
+  ],
+  "27060": [
+    {
+      "fips": "36109",
+      "name": "Tompkins County"
+    }
+  ],
+  "27100": [
+    {
+      "fips": "26075",
+      "name": "Jackson County"
+    }
+  ],
+  "27140": [
+    {
+      "fips": "28029",
+      "name": "Copiah County"
+    },
+    {
+      "fips": "28049",
+      "name": "Hinds County"
+    },
+    {
+      "fips": "28051",
+      "name": "Holmes County"
+    },
+    {
+      "fips": "28089",
+      "name": "Madison County"
+    },
+    {
+      "fips": "28121",
+      "name": "Rankin County"
+    },
+    {
+      "fips": "28123",
+      "name": "Scott County"
+    },
+    {
+      "fips": "28127",
+      "name": "Simpson County"
+    },
+    {
+      "fips": "28163",
+      "name": "Yazoo County"
+    }
+  ],
+  "27180": [
+    {
+      "fips": "47023",
+      "name": "Chester County"
+    },
+    {
+      "fips": "47033",
+      "name": "Crockett County"
+    },
+    {
+      "fips": "47053",
+      "name": "Gibson County"
+    },
+    {
+      "fips": "47113",
+      "name": "Madison County"
+    }
+  ],
+  "27220": [
+    {
+      "fips": "16081",
+      "name": "Teton County"
+    },
+    {
+      "fips": "56039",
+      "name": "Teton County"
+    }
+  ],
+  "27260": [
+    {
+      "fips": "12003",
+      "name": "Baker County"
+    },
+    {
+      "fips": "12019",
+      "name": "Clay County"
+    },
+    {
+      "fips": "12031",
+      "name": "Duval County"
+    },
+    {
+      "fips": "12089",
+      "name": "Nassau County"
+    },
+    {
+      "fips": "12109",
+      "name": "St. Johns County"
+    }
+  ],
+  "27300": [
+    {
+      "fips": "17137",
+      "name": "Morgan County"
+    },
+    {
+      "fips": "17171",
+      "name": "Scott County"
+    }
+  ],
+  "27340": [
+    {
+      "fips": "37133",
+      "name": "Onslow County"
+    }
+  ],
+  "27380": [
+    {
+      "fips": "48073",
+      "name": "Cherokee County"
+    }
+  ],
+  "27420": [
+    {
+      "fips": "38093",
+      "name": "Stutsman County"
+    }
+  ],
+  "27460": [
+    {
+      "fips": "36013",
+      "name": "Chautauqua County"
+    }
+  ],
+  "27500": [
+    {
+      "fips": "55105",
+      "name": "Rock County"
+    }
+  ],
+  "27540": [
+    {
+      "fips": "18037",
+      "name": "Dubois County"
+    }
+  ],
+  "27600": [
+    {
+      "fips": "13157",
+      "name": "Jackson County"
+    }
+  ],
+  "27620": [
+    {
+      "fips": "29027",
+      "name": "Callaway County"
+    },
+    {
+      "fips": "29051",
+      "name": "Cole County"
+    },
+    {
+      "fips": "29135",
+      "name": "Moniteau County"
+    },
+    {
+      "fips": "29151",
+      "name": "Osage County"
+    }
+  ],
+  "27700": [
+    {
+      "fips": "13305",
+      "name": "Wayne County"
+    }
+  ],
+  "27740": [
+    {
+      "fips": "47019",
+      "name": "Carter County"
+    },
+    {
+      "fips": "47171",
+      "name": "Unicoi County"
+    },
+    {
+      "fips": "47179",
+      "name": "Washington County"
+    }
+  ],
+  "27780": [
+    {
+      "fips": "42021",
+      "name": "Cambria County"
+    }
+  ],
+  "27860": [
+    {
+      "fips": "05031",
+      "name": "Craighead County"
+    },
+    {
+      "fips": "05111",
+      "name": "Poinsett County"
+    }
+  ],
+  "27900": [
+    {
+      "fips": "20021",
+      "name": "Cherokee County"
+    },
+    {
+      "fips": "29097",
+      "name": "Jasper County"
+    },
+    {
+      "fips": "29145",
+      "name": "Newton County"
+    }
+  ],
+  "27940": [
+    {
+      "fips": "02110",
+      "name": "Juneau City and Borough"
+    }
+  ],
+  "27980": [
+    {
+      "fips": "15005",
+      "name": "Kalawao County"
+    },
+    {
+      "fips": "15009",
+      "name": "Maui County"
+    }
+  ],
+  "28020": [
+    {
+      "fips": "26077",
+      "name": "Kalamazoo County"
+    }
+  ],
+  "28060": [
+    {
+      "fips": "30029",
+      "name": "Flathead County"
+    }
+  ],
+  "28100": [
+    {
+      "fips": "17091",
+      "name": "Kankakee County"
+    }
+  ],
+  "28140": [
+    {
+      "fips": "20091",
+      "name": "Johnson County"
+    },
+    {
+      "fips": "20103",
+      "name": "Leavenworth County"
+    },
+    {
+      "fips": "20107",
+      "name": "Linn County"
+    },
+    {
+      "fips": "20121",
+      "name": "Miami County"
+    },
+    {
+      "fips": "20209",
+      "name": "Wyandotte County"
+    },
+    {
+      "fips": "29013",
+      "name": "Bates County"
+    },
+    {
+      "fips": "29025",
+      "name": "Caldwell County"
+    },
+    {
+      "fips": "29037",
+      "name": "Cass County"
+    },
+    {
+      "fips": "29047",
+      "name": "Clay County"
+    },
+    {
+      "fips": "29049",
+      "name": "Clinton County"
+    },
+    {
+      "fips": "29095",
+      "name": "Jackson County"
+    },
+    {
+      "fips": "29107",
+      "name": "Lafayette County"
+    },
+    {
+      "fips": "29165",
+      "name": "Platte County"
+    },
+    {
+      "fips": "29177",
+      "name": "Ray County"
+    }
+  ],
+  "28180": [
+    {
+      "fips": "15007",
+      "name": "Kauai County"
+    }
+  ],
+  "28260": [
+    {
+      "fips": "31019",
+      "name": "Buffalo County"
+    },
+    {
+      "fips": "31099",
+      "name": "Kearney County"
+    }
+  ],
+  "28300": [
+    {
+      "fips": "33005",
+      "name": "Cheshire County"
+    }
+  ],
+  "28340": [
+    {
+      "fips": "18113",
+      "name": "Noble County"
+    }
+  ],
+  "28380": [
+    {
+      "fips": "29069",
+      "name": "Dunklin County"
+    }
+  ],
+  "28420": [
+    {
+      "fips": "53005",
+      "name": "Benton County"
+    },
+    {
+      "fips": "53021",
+      "name": "Franklin County"
+    }
+  ],
+  "28450": [
+    {
+      "fips": "55059",
+      "name": "Kenosha County"
+    }
+  ],
+  "28500": [
+    {
+      "fips": "48265",
+      "name": "Kerr County"
+    }
+  ],
+  "28540": [
+    {
+      "fips": "02130",
+      "name": "Ketchikan Gateway Borough"
+    }
+  ],
+  "28580": [
+    {
+      "fips": "12087",
+      "name": "Monroe County"
+    }
+  ],
+  "28620": [
+    {
+      "fips": "37055",
+      "name": "Dare County"
+    }
+  ],
+  "28660": [
+    {
+      "fips": "48027",
+      "name": "Bell County"
+    },
+    {
+      "fips": "48099",
+      "name": "Coryell County"
+    },
+    {
+      "fips": "48281",
+      "name": "Lampasas County"
+    }
+  ],
+  "28680": [
+    {
+      "fips": "13039",
+      "name": "Camden County"
+    }
+  ],
+  "28700": [
+    {
+      "fips": "47073",
+      "name": "Hawkins County"
+    },
+    {
+      "fips": "47163",
+      "name": "Sullivan County"
+    },
+    {
+      "fips": "51169",
+      "name": "Scott County"
+    },
+    {
+      "fips": "51191",
+      "name": "Washington County"
+    },
+    {
+      "fips": "51520",
+      "name": "Bristol city"
+    }
+  ],
+  "28740": [
+    {
+      "fips": "36111",
+      "name": "Ulster County"
+    }
+  ],
+  "28780": [
+    {
+      "fips": "48273",
+      "name": "Kleberg County"
+    }
+  ],
+  "28820": [
+    {
+      "fips": "37107",
+      "name": "Lenoir County"
+    }
+  ],
+  "28860": [
+    {
+      "fips": "29001",
+      "name": "Adair County"
+    },
+    {
+      "fips": "29197",
+      "name": "Schuyler County"
+    }
+  ],
+  "28880": [
+    {
+      "fips": "36027",
+      "name": "Dutchess County"
+    },
+    {
+      "fips": "36071",
+      "name": "Orange County"
+    }
+  ],
+  "28900": [
+    {
+      "fips": "41035",
+      "name": "Klamath County"
+    }
+  ],
+  "28940": [
+    {
+      "fips": "47001",
+      "name": "Anderson County"
+    },
+    {
+      "fips": "47009",
+      "name": "Blount County"
+    },
+    {
+      "fips": "47013",
+      "name": "Campbell County"
+    },
+    {
+      "fips": "47057",
+      "name": "Grainger County"
+    },
+    {
+      "fips": "47093",
+      "name": "Knox County"
+    },
+    {
+      "fips": "47105",
+      "name": "Loudon County"
+    },
+    {
+      "fips": "47129",
+      "name": "Morgan County"
+    },
+    {
+      "fips": "47145",
+      "name": "Roane County"
+    },
+    {
+      "fips": "47173",
+      "name": "Union County"
+    }
+  ],
+  "29020": [
+    {
+      "fips": "18067",
+      "name": "Howard County"
+    }
+  ],
+  "29060": [
+    {
+      "fips": "33001",
+      "name": "Belknap County"
+    }
+  ],
+  "29100": [
+    {
+      "fips": "27055",
+      "name": "Houston County"
+    },
+    {
+      "fips": "55063",
+      "name": "La Crosse County"
+    },
+    {
+      "fips": "55123",
+      "name": "Vernon County"
+    }
+  ],
+  "29180": [
+    {
+      "fips": "22001",
+      "name": "Acadia Parish"
+    },
+    {
+      "fips": "22055",
+      "name": "Lafayette Parish"
+    },
+    {
+      "fips": "22099",
+      "name": "St. Martin Parish"
+    },
+    {
+      "fips": "22113",
+      "name": "Vermilion Parish"
+    }
+  ],
+  "29200": [
+    {
+      "fips": "18007",
+      "name": "Benton County"
+    },
+    {
+      "fips": "18015",
+      "name": "Carroll County"
+    },
+    {
+      "fips": "18157",
+      "name": "Tippecanoe County"
+    },
+    {
+      "fips": "18171",
+      "name": "Warren County"
+    }
+  ],
+  "29260": [
+    {
+      "fips": "41061",
+      "name": "Union County"
+    }
+  ],
+  "29300": [
+    {
+      "fips": "01017",
+      "name": "Chambers County"
+    },
+    {
+      "fips": "13285",
+      "name": "Troup County"
+    }
+  ],
+  "29340": [
+    {
+      "fips": "22019",
+      "name": "Calcasieu Parish"
+    },
+    {
+      "fips": "22023",
+      "name": "Cameron Parish"
+    },
+    {
+      "fips": "22053",
+      "name": "Jefferson Davis Parish"
+    }
+  ],
+  "29380": [
+    {
+      "fips": "12023",
+      "name": "Columbia County"
+    }
+  ],
+  "29420": [
+    {
+      "fips": "04015",
+      "name": "Mohave County"
+    }
+  ],
+  "29460": [
+    {
+      "fips": "12105",
+      "name": "Polk County"
+    }
+  ],
+  "29470": [
+    {
+      "fips": "51137",
+      "name": "Orange County"
+    }
+  ],
+  "29540": [
+    {
+      "fips": "42071",
+      "name": "Lancaster County"
+    }
+  ],
+  "29620": [
+    {
+      "fips": "26037",
+      "name": "Clinton County"
+    },
+    {
+      "fips": "26045",
+      "name": "Eaton County"
+    },
+    {
+      "fips": "26065",
+      "name": "Ingham County"
+    }
+  ],
+  "29660": [
+    {
+      "fips": "56001",
+      "name": "Albany County"
+    }
+  ],
+  "29700": [
+    {
+      "fips": "48479",
+      "name": "Webb County"
+    }
+  ],
+  "29720": [
+    {
+      "fips": "72081",
+      "name": "Lares Municipio"
+    }
+  ],
+  "29740": [
+    {
+      "fips": "35013",
+      "name": "Do\u00f1a Ana County"
+    }
+  ],
+  "29780": [
+    {
+      "fips": "35033",
+      "name": "Mora County"
+    },
+    {
+      "fips": "35047",
+      "name": "San Miguel County"
+    }
+  ],
+  "29820": [
+    {
+      "fips": "32003",
+      "name": "Clark County"
+    }
+  ],
+  "29860": [
+    {
+      "fips": "28061",
+      "name": "Jasper County"
+    },
+    {
+      "fips": "28067",
+      "name": "Jones County"
+    }
+  ],
+  "29900": [
+    {
+      "fips": "37165",
+      "name": "Scotland County"
+    }
+  ],
+  "29940": [
+    {
+      "fips": "20045",
+      "name": "Douglas County"
+    }
+  ],
+  "29980": [
+    {
+      "fips": "47099",
+      "name": "Lawrence County"
+    }
+  ],
+  "30020": [
+    {
+      "fips": "40031",
+      "name": "Comanche County"
+    },
+    {
+      "fips": "40033",
+      "name": "Cotton County"
+    }
+  ],
+  "30060": [
+    {
+      "fips": "29105",
+      "name": "Laclede County"
+    }
+  ],
+  "30140": [
+    {
+      "fips": "42075",
+      "name": "Lebanon County"
+    }
+  ],
+  "30150": [
+    {
+      "fips": "33009",
+      "name": "Grafton County"
+    },
+    {
+      "fips": "33019",
+      "name": "Sullivan County"
+    },
+    {
+      "fips": "50017",
+      "name": "Orange County"
+    },
+    {
+      "fips": "50027",
+      "name": "Windsor County"
+    }
+  ],
+  "30180": [
+    {
+      "fips": "19149",
+      "name": "Plymouth County"
+    }
+  ],
+  "30260": [
+    {
+      "fips": "42119",
+      "name": "Union County"
+    }
+  ],
+  "30280": [
+    {
+      "fips": "47117",
+      "name": "Marshall County"
+    }
+  ],
+  "30300": [
+    {
+      "fips": "16069",
+      "name": "Nez Perce County"
+    },
+    {
+      "fips": "53003",
+      "name": "Asotin County"
+    }
+  ],
+  "30340": [
+    {
+      "fips": "23001",
+      "name": "Androscoggin County"
+    }
+  ],
+  "30380": [
+    {
+      "fips": "42087",
+      "name": "Mifflin County"
+    }
+  ],
+  "30420": [
+    {
+      "fips": "31047",
+      "name": "Dawson County"
+    },
+    {
+      "fips": "31073",
+      "name": "Gosper County"
+    }
+  ],
+  "30460": [
+    {
+      "fips": "21017",
+      "name": "Bourbon County"
+    },
+    {
+      "fips": "21049",
+      "name": "Clark County"
+    },
+    {
+      "fips": "21067",
+      "name": "Fayette County"
+    },
+    {
+      "fips": "21113",
+      "name": "Jessamine County"
+    },
+    {
+      "fips": "21209",
+      "name": "Scott County"
+    },
+    {
+      "fips": "21239",
+      "name": "Woodford County"
+    }
+  ],
+  "30500": [
+    {
+      "fips": "24009",
+      "name": "Calvert County"
+    },
+    {
+      "fips": "24037",
+      "name": "St. Mary's County"
+    }
+  ],
+  "30580": [
+    {
+      "fips": "20175",
+      "name": "Seward County"
+    }
+  ],
+  "30620": [
+    {
+      "fips": "39003",
+      "name": "Allen County"
+    }
+  ],
+  "30660": [
+    {
+      "fips": "17107",
+      "name": "Logan County"
+    }
+  ],
+  "30700": [
+    {
+      "fips": "31109",
+      "name": "Lancaster County"
+    },
+    {
+      "fips": "31159",
+      "name": "Seward County"
+    }
+  ],
+  "30780": [
+    {
+      "fips": "05045",
+      "name": "Faulkner County"
+    },
+    {
+      "fips": "05053",
+      "name": "Grant County"
+    },
+    {
+      "fips": "05085",
+      "name": "Lonoke County"
+    },
+    {
+      "fips": "05105",
+      "name": "Perry County"
+    },
+    {
+      "fips": "05119",
+      "name": "Pulaski County"
+    },
+    {
+      "fips": "05125",
+      "name": "Saline County"
+    }
+  ],
+  "30820": [
+    {
+      "fips": "42035",
+      "name": "Clinton County"
+    }
+  ],
+  "30860": [
+    {
+      "fips": "16041",
+      "name": "Franklin County"
+    },
+    {
+      "fips": "49005",
+      "name": "Cache County"
+    }
+  ],
+  "30900": [
+    {
+      "fips": "18017",
+      "name": "Cass County"
+    }
+  ],
+  "30980": [
+    {
+      "fips": "48183",
+      "name": "Gregg County"
+    },
+    {
+      "fips": "48203",
+      "name": "Harrison County"
+    },
+    {
+      "fips": "48401",
+      "name": "Rusk County"
+    },
+    {
+      "fips": "48459",
+      "name": "Upshur County"
+    }
+  ],
+  "31020": [
+    {
+      "fips": "53015",
+      "name": "Cowlitz County"
+    }
+  ],
+  "31060": [
+    {
+      "fips": "35028",
+      "name": "Los Alamos County"
+    }
+  ],
+  "31080": [
+    {
+      "fips": "06059",
+      "name": "Orange County"
+    },
+    {
+      "fips": "06037",
+      "name": "Los Angeles County"
+    }
+  ],
+  "31140": [
+    {
+      "fips": "18019",
+      "name": "Clark County"
+    },
+    {
+      "fips": "18043",
+      "name": "Floyd County"
+    },
+    {
+      "fips": "18061",
+      "name": "Harrison County"
+    },
+    {
+      "fips": "18175",
+      "name": "Washington County"
+    },
+    {
+      "fips": "21029",
+      "name": "Bullitt County"
+    },
+    {
+      "fips": "21103",
+      "name": "Henry County"
+    },
+    {
+      "fips": "21111",
+      "name": "Jefferson County"
+    },
+    {
+      "fips": "21163",
+      "name": "Meade County"
+    },
+    {
+      "fips": "21179",
+      "name": "Nelson County"
+    },
+    {
+      "fips": "21185",
+      "name": "Oldham County"
+    },
+    {
+      "fips": "21211",
+      "name": "Shelby County"
+    },
+    {
+      "fips": "21215",
+      "name": "Spencer County"
+    }
+  ],
+  "31180": [
+    {
+      "fips": "48079",
+      "name": "Cochran County"
+    },
+    {
+      "fips": "48107",
+      "name": "Crosby County"
+    },
+    {
+      "fips": "48169",
+      "name": "Garza County"
+    },
+    {
+      "fips": "48219",
+      "name": "Hockley County"
+    },
+    {
+      "fips": "48303",
+      "name": "Lubbock County"
+    },
+    {
+      "fips": "48305",
+      "name": "Lynn County"
+    }
+  ],
+  "31220": [
+    {
+      "fips": "26105",
+      "name": "Mason County"
+    }
+  ],
+  "31260": [
+    {
+      "fips": "48005",
+      "name": "Angelina County"
+    }
+  ],
+  "31300": [
+    {
+      "fips": "37155",
+      "name": "Robeson County"
+    }
+  ],
+  "31340": [
+    {
+      "fips": "51009",
+      "name": "Amherst County"
+    },
+    {
+      "fips": "51011",
+      "name": "Appomattox County"
+    },
+    {
+      "fips": "51019",
+      "name": "Bedford County"
+    },
+    {
+      "fips": "51031",
+      "name": "Campbell County"
+    },
+    {
+      "fips": "51680",
+      "name": "Lynchburg city"
+    }
+  ],
+  "31380": [
+    {
+      "fips": "17109",
+      "name": "McDonough County"
+    }
+  ],
+  "31420": [
+    {
+      "fips": "13021",
+      "name": "Bibb County"
+    },
+    {
+      "fips": "13079",
+      "name": "Crawford County"
+    },
+    {
+      "fips": "13169",
+      "name": "Jones County"
+    },
+    {
+      "fips": "13207",
+      "name": "Monroe County"
+    },
+    {
+      "fips": "13289",
+      "name": "Twiggs County"
+    }
+  ],
+  "31500": [
+    {
+      "fips": "18077",
+      "name": "Jefferson County"
+    }
+  ],
+  "31540": [
+    {
+      "fips": "55021",
+      "name": "Columbia County"
+    },
+    {
+      "fips": "55025",
+      "name": "Dane County"
+    },
+    {
+      "fips": "55045",
+      "name": "Green County"
+    },
+    {
+      "fips": "55049",
+      "name": "Iowa County"
+    }
+  ],
+  "31580": [
+    {
+      "fips": "21107",
+      "name": "Hopkins County"
+    }
+  ],
+  "31620": [
+    {
+      "fips": "05027",
+      "name": "Columbia County"
+    }
+  ],
+  "31680": [
+    {
+      "fips": "05059",
+      "name": "Hot Spring County"
+    }
+  ],
+  "31700": [
+    {
+      "fips": "33011",
+      "name": "Hillsborough County"
+    }
+  ],
+  "31740": [
+    {
+      "fips": "20061",
+      "name": "Geary County"
+    },
+    {
+      "fips": "20149",
+      "name": "Pottawatomie County"
+    },
+    {
+      "fips": "20161",
+      "name": "Riley County"
+    }
+  ],
+  "31820": [
+    {
+      "fips": "55071",
+      "name": "Manitowoc County"
+    }
+  ],
+  "31860": [
+    {
+      "fips": "27013",
+      "name": "Blue Earth County"
+    },
+    {
+      "fips": "27103",
+      "name": "Nicollet County"
+    }
+  ],
+  "31900": [
+    {
+      "fips": "39139",
+      "name": "Richland County"
+    }
+  ],
+  "31930": [
+    {
+      "fips": "39167",
+      "name": "Washington County"
+    }
+  ],
+  "31940": [
+    {
+      "fips": "26109",
+      "name": "Menominee County"
+    },
+    {
+      "fips": "55075",
+      "name": "Marinette County"
+    }
+  ],
+  "31980": [
+    {
+      "fips": "18053",
+      "name": "Grant County"
+    }
+  ],
+  "32000": [
+    {
+      "fips": "37111",
+      "name": "McDowell County"
+    }
+  ],
+  "32020": [
+    {
+      "fips": "39101",
+      "name": "Marion County"
+    }
+  ],
+  "32060": [
+    {
+      "fips": "17199",
+      "name": "Williamson County"
+    }
+  ],
+  "32100": [
+    {
+      "fips": "26103",
+      "name": "Marquette County"
+    }
+  ],
+  "32140": [
+    {
+      "fips": "27083",
+      "name": "Lyon County"
+    }
+  ],
+  "32180": [
+    {
+      "fips": "29195",
+      "name": "Saline County"
+    }
+  ],
+  "32260": [
+    {
+      "fips": "19127",
+      "name": "Marshall County"
+    }
+  ],
+  "32280": [
+    {
+      "fips": "47183",
+      "name": "Weakley County"
+    }
+  ],
+  "32300": [
+    {
+      "fips": "51089",
+      "name": "Henry County"
+    },
+    {
+      "fips": "51690",
+      "name": "Martinsville city"
+    }
+  ],
+  "32340": [
+    {
+      "fips": "29147",
+      "name": "Nodaway County"
+    }
+  ],
+  "32380": [
+    {
+      "fips": "19033",
+      "name": "Cerro Gordo County"
+    },
+    {
+      "fips": "19195",
+      "name": "Worth County"
+    }
+  ],
+  "32390": [
+    {
+      "fips": "36089",
+      "name": "St. Lawrence County"
+    }
+  ],
+  "32420": [
+    {
+      "fips": "72023",
+      "name": "Cabo Rojo Municipio"
+    },
+    {
+      "fips": "72067",
+      "name": "Hormigueros Municipio"
+    },
+    {
+      "fips": "72079",
+      "name": "Lajas Municipio"
+    },
+    {
+      "fips": "72097",
+      "name": "Mayag\u00fcez Municipio"
+    },
+    {
+      "fips": "72121",
+      "name": "Sabana Grande Municipio"
+    },
+    {
+      "fips": "72125",
+      "name": "San Germ\u00e1n Municipio"
+    }
+  ],
+  "32460": [
+    {
+      "fips": "21083",
+      "name": "Graves County"
+    }
+  ],
+  "32540": [
+    {
+      "fips": "40121",
+      "name": "Pittsburg County"
+    }
+  ],
+  "32580": [
+    {
+      "fips": "48215",
+      "name": "Hidalgo County"
+    }
+  ],
+  "32620": [
+    {
+      "fips": "28113",
+      "name": "Pike County"
+    },
+    {
+      "fips": "28147",
+      "name": "Walthall County"
+    }
+  ],
+  "32660": [
+    {
+      "fips": "47177",
+      "name": "Warren County"
+    }
+  ],
+  "32700": [
+    {
+      "fips": "20113",
+      "name": "McPherson County"
+    }
+  ],
+  "32740": [
+    {
+      "fips": "42039",
+      "name": "Crawford County"
+    }
+  ],
+  "32780": [
+    {
+      "fips": "41029",
+      "name": "Jackson County"
+    }
+  ],
+  "32820": [
+    {
+      "fips": "05035",
+      "name": "Crittenden County"
+    },
+    {
+      "fips": "28009",
+      "name": "Benton County"
+    },
+    {
+      "fips": "28033",
+      "name": "DeSoto County"
+    },
+    {
+      "fips": "28093",
+      "name": "Marshall County"
+    },
+    {
+      "fips": "28137",
+      "name": "Tate County"
+    },
+    {
+      "fips": "28143",
+      "name": "Tunica County"
+    },
+    {
+      "fips": "47047",
+      "name": "Fayette County"
+    },
+    {
+      "fips": "47157",
+      "name": "Shelby County"
+    },
+    {
+      "fips": "47167",
+      "name": "Tipton County"
+    }
+  ],
+  "32860": [
+    {
+      "fips": "55033",
+      "name": "Dunn County"
+    }
+  ],
+  "32900": [
+    {
+      "fips": "06047",
+      "name": "Merced County"
+    }
+  ],
+  "32940": [
+    {
+      "fips": "28023",
+      "name": "Clarke County"
+    },
+    {
+      "fips": "28075",
+      "name": "Lauderdale County"
+    }
+  ],
+  "33020": [
+    {
+      "fips": "29007",
+      "name": "Audrain County"
+    }
+  ],
+  "33060": [
+    {
+      "fips": "40115",
+      "name": "Ottawa County"
+    }
+  ],
+  "33100": [
+    {
+      "fips": "12011",
+      "name": "Broward County"
+    },
+    {
+      "fips": "12086",
+      "name": "Miami-Dade County"
+    },
+    {
+      "fips": "12099",
+      "name": "Palm Beach County"
+    }
+  ],
+  "33140": [
+    {
+      "fips": "18091",
+      "name": "LaPorte County"
+    }
+  ],
+  "33180": [
+    {
+      "fips": "21013",
+      "name": "Bell County"
+    }
+  ],
+  "33220": [
+    {
+      "fips": "26111",
+      "name": "Midland County"
+    }
+  ],
+  "33260": [
+    {
+      "fips": "48317",
+      "name": "Martin County"
+    },
+    {
+      "fips": "48329",
+      "name": "Midland County"
+    }
+  ],
+  "33300": [
+    {
+      "fips": "13009",
+      "name": "Baldwin County"
+    }
+  ],
+  "33340": [
+    {
+      "fips": "55079",
+      "name": "Milwaukee County"
+    },
+    {
+      "fips": "55089",
+      "name": "Ozaukee County"
+    },
+    {
+      "fips": "55131",
+      "name": "Washington County"
+    },
+    {
+      "fips": "55133",
+      "name": "Waukesha County"
+    }
+  ],
+  "33380": [
+    {
+      "fips": "22119",
+      "name": "Webster Parish"
+    }
+  ],
+  "33420": [
+    {
+      "fips": "48363",
+      "name": "Palo Pinto County"
+    }
+  ],
+  "33460": [
+    {
+      "fips": "27003",
+      "name": "Anoka County"
+    },
+    {
+      "fips": "27019",
+      "name": "Carver County"
+    },
+    {
+      "fips": "27025",
+      "name": "Chisago County"
+    },
+    {
+      "fips": "27037",
+      "name": "Dakota County"
+    },
+    {
+      "fips": "27053",
+      "name": "Hennepin County"
+    },
+    {
+      "fips": "27059",
+      "name": "Isanti County"
+    },
+    {
+      "fips": "27079",
+      "name": "Le Sueur County"
+    },
+    {
+      "fips": "27095",
+      "name": "Mille Lacs County"
+    },
+    {
+      "fips": "27123",
+      "name": "Ramsey County"
+    },
+    {
+      "fips": "27139",
+      "name": "Scott County"
+    },
+    {
+      "fips": "27141",
+      "name": "Sherburne County"
+    },
+    {
+      "fips": "27163",
+      "name": "Washington County"
+    },
+    {
+      "fips": "27171",
+      "name": "Wright County"
+    },
+    {
+      "fips": "55093",
+      "name": "Pierce County"
+    },
+    {
+      "fips": "55109",
+      "name": "St. Croix County"
+    }
+  ],
+  "33500": [
+    {
+      "fips": "38049",
+      "name": "McHenry County"
+    },
+    {
+      "fips": "38075",
+      "name": "Renville County"
+    },
+    {
+      "fips": "38101",
+      "name": "Ward County"
+    }
+  ],
+  "33540": [
+    {
+      "fips": "30061",
+      "name": "Mineral County"
+    },
+    {
+      "fips": "30063",
+      "name": "Missoula County"
+    }
+  ],
+  "33580": [
+    {
+      "fips": "46035",
+      "name": "Davison County"
+    },
+    {
+      "fips": "46061",
+      "name": "Hanson County"
+    },
+    {
+      "fips": "46111",
+      "name": "Sanborn County"
+    }
+  ],
+  "33620": [
+    {
+      "fips": "29175",
+      "name": "Randolph County"
+    }
+  ],
+  "33660": [
+    {
+      "fips": "01097",
+      "name": "Mobile County"
+    }
+  ],
+  "33700": [
+    {
+      "fips": "06099",
+      "name": "Stanislaus County"
+    }
+  ],
+  "33740": [
+    {
+      "fips": "22067",
+      "name": "Morehouse Parish"
+    },
+    {
+      "fips": "22073",
+      "name": "Ouachita Parish"
+    },
+    {
+      "fips": "22083",
+      "name": "Richland Parish"
+    },
+    {
+      "fips": "22111",
+      "name": "Union Parish"
+    }
+  ],
+  "33780": [
+    {
+      "fips": "26115",
+      "name": "Monroe County"
+    }
+  ],
+  "33860": [
+    {
+      "fips": "01001",
+      "name": "Autauga County"
+    },
+    {
+      "fips": "01051",
+      "name": "Elmore County"
+    },
+    {
+      "fips": "01085",
+      "name": "Lowndes County"
+    },
+    {
+      "fips": "01101",
+      "name": "Montgomery County"
+    }
+  ],
+  "33900": [
+    {
+      "fips": "18181",
+      "name": "White County"
+    }
+  ],
+  "33910": [
+    {
+      "fips": "36105",
+      "name": "Sullivan County"
+    }
+  ],
+  "33940": [
+    {
+      "fips": "08085",
+      "name": "Montrose County"
+    }
+  ],
+  "33980": [
+    {
+      "fips": "37031",
+      "name": "Carteret County"
+    }
+  ],
+  "34020": [
+    {
+      "fips": "22101",
+      "name": "St. Mary Parish"
+    }
+  ],
+  "34060": [
+    {
+      "fips": "54061",
+      "name": "Monongalia County"
+    },
+    {
+      "fips": "54077",
+      "name": "Preston County"
+    }
+  ],
+  "34100": [
+    {
+      "fips": "47063",
+      "name": "Hamblen County"
+    },
+    {
+      "fips": "47089",
+      "name": "Jefferson County"
+    }
+  ],
+  "34140": [
+    {
+      "fips": "16057",
+      "name": "Latah County"
+    }
+  ],
+  "34180": [
+    {
+      "fips": "53025",
+      "name": "Grant County"
+    }
+  ],
+  "34220": [
+    {
+      "fips": "13071",
+      "name": "Colquitt County"
+    }
+  ],
+  "34260": [
+    {
+      "fips": "05005",
+      "name": "Baxter County"
+    }
+  ],
+  "34300": [
+    {
+      "fips": "16039",
+      "name": "Elmore County"
+    }
+  ],
+  "34340": [
+    {
+      "fips": "37171",
+      "name": "Surry County"
+    }
+  ],
+  "34380": [
+    {
+      "fips": "26073",
+      "name": "Isabella County"
+    }
+  ],
+  "34420": [
+    {
+      "fips": "48063",
+      "name": "Camp County"
+    },
+    {
+      "fips": "48343",
+      "name": "Morris County"
+    },
+    {
+      "fips": "48449",
+      "name": "Titus County"
+    }
+  ],
+  "34460": [
+    {
+      "fips": "21011",
+      "name": "Bath County"
+    },
+    {
+      "fips": "21165",
+      "name": "Menifee County"
+    },
+    {
+      "fips": "21173",
+      "name": "Montgomery County"
+    }
+  ],
+  "34500": [
+    {
+      "fips": "17081",
+      "name": "Jefferson County"
+    }
+  ],
+  "34540": [
+    {
+      "fips": "39083",
+      "name": "Knox County"
+    }
+  ],
+  "34580": [
+    {
+      "fips": "53057",
+      "name": "Skagit County"
+    }
+  ],
+  "34620": [
+    {
+      "fips": "18035",
+      "name": "Delaware County"
+    }
+  ],
+  "34660": [
+    {
+      "fips": "21035",
+      "name": "Calloway County"
+    }
+  ],
+  "34680": [
+    {
+      "fips": "45043",
+      "name": "Georgetown County"
+    }
+  ],
+  "34700": [
+    {
+      "fips": "19139",
+      "name": "Muscatine County"
+    }
+  ],
+  "34740": [
+    {
+      "fips": "26121",
+      "name": "Muskegon County"
+    }
+  ],
+  "34780": [
+    {
+      "fips": "40101",
+      "name": "Muskogee County"
+    }
+  ],
+  "34820": [
+    {
+      "fips": "45051",
+      "name": "Horry County"
+    }
+  ],
+  "34860": [
+    {
+      "fips": "48347",
+      "name": "Nacogdoches County"
+    }
+  ],
+  "34880": [
+    {
+      "fips": "25019",
+      "name": "Nantucket County"
+    }
+  ],
+  "34900": [
+    {
+      "fips": "06055",
+      "name": "Napa County"
+    }
+  ],
+  "34940": [
+    {
+      "fips": "12021",
+      "name": "Collier County"
+    }
+  ],
+  "34980": [
+    {
+      "fips": "47015",
+      "name": "Cannon County"
+    },
+    {
+      "fips": "47021",
+      "name": "Cheatham County"
+    },
+    {
+      "fips": "47037",
+      "name": "Davidson County"
+    },
+    {
+      "fips": "47043",
+      "name": "Dickson County"
+    },
+    {
+      "fips": "47081",
+      "name": "Hickman County"
+    },
+    {
+      "fips": "47111",
+      "name": "Macon County"
+    },
+    {
+      "fips": "47119",
+      "name": "Maury County"
+    },
+    {
+      "fips": "47147",
+      "name": "Robertson County"
+    },
+    {
+      "fips": "47149",
+      "name": "Rutherford County"
+    },
+    {
+      "fips": "47159",
+      "name": "Smith County"
+    },
+    {
+      "fips": "47165",
+      "name": "Sumner County"
+    },
+    {
+      "fips": "47169",
+      "name": "Trousdale County"
+    },
+    {
+      "fips": "47187",
+      "name": "Williamson County"
+    },
+    {
+      "fips": "47189",
+      "name": "Wilson County"
+    }
+  ],
+  "35020": [
+    {
+      "fips": "22029",
+      "name": "Concordia Parish"
+    },
+    {
+      "fips": "28001",
+      "name": "Adams County"
+    },
+    {
+      "fips": "28063",
+      "name": "Jefferson County"
+    }
+  ],
+  "35060": [
+    {
+      "fips": "22069",
+      "name": "Natchitoches Parish"
+    }
+  ],
+  "35100": [
+    {
+      "fips": "37049",
+      "name": "Craven County"
+    },
+    {
+      "fips": "37103",
+      "name": "Jones County"
+    },
+    {
+      "fips": "37137",
+      "name": "Pamlico County"
+    }
+  ],
+  "35140": [
+    {
+      "fips": "45071",
+      "name": "Newberry County"
+    }
+  ],
+  "35220": [
+    {
+      "fips": "18065",
+      "name": "Henry County"
+    }
+  ],
+  "35300": [
+    {
+      "fips": "09170",
+      "name": "South Central Connecticut Planning Region"
+    }
+  ],
+  "35340": [
+    {
+      "fips": "22045",
+      "name": "Iberia Parish"
+    }
+  ],
+  "35380": [
+    {
+      "fips": "22051",
+      "name": "Jefferson Parish"
+    },
+    {
+      "fips": "22071",
+      "name": "Orleans Parish"
+    },
+    {
+      "fips": "22075",
+      "name": "Plaquemines Parish"
+    },
+    {
+      "fips": "22087",
+      "name": "St. Bernard Parish"
+    },
+    {
+      "fips": "22089",
+      "name": "St. Charles Parish"
+    },
+    {
+      "fips": "22093",
+      "name": "St. James Parish"
+    },
+    {
+      "fips": "22095",
+      "name": "St. John the Baptist Parish"
+    }
+  ],
+  "35420": [
+    {
+      "fips": "39157",
+      "name": "Tuscarawas County"
+    }
+  ],
+  "35440": [
+    {
+      "fips": "41041",
+      "name": "Lincoln County"
+    }
+  ],
+  "35460": [
+    {
+      "fips": "47029",
+      "name": "Cocke County"
+    }
+  ],
+  "35580": [
+    {
+      "fips": "27015",
+      "name": "Brown County"
+    }
+  ],
+  "35620": [
+    {
+      "fips": "34023",
+      "name": "Middlesex County"
+    },
+    {
+      "fips": "34025",
+      "name": "Monmouth County"
+    },
+    {
+      "fips": "34029",
+      "name": "Ocean County"
+    },
+    {
+      "fips": "34035",
+      "name": "Somerset County"
+    },
+    {
+      "fips": "36059",
+      "name": "Nassau County"
+    },
+    {
+      "fips": "36103",
+      "name": "Suffolk County"
+    },
+    {
+      "fips": "34013",
+      "name": "Essex County"
+    },
+    {
+      "fips": "34019",
+      "name": "Hunterdon County"
+    },
+    {
+      "fips": "34027",
+      "name": "Morris County"
+    },
+    {
+      "fips": "34037",
+      "name": "Sussex County"
+    },
+    {
+      "fips": "34039",
+      "name": "Union County"
+    },
+    {
+      "fips": "34003",
+      "name": "Bergen County"
+    },
+    {
+      "fips": "34017",
+      "name": "Hudson County"
+    },
+    {
+      "fips": "34031",
+      "name": "Passaic County"
+    },
+    {
+      "fips": "36005",
+      "name": "Bronx County"
+    },
+    {
+      "fips": "36047",
+      "name": "Kings County"
+    },
+    {
+      "fips": "36061",
+      "name": "New York County"
+    },
+    {
+      "fips": "36079",
+      "name": "Putnam County"
+    },
+    {
+      "fips": "36081",
+      "name": "Queens County"
+    },
+    {
+      "fips": "36085",
+      "name": "Richmond County"
+    },
+    {
+      "fips": "36087",
+      "name": "Rockland County"
+    },
+    {
+      "fips": "36119",
+      "name": "Westchester County"
+    }
+  ],
+  "35660": [
+    {
+      "fips": "26021",
+      "name": "Berrien County"
+    }
+  ],
+  "35700": [
+    {
+      "fips": "04023",
+      "name": "Santa Cruz County"
+    }
+  ],
+  "35740": [
+    {
+      "fips": "31119",
+      "name": "Madison County"
+    },
+    {
+      "fips": "31139",
+      "name": "Pierce County"
+    },
+    {
+      "fips": "31167",
+      "name": "Stanton County"
+    }
+  ],
+  "35820": [
+    {
+      "fips": "31111",
+      "name": "Lincoln County"
+    },
+    {
+      "fips": "31113",
+      "name": "Logan County"
+    }
+  ],
+  "35840": [
+    {
+      "fips": "12081",
+      "name": "Manatee County"
+    },
+    {
+      "fips": "12115",
+      "name": "Sarasota County"
+    }
+  ],
+  "35900": [
+    {
+      "fips": "37193",
+      "name": "Wilkes County"
+    }
+  ],
+  "35940": [
+    {
+      "fips": "39077",
+      "name": "Huron County"
+    }
+  ],
+  "35980": [
+    {
+      "fips": "09180",
+      "name": "Southeastern Connecticut Planning Region"
+    }
+  ],
+  "36020": [
+    {
+      "fips": "53029",
+      "name": "Island County"
+    }
+  ],
+  "36100": [
+    {
+      "fips": "12083",
+      "name": "Marion County"
+    }
+  ],
+  "36180": [
+    {
+      "fips": "24047",
+      "name": "Worcester County"
+    }
+  ],
+  "36220": [
+    {
+      "fips": "48135",
+      "name": "Ector County"
+    }
+  ],
+  "36260": [
+    {
+      "fips": "49011",
+      "name": "Davis County"
+    },
+    {
+      "fips": "49029",
+      "name": "Morgan County"
+    },
+    {
+      "fips": "49057",
+      "name": "Weber County"
+    }
+  ],
+  "36340": [
+    {
+      "fips": "42121",
+      "name": "Venango County"
+    }
+  ],
+  "36380": [
+    {
+      "fips": "12093",
+      "name": "Okeechobee County"
+    }
+  ],
+  "36420": [
+    {
+      "fips": "40017",
+      "name": "Canadian County"
+    },
+    {
+      "fips": "40027",
+      "name": "Cleveland County"
+    },
+    {
+      "fips": "40051",
+      "name": "Grady County"
+    },
+    {
+      "fips": "40081",
+      "name": "Lincoln County"
+    },
+    {
+      "fips": "40083",
+      "name": "Logan County"
+    },
+    {
+      "fips": "40087",
+      "name": "McClain County"
+    },
+    {
+      "fips": "40109",
+      "name": "Oklahoma County"
+    }
+  ],
+  "36460": [
+    {
+      "fips": "36009",
+      "name": "Cattaraugus County"
+    }
+  ],
+  "36500": [
+    {
+      "fips": "53067",
+      "name": "Thurston County"
+    }
+  ],
+  "36540": [
+    {
+      "fips": "19085",
+      "name": "Harrison County"
+    },
+    {
+      "fips": "19129",
+      "name": "Mills County"
+    },
+    {
+      "fips": "19155",
+      "name": "Pottawattamie County"
+    },
+    {
+      "fips": "31025",
+      "name": "Cass County"
+    },
+    {
+      "fips": "31055",
+      "name": "Douglas County"
+    },
+    {
+      "fips": "31153",
+      "name": "Sarpy County"
+    },
+    {
+      "fips": "31155",
+      "name": "Saunders County"
+    },
+    {
+      "fips": "31177",
+      "name": "Washington County"
+    }
+  ],
+  "36580": [
+    {
+      "fips": "36077",
+      "name": "Otsego County"
+    }
+  ],
+  "36620": [
+    {
+      "fips": "16075",
+      "name": "Payette County"
+    },
+    {
+      "fips": "41045",
+      "name": "Malheur County"
+    }
+  ],
+  "36660": [
+    {
+      "fips": "22097",
+      "name": "St. Landry Parish"
+    }
+  ],
+  "36700": [
+    {
+      "fips": "45075",
+      "name": "Orangeburg County"
+    }
+  ],
+  "36740": [
+    {
+      "fips": "12069",
+      "name": "Lake County"
+    },
+    {
+      "fips": "12095",
+      "name": "Orange County"
+    },
+    {
+      "fips": "12097",
+      "name": "Osceola County"
+    },
+    {
+      "fips": "12117",
+      "name": "Seminole County"
+    }
+  ],
+  "36780": [
+    {
+      "fips": "55139",
+      "name": "Winnebago County"
+    }
+  ],
+  "36820": [
+    {
+      "fips": "19123",
+      "name": "Mahaska County"
+    }
+  ],
+  "36830": [
+    {
+      "fips": "53001",
+      "name": "Adams County"
+    }
+  ],
+  "36837": [
+    {
+      "fips": "17011",
+      "name": "Bureau County"
+    },
+    {
+      "fips": "17099",
+      "name": "LaSalle County"
+    },
+    {
+      "fips": "17155",
+      "name": "Putnam County"
+    }
+  ],
+  "36840": [
+    {
+      "fips": "20059",
+      "name": "Franklin County"
+    }
+  ],
+  "36900": [
+    {
+      "fips": "19179",
+      "name": "Wapello County"
+    }
+  ],
+  "36940": [
+    {
+      "fips": "27147",
+      "name": "Steele County"
+    }
+  ],
+  "36980": [
+    {
+      "fips": "21059",
+      "name": "Daviess County"
+    },
+    {
+      "fips": "21149",
+      "name": "McLean County"
+    }
+  ],
+  "37020": [
+    {
+      "fips": "26155",
+      "name": "Shiawassee County"
+    }
+  ],
+  "37060": [
+    {
+      "fips": "28071",
+      "name": "Lafayette County"
+    },
+    {
+      "fips": "28161",
+      "name": "Yalobusha County"
+    }
+  ],
+  "37100": [
+    {
+      "fips": "06111",
+      "name": "Ventura County"
+    }
+  ],
+  "37120": [
+    {
+      "fips": "01045",
+      "name": "Dale County"
+    }
+  ],
+  "37140": [
+    {
+      "fips": "17127",
+      "name": "Massac County"
+    },
+    {
+      "fips": "21007",
+      "name": "Ballard County"
+    },
+    {
+      "fips": "21039",
+      "name": "Carlisle County"
+    },
+    {
+      "fips": "21139",
+      "name": "Livingston County"
+    },
+    {
+      "fips": "21145",
+      "name": "McCracken County"
+    }
+  ],
+  "37220": [
+    {
+      "fips": "32023",
+      "name": "Nye County"
+    }
+  ],
+  "37260": [
+    {
+      "fips": "12107",
+      "name": "Putnam County"
+    }
+  ],
+  "37300": [
+    {
+      "fips": "48001",
+      "name": "Anderson County"
+    }
+  ],
+  "37340": [
+    {
+      "fips": "12009",
+      "name": "Brevard County"
+    }
+  ],
+  "37420": [
+    {
+      "fips": "48179",
+      "name": "Gray County"
+    },
+    {
+      "fips": "48393",
+      "name": "Roberts County"
+    }
+  ],
+  "37460": [
+    {
+      "fips": "12005",
+      "name": "Bay County"
+    },
+    {
+      "fips": "12133",
+      "name": "Washington County"
+    }
+  ],
+  "37500": [
+    {
+      "fips": "05055",
+      "name": "Greene County"
+    }
+  ],
+  "37540": [
+    {
+      "fips": "47079",
+      "name": "Henry County"
+    }
+  ],
+  "37580": [
+    {
+      "fips": "48277",
+      "name": "Lamar County"
+    },
+    {
+      "fips": "48387",
+      "name": "Red River County"
+    }
+  ],
+  "37620": [
+    {
+      "fips": "54105",
+      "name": "Wirt County"
+    },
+    {
+      "fips": "54107",
+      "name": "Wood County"
+    }
+  ],
+  "37740": [
+    {
+      "fips": "04007",
+      "name": "Gila County"
+    }
+  ],
+  "37800": [
+    {
+      "fips": "19125",
+      "name": "Marion County"
+    }
+  ],
+  "37860": [
+    {
+      "fips": "12033",
+      "name": "Escambia County"
+    },
+    {
+      "fips": "12113",
+      "name": "Santa Rosa County"
+    }
+  ],
+  "37900": [
+    {
+      "fips": "17123",
+      "name": "Marshall County"
+    },
+    {
+      "fips": "17143",
+      "name": "Peoria County"
+    },
+    {
+      "fips": "17175",
+      "name": "Stark County"
+    },
+    {
+      "fips": "17179",
+      "name": "Tazewell County"
+    },
+    {
+      "fips": "17203",
+      "name": "Woodford County"
+    }
+  ],
+  "37940": [
+    {
+      "fips": "18103",
+      "name": "Miami County"
+    }
+  ],
+  "37950": [
+    {
+      "fips": "26047",
+      "name": "Emmet County"
+    }
+  ],
+  "37980": [
+    {
+      "fips": "34005",
+      "name": "Burlington County"
+    },
+    {
+      "fips": "34007",
+      "name": "Camden County"
+    },
+    {
+      "fips": "34015",
+      "name": "Gloucester County"
+    },
+    {
+      "fips": "42017",
+      "name": "Bucks County"
+    },
+    {
+      "fips": "42029",
+      "name": "Chester County"
+    },
+    {
+      "fips": "42091",
+      "name": "Montgomery County"
+    },
+    {
+      "fips": "42045",
+      "name": "Delaware County"
+    },
+    {
+      "fips": "42101",
+      "name": "Philadelphia County"
+    },
+    {
+      "fips": "10003",
+      "name": "New Castle County"
+    },
+    {
+      "fips": "24015",
+      "name": "Cecil County"
+    },
+    {
+      "fips": "34033",
+      "name": "Salem County"
+    }
+  ],
+  "38060": [
+    {
+      "fips": "04013",
+      "name": "Maricopa County"
+    },
+    {
+      "fips": "04021",
+      "name": "Pinal County"
+    }
+  ],
+  "38100": [
+    {
+      "fips": "28109",
+      "name": "Pearl River County"
+    }
+  ],
+  "38180": [
+    {
+      "fips": "46065",
+      "name": "Hughes County"
+    },
+    {
+      "fips": "46117",
+      "name": "Stanley County"
+    }
+  ],
+  "38210": [
+    {
+      "fips": "21071",
+      "name": "Floyd County"
+    },
+    {
+      "fips": "21195",
+      "name": "Pike County"
+    }
+  ],
+  "38220": [
+    {
+      "fips": "05025",
+      "name": "Cleveland County"
+    },
+    {
+      "fips": "05069",
+      "name": "Jefferson County"
+    }
+  ],
+  "38240": [
+    {
+      "fips": "37125",
+      "name": "Moore County"
+    }
+  ],
+  "38260": [
+    {
+      "fips": "20037",
+      "name": "Crawford County"
+    }
+  ],
+  "38300": [
+    {
+      "fips": "42003",
+      "name": "Allegheny County"
+    },
+    {
+      "fips": "42005",
+      "name": "Armstrong County"
+    },
+    {
+      "fips": "42007",
+      "name": "Beaver County"
+    },
+    {
+      "fips": "42019",
+      "name": "Butler County"
+    },
+    {
+      "fips": "42051",
+      "name": "Fayette County"
+    },
+    {
+      "fips": "42073",
+      "name": "Lawrence County"
+    },
+    {
+      "fips": "42125",
+      "name": "Washington County"
+    },
+    {
+      "fips": "42129",
+      "name": "Westmoreland County"
+    }
+  ],
+  "38340": [
+    {
+      "fips": "25003",
+      "name": "Berkshire County"
+    }
+  ],
+  "38380": [
+    {
+      "fips": "48153",
+      "name": "Floyd County"
+    },
+    {
+      "fips": "48189",
+      "name": "Hale County"
+    }
+  ],
+  "38420": [
+    {
+      "fips": "55043",
+      "name": "Grant County"
+    }
+  ],
+  "38460": [
+    {
+      "fips": "36019",
+      "name": "Clinton County"
+    }
+  ],
+  "38500": [
+    {
+      "fips": "18099",
+      "name": "Marshall County"
+    }
+  ],
+  "38540": [
+    {
+      "fips": "16005",
+      "name": "Bannock County"
+    }
+  ],
+  "38620": [
+    {
+      "fips": "40071",
+      "name": "Kay County"
+    }
+  ],
+  "38660": [
+    {
+      "fips": "72059",
+      "name": "Guayanilla Municipio"
+    },
+    {
+      "fips": "72075",
+      "name": "Juana D\u00edaz Municipio"
+    },
+    {
+      "fips": "72111",
+      "name": "Pe\u00f1uelas Municipio"
+    },
+    {
+      "fips": "72113",
+      "name": "Ponce Municipio"
+    },
+    {
+      "fips": "72149",
+      "name": "Villalba Municipio"
+    },
+    {
+      "fips": "72153",
+      "name": "Yauco Municipio"
+    }
+  ],
+  "38700": [
+    {
+      "fips": "17105",
+      "name": "Livingston County"
+    }
+  ],
+  "38740": [
+    {
+      "fips": "29023",
+      "name": "Butler County"
+    }
+  ],
+  "38820": [
+    {
+      "fips": "53009",
+      "name": "Clallam County"
+    }
+  ],
+  "38860": [
+    {
+      "fips": "23005",
+      "name": "Cumberland County"
+    },
+    {
+      "fips": "23023",
+      "name": "Sagadahoc County"
+    },
+    {
+      "fips": "23031",
+      "name": "York County"
+    }
+  ],
+  "38900": [
+    {
+      "fips": "41005",
+      "name": "Clackamas County"
+    },
+    {
+      "fips": "41009",
+      "name": "Columbia County"
+    },
+    {
+      "fips": "41051",
+      "name": "Multnomah County"
+    },
+    {
+      "fips": "41067",
+      "name": "Washington County"
+    },
+    {
+      "fips": "41071",
+      "name": "Yamhill County"
+    },
+    {
+      "fips": "53011",
+      "name": "Clark County"
+    },
+    {
+      "fips": "53059",
+      "name": "Skamania County"
+    }
+  ],
+  "38920": [
+    {
+      "fips": "48057",
+      "name": "Calhoun County"
+    }
+  ],
+  "38940": [
+    {
+      "fips": "12085",
+      "name": "Martin County"
+    },
+    {
+      "fips": "12111",
+      "name": "St. Lucie County"
+    }
+  ],
+  "39020": [
+    {
+      "fips": "39145",
+      "name": "Scioto County"
+    }
+  ],
+  "39040": [
+    {
+      "fips": "53031",
+      "name": "Jefferson County"
+    }
+  ],
+  "39060": [
+    {
+      "fips": "42107",
+      "name": "Schuylkill County"
+    }
+  ],
+  "39150": [
+    {
+      "fips": "04025",
+      "name": "Yavapai County"
+    }
+  ],
+  "39220": [
+    {
+      "fips": "49007",
+      "name": "Carbon County"
+    }
+  ],
+  "39300": [
+    {
+      "fips": "25005",
+      "name": "Bristol County"
+    },
+    {
+      "fips": "44001",
+      "name": "Bristol County"
+    },
+    {
+      "fips": "44003",
+      "name": "Kent County"
+    },
+    {
+      "fips": "44005",
+      "name": "Newport County"
+    },
+    {
+      "fips": "44007",
+      "name": "Providence County"
+    },
+    {
+      "fips": "44009",
+      "name": "Washington County"
+    }
+  ],
+  "39340": [
+    {
+      "fips": "49023",
+      "name": "Juab County"
+    },
+    {
+      "fips": "49049",
+      "name": "Utah County"
+    }
+  ],
+  "39380": [
+    {
+      "fips": "08101",
+      "name": "Pueblo County"
+    }
+  ],
+  "39420": [
+    {
+      "fips": "53075",
+      "name": "Whitman County"
+    }
+  ],
+  "39460": [
+    {
+      "fips": "12015",
+      "name": "Charlotte County"
+    }
+  ],
+  "39480": [
+    {
+      "fips": "09150",
+      "name": "Northeastern Connecticut Planning Region"
+    }
+  ],
+  "39500": [
+    {
+      "fips": "17001",
+      "name": "Adams County"
+    },
+    {
+      "fips": "29111",
+      "name": "Lewis County"
+    }
+  ],
+  "39540": [
+    {
+      "fips": "55101",
+      "name": "Racine County"
+    }
+  ],
+  "39580": [
+    {
+      "fips": "37069",
+      "name": "Franklin County"
+    },
+    {
+      "fips": "37101",
+      "name": "Johnston County"
+    },
+    {
+      "fips": "37183",
+      "name": "Wake County"
+    }
+  ],
+  "39660": [
+    {
+      "fips": "46033",
+      "name": "Custer County"
+    },
+    {
+      "fips": "46093",
+      "name": "Meade County"
+    },
+    {
+      "fips": "46103",
+      "name": "Pennington County"
+    }
+  ],
+  "39700": [
+    {
+      "fips": "48489",
+      "name": "Willacy County"
+    }
+  ],
+  "39740": [
+    {
+      "fips": "42011",
+      "name": "Berks County"
+    }
+  ],
+  "39780": [
+    {
+      "fips": "06103",
+      "name": "Tehama County"
+    }
+  ],
+  "39820": [
+    {
+      "fips": "06089",
+      "name": "Shasta County"
+    }
+  ],
+  "39860": [
+    {
+      "fips": "27049",
+      "name": "Goodhue County"
+    }
+  ],
+  "39900": [
+    {
+      "fips": "32019",
+      "name": "Lyon County"
+    },
+    {
+      "fips": "32029",
+      "name": "Storey County"
+    },
+    {
+      "fips": "32031",
+      "name": "Washoe County"
+    }
+  ],
+  "39940": [
+    {
+      "fips": "16043",
+      "name": "Fremont County"
+    },
+    {
+      "fips": "16065",
+      "name": "Madison County"
+    }
+  ],
+  "39960": [
+    {
+      "fips": "55005",
+      "name": "Barron County"
+    }
+  ],
+  "39980": [
+    {
+      "fips": "18177",
+      "name": "Wayne County"
+    }
+  ],
+  "40060": [
+    {
+      "fips": "51007",
+      "name": "Amelia County"
+    },
+    {
+      "fips": "51036",
+      "name": "Charles City County"
+    },
+    {
+      "fips": "51041",
+      "name": "Chesterfield County"
+    },
+    {
+      "fips": "51053",
+      "name": "Dinwiddie County"
+    },
+    {
+      "fips": "51075",
+      "name": "Goochland County"
+    },
+    {
+      "fips": "51085",
+      "name": "Hanover County"
+    },
+    {
+      "fips": "51087",
+      "name": "Henrico County"
+    },
+    {
+      "fips": "51097",
+      "name": "King and Queen County"
+    },
+    {
+      "fips": "51101",
+      "name": "King William County"
+    },
+    {
+      "fips": "51127",
+      "name": "New Kent County"
+    },
+    {
+      "fips": "51145",
+      "name": "Powhatan County"
+    },
+    {
+      "fips": "51149",
+      "name": "Prince George County"
+    },
+    {
+      "fips": "51183",
+      "name": "Sussex County"
+    },
+    {
+      "fips": "51570",
+      "name": "Colonial Heights city"
+    },
+    {
+      "fips": "51670",
+      "name": "Hopewell city"
+    },
+    {
+      "fips": "51730",
+      "name": "Petersburg city"
+    },
+    {
+      "fips": "51760",
+      "name": "Richmond city"
+    }
+  ],
+  "40080": [
+    {
+      "fips": "21065",
+      "name": "Estill County"
+    },
+    {
+      "fips": "21151",
+      "name": "Madison County"
+    },
+    {
+      "fips": "21203",
+      "name": "Rockcastle County"
+    }
+  ],
+  "40090": [
+    {
+      "fips": "08045",
+      "name": "Garfield County"
+    },
+    {
+      "fips": "08097",
+      "name": "Pitkin County"
+    }
+  ],
+  "40100": [
+    {
+      "fips": "48427",
+      "name": "Starr County"
+    }
+  ],
+  "40140": [
+    {
+      "fips": "06065",
+      "name": "Riverside County"
+    },
+    {
+      "fips": "06071",
+      "name": "San Bernardino County"
+    }
+  ],
+  "40180": [
+    {
+      "fips": "56013",
+      "name": "Fremont County"
+    }
+  ],
+  "40220": [
+    {
+      "fips": "51023",
+      "name": "Botetourt County"
+    },
+    {
+      "fips": "51045",
+      "name": "Craig County"
+    },
+    {
+      "fips": "51067",
+      "name": "Franklin County"
+    },
+    {
+      "fips": "51161",
+      "name": "Roanoke County"
+    },
+    {
+      "fips": "51770",
+      "name": "Roanoke city"
+    },
+    {
+      "fips": "51775",
+      "name": "Salem city"
+    }
+  ],
+  "40260": [
+    {
+      "fips": "37083",
+      "name": "Halifax County"
+    },
+    {
+      "fips": "37131",
+      "name": "Northampton County"
+    }
+  ],
+  "40300": [
+    {
+      "fips": "17141",
+      "name": "Ogle County"
+    }
+  ],
+  "40340": [
+    {
+      "fips": "27039",
+      "name": "Dodge County"
+    },
+    {
+      "fips": "27045",
+      "name": "Fillmore County"
+    },
+    {
+      "fips": "27109",
+      "name": "Olmsted County"
+    },
+    {
+      "fips": "27157",
+      "name": "Wabasha County"
+    }
+  ],
+  "40380": [
+    {
+      "fips": "36051",
+      "name": "Livingston County"
+    },
+    {
+      "fips": "36055",
+      "name": "Monroe County"
+    },
+    {
+      "fips": "36069",
+      "name": "Ontario County"
+    },
+    {
+      "fips": "36073",
+      "name": "Orleans County"
+    },
+    {
+      "fips": "36117",
+      "name": "Wayne County"
+    }
+  ],
+  "40420": [
+    {
+      "fips": "17007",
+      "name": "Boone County"
+    },
+    {
+      "fips": "17201",
+      "name": "Winnebago County"
+    }
+  ],
+  "40460": [
+    {
+      "fips": "37153",
+      "name": "Richmond County"
+    }
+  ],
+  "40540": [
+    {
+      "fips": "56037",
+      "name": "Sweetwater County"
+    }
+  ],
+  "40580": [
+    {
+      "fips": "37065",
+      "name": "Edgecombe County"
+    },
+    {
+      "fips": "37127",
+      "name": "Nash County"
+    }
+  ],
+  "40620": [
+    {
+      "fips": "29161",
+      "name": "Phelps County"
+    }
+  ],
+  "40660": [
+    {
+      "fips": "13115",
+      "name": "Floyd County"
+    }
+  ],
+  "40700": [
+    {
+      "fips": "41019",
+      "name": "Douglas County"
+    }
+  ],
+  "40740": [
+    {
+      "fips": "35005",
+      "name": "Chaves County"
+    }
+  ],
+  "40760": [
+    {
+      "fips": "35027",
+      "name": "Lincoln County"
+    }
+  ],
+  "40770": [
+    {
+      "fips": "01059",
+      "name": "Franklin County"
+    }
+  ],
+  "40780": [
+    {
+      "fips": "05115",
+      "name": "Pope County"
+    },
+    {
+      "fips": "05149",
+      "name": "Yell County"
+    }
+  ],
+  "40820": [
+    {
+      "fips": "22061",
+      "name": "Lincoln Parish"
+    }
+  ],
+  "40860": [
+    {
+      "fips": "50021",
+      "name": "Rutland County"
+    }
+  ],
+  "40900": [
+    {
+      "fips": "06017",
+      "name": "El Dorado County"
+    },
+    {
+      "fips": "06061",
+      "name": "Placer County"
+    },
+    {
+      "fips": "06067",
+      "name": "Sacramento County"
+    },
+    {
+      "fips": "06113",
+      "name": "Yolo County"
+    }
+  ],
+  "40940": [
+    {
+      "fips": "04009",
+      "name": "Graham County"
+    }
+  ],
+  "40980": [
+    {
+      "fips": "26145",
+      "name": "Saginaw County"
+    }
+  ],
+  "41060": [
+    {
+      "fips": "27009",
+      "name": "Benton County"
+    },
+    {
+      "fips": "27145",
+      "name": "Stearns County"
+    }
+  ],
+  "41100": [
+    {
+      "fips": "49053",
+      "name": "Washington County"
+    }
+  ],
+  "41140": [
+    {
+      "fips": "20043",
+      "name": "Doniphan County"
+    },
+    {
+      "fips": "29003",
+      "name": "Andrew County"
+    },
+    {
+      "fips": "29021",
+      "name": "Buchanan County"
+    },
+    {
+      "fips": "29063",
+      "name": "DeKalb County"
+    }
+  ],
+  "41180": [
+    {
+      "fips": "17005",
+      "name": "Bond County"
+    },
+    {
+      "fips": "17013",
+      "name": "Calhoun County"
+    },
+    {
+      "fips": "17027",
+      "name": "Clinton County"
+    },
+    {
+      "fips": "17083",
+      "name": "Jersey County"
+    },
+    {
+      "fips": "17117",
+      "name": "Macoupin County"
+    },
+    {
+      "fips": "17119",
+      "name": "Madison County"
+    },
+    {
+      "fips": "17133",
+      "name": "Monroe County"
+    },
+    {
+      "fips": "17163",
+      "name": "St. Clair County"
+    },
+    {
+      "fips": "29071",
+      "name": "Franklin County"
+    },
+    {
+      "fips": "29099",
+      "name": "Jefferson County"
+    },
+    {
+      "fips": "29113",
+      "name": "Lincoln County"
+    },
+    {
+      "fips": "29183",
+      "name": "St. Charles County"
+    },
+    {
+      "fips": "29189",
+      "name": "St. Louis County"
+    },
+    {
+      "fips": "29219",
+      "name": "Warren County"
+    },
+    {
+      "fips": "29510",
+      "name": "St. Louis city"
+    }
+  ],
+  "41260": [
+    {
+      "fips": "42047",
+      "name": "Elk County"
+    }
+  ],
+  "41400": [
+    {
+      "fips": "39029",
+      "name": "Columbiana County"
+    }
+  ],
+  "41420": [
+    {
+      "fips": "41047",
+      "name": "Marion County"
+    },
+    {
+      "fips": "41053",
+      "name": "Polk County"
+    }
+  ],
+  "41460": [
+    {
+      "fips": "20143",
+      "name": "Ottawa County"
+    },
+    {
+      "fips": "20169",
+      "name": "Saline County"
+    }
+  ],
+  "41500": [
+    {
+      "fips": "06053",
+      "name": "Monterey County"
+    }
+  ],
+  "41540": [
+    {
+      "fips": "24039",
+      "name": "Somerset County"
+    },
+    {
+      "fips": "24045",
+      "name": "Wicomico County"
+    }
+  ],
+  "41620": [
+    {
+      "fips": "49035",
+      "name": "Salt Lake County"
+    },
+    {
+      "fips": "49045",
+      "name": "Tooele County"
+    }
+  ],
+  "41660": [
+    {
+      "fips": "48235",
+      "name": "Irion County"
+    },
+    {
+      "fips": "48451",
+      "name": "Tom Green County"
+    }
+  ],
+  "41700": [
+    {
+      "fips": "48013",
+      "name": "Atascosa County"
+    },
+    {
+      "fips": "48019",
+      "name": "Bandera County"
+    },
+    {
+      "fips": "48029",
+      "name": "Bexar County"
+    },
+    {
+      "fips": "48091",
+      "name": "Comal County"
+    },
+    {
+      "fips": "48187",
+      "name": "Guadalupe County"
+    },
+    {
+      "fips": "48259",
+      "name": "Kendall County"
+    },
+    {
+      "fips": "48325",
+      "name": "Medina County"
+    },
+    {
+      "fips": "48493",
+      "name": "Wilson County"
+    }
+  ],
+  "41740": [
+    {
+      "fips": "06073",
+      "name": "San Diego County"
+    }
+  ],
+  "41760": [
+    {
+      "fips": "16017",
+      "name": "Bonner County"
+    }
+  ],
+  "41780": [
+    {
+      "fips": "39043",
+      "name": "Erie County"
+    },
+    {
+      "fips": "39123",
+      "name": "Ottawa County"
+    }
+  ],
+  "41820": [
+    {
+      "fips": "37105",
+      "name": "Lee County"
+    }
+  ],
+  "41860": [
+    {
+      "fips": "06001",
+      "name": "Alameda County"
+    },
+    {
+      "fips": "06013",
+      "name": "Contra Costa County"
+    },
+    {
+      "fips": "06075",
+      "name": "San Francisco County"
+    },
+    {
+      "fips": "06081",
+      "name": "San Mateo County"
+    },
+    {
+      "fips": "06041",
+      "name": "Marin County"
+    }
+  ],
+  "41940": [
+    {
+      "fips": "06069",
+      "name": "San Benito County"
+    },
+    {
+      "fips": "06085",
+      "name": "Santa Clara County"
+    }
+  ],
+  "41980": [
+    {
+      "fips": "72007",
+      "name": "Aguas Buenas Municipio"
+    },
+    {
+      "fips": "72009",
+      "name": "Aibonito Municipio"
+    },
+    {
+      "fips": "72017",
+      "name": "Barceloneta Municipio"
+    },
+    {
+      "fips": "72019",
+      "name": "Barranquitas Municipio"
+    },
+    {
+      "fips": "72021",
+      "name": "Bayam\u00f3n Municipio"
+    },
+    {
+      "fips": "72025",
+      "name": "Caguas Municipio"
+    },
+    {
+      "fips": "72029",
+      "name": "Can\u00f3vanas Municipio"
+    },
+    {
+      "fips": "72031",
+      "name": "Carolina Municipio"
+    },
+    {
+      "fips": "72033",
+      "name": "Cata\u00f1o Municipio"
+    },
+    {
+      "fips": "72035",
+      "name": "Cayey Municipio"
+    },
+    {
+      "fips": "72037",
+      "name": "Ceiba Municipio"
+    },
+    {
+      "fips": "72039",
+      "name": "Ciales Municipio"
+    },
+    {
+      "fips": "72041",
+      "name": "Cidra Municipio"
+    },
+    {
+      "fips": "72045",
+      "name": "Comer\u00edo Municipio"
+    },
+    {
+      "fips": "72047",
+      "name": "Corozal Municipio"
+    },
+    {
+      "fips": "72051",
+      "name": "Dorado Municipio"
+    },
+    {
+      "fips": "72053",
+      "name": "Fajardo Municipio"
+    },
+    {
+      "fips": "72054",
+      "name": "Florida Municipio"
+    },
+    {
+      "fips": "72061",
+      "name": "Guaynabo Municipio"
+    },
+    {
+      "fips": "72063",
+      "name": "Gurabo Municipio"
+    },
+    {
+      "fips": "72069",
+      "name": "Humacao Municipio"
+    },
+    {
+      "fips": "72077",
+      "name": "Juncos Municipio"
+    },
+    {
+      "fips": "72085",
+      "name": "Las Piedras Municipio"
+    },
+    {
+      "fips": "72087",
+      "name": "Lo\u00edza Municipio"
+    },
+    {
+      "fips": "72089",
+      "name": "Luquillo Municipio"
+    },
+    {
+      "fips": "72091",
+      "name": "Manat\u00ed Municipio"
+    },
+    {
+      "fips": "72095",
+      "name": "Maunabo Municipio"
+    },
+    {
+      "fips": "72101",
+      "name": "Morovis Municipio"
+    },
+    {
+      "fips": "72103",
+      "name": "Naguabo Municipio"
+    },
+    {
+      "fips": "72105",
+      "name": "Naranjito Municipio"
+    },
+    {
+      "fips": "72107",
+      "name": "Orocovis Municipio"
+    },
+    {
+      "fips": "72119",
+      "name": "R\u00edo Grande Municipio"
+    },
+    {
+      "fips": "72127",
+      "name": "San Juan Municipio"
+    },
+    {
+      "fips": "72129",
+      "name": "San Lorenzo Municipio"
+    },
+    {
+      "fips": "72135",
+      "name": "Toa Alta Municipio"
+    },
+    {
+      "fips": "72137",
+      "name": "Toa Baja Municipio"
+    },
+    {
+      "fips": "72139",
+      "name": "Trujillo Alto Municipio"
+    },
+    {
+      "fips": "72143",
+      "name": "Vega Alta Municipio"
+    },
+    {
+      "fips": "72145",
+      "name": "Vega Baja Municipio"
+    },
+    {
+      "fips": "72151",
+      "name": "Yabucoa Municipio"
+    }
+  ],
+  "42020": [
+    {
+      "fips": "06079",
+      "name": "San Luis Obispo County"
+    }
+  ],
+  "42100": [
+    {
+      "fips": "06087",
+      "name": "Santa Cruz County"
+    }
+  ],
+  "42140": [
+    {
+      "fips": "35049",
+      "name": "Santa Fe County"
+    }
+  ],
+  "42200": [
+    {
+      "fips": "06083",
+      "name": "Santa Barbara County"
+    }
+  ],
+  "42220": [
+    {
+      "fips": "06097",
+      "name": "Sonoma County"
+    }
+  ],
+  "42300": [
+    {
+      "fips": "26033",
+      "name": "Chippewa County"
+    }
+  ],
+  "42340": [
+    {
+      "fips": "13029",
+      "name": "Bryan County"
+    },
+    {
+      "fips": "13051",
+      "name": "Chatham County"
+    },
+    {
+      "fips": "13103",
+      "name": "Effingham County"
+    }
+  ],
+  "42380": [
+    {
+      "fips": "42015",
+      "name": "Bradford County"
+    }
+  ],
+  "42420": [
+    {
+      "fips": "31007",
+      "name": "Banner County"
+    },
+    {
+      "fips": "31157",
+      "name": "Scotts Bluff County"
+    }
+  ],
+  "42460": [
+    {
+      "fips": "01071",
+      "name": "Jackson County"
+    }
+  ],
+  "42540": [
+    {
+      "fips": "42069",
+      "name": "Lackawanna County"
+    },
+    {
+      "fips": "42079",
+      "name": "Luzerne County"
+    },
+    {
+      "fips": "42131",
+      "name": "Wyoming County"
+    }
+  ],
+  "42580": [
+    {
+      "fips": "10005",
+      "name": "Sussex County"
+    }
+  ],
+  "42620": [
+    {
+      "fips": "05145",
+      "name": "White County"
+    }
+  ],
+  "42660": [
+    {
+      "fips": "53061",
+      "name": "Snohomish County"
+    },
+    {
+      "fips": "53033",
+      "name": "King County"
+    },
+    {
+      "fips": "53053",
+      "name": "Pierce County"
+    }
+  ],
+  "42680": [
+    {
+      "fips": "12061",
+      "name": "Indian River County"
+    }
+  ],
+  "42700": [
+    {
+      "fips": "12055",
+      "name": "Highlands County"
+    }
+  ],
+  "42740": [
+    {
+      "fips": "29159",
+      "name": "Pettis County"
+    }
+  ],
+  "42780": [
+    {
+      "fips": "42109",
+      "name": "Snyder County"
+    }
+  ],
+  "42820": [
+    {
+      "fips": "01047",
+      "name": "Dallas County"
+    }
+  ],
+  "42860": [
+    {
+      "fips": "45073",
+      "name": "Oconee County"
+    }
+  ],
+  "42900": [
+    {
+      "fips": "36099",
+      "name": "Seneca County"
+    }
+  ],
+  "42940": [
+    {
+      "fips": "47155",
+      "name": "Sevier County"
+    }
+  ],
+  "42980": [
+    {
+      "fips": "18071",
+      "name": "Jackson County"
+    }
+  ],
+  "43020": [
+    {
+      "fips": "55078",
+      "name": "Menominee County"
+    },
+    {
+      "fips": "55115",
+      "name": "Shawano County"
+    }
+  ],
+  "43060": [
+    {
+      "fips": "40125",
+      "name": "Pottawatomie County"
+    }
+  ],
+  "43100": [
+    {
+      "fips": "55117",
+      "name": "Sheboygan County"
+    }
+  ],
+  "43140": [
+    {
+      "fips": "37045",
+      "name": "Cleveland County"
+    }
+  ],
+  "43180": [
+    {
+      "fips": "47003",
+      "name": "Bedford County"
+    }
+  ],
+  "43220": [
+    {
+      "fips": "53045",
+      "name": "Mason County"
+    }
+  ],
+  "43260": [
+    {
+      "fips": "56033",
+      "name": "Sheridan County"
+    }
+  ],
+  "43300": [
+    {
+      "fips": "48181",
+      "name": "Grayson County"
+    }
+  ],
+  "43320": [
+    {
+      "fips": "04017",
+      "name": "Navajo County"
+    }
+  ],
+  "43340": [
+    {
+      "fips": "22015",
+      "name": "Bossier Parish"
+    },
+    {
+      "fips": "22017",
+      "name": "Caddo Parish"
+    },
+    {
+      "fips": "22031",
+      "name": "De Soto Parish"
+    }
+  ],
+  "43380": [
+    {
+      "fips": "39149",
+      "name": "Shelby County"
+    }
+  ],
+  "43420": [
+    {
+      "fips": "04003",
+      "name": "Cochise County"
+    }
+  ],
+  "43460": [
+    {
+      "fips": "29133",
+      "name": "Mississippi County"
+    },
+    {
+      "fips": "29201",
+      "name": "Scott County"
+    }
+  ],
+  "43500": [
+    {
+      "fips": "35017",
+      "name": "Grant County"
+    }
+  ],
+  "43580": [
+    {
+      "fips": "19193",
+      "name": "Woodbury County"
+    },
+    {
+      "fips": "31043",
+      "name": "Dakota County"
+    },
+    {
+      "fips": "46127",
+      "name": "Union County"
+    }
+  ],
+  "43620": [
+    {
+      "fips": "27133",
+      "name": "Rock County"
+    },
+    {
+      "fips": "46083",
+      "name": "Lincoln County"
+    },
+    {
+      "fips": "46087",
+      "name": "McCook County"
+    },
+    {
+      "fips": "46099",
+      "name": "Minnehaha County"
+    },
+    {
+      "fips": "46125",
+      "name": "Turner County"
+    }
+  ],
+  "43640": [
+    {
+      "fips": "22103",
+      "name": "St. Tammany Parish"
+    }
+  ],
+  "43660": [
+    {
+      "fips": "48415",
+      "name": "Scurry County"
+    }
+  ],
+  "43700": [
+    {
+      "fips": "21199",
+      "name": "Pulaski County"
+    }
+  ],
+  "43740": [
+    {
+      "fips": "42111",
+      "name": "Somerset County"
+    }
+  ],
+  "43760": [
+    {
+      "fips": "06109",
+      "name": "Tuolumne County"
+    }
+  ],
+  "43780": [
+    {
+      "fips": "18141",
+      "name": "St. Joseph County"
+    },
+    {
+      "fips": "26027",
+      "name": "Cass County"
+    }
+  ],
+  "43890": [
+    {
+      "fips": "55081",
+      "name": "Monroe County"
+    }
+  ],
+  "43900": [
+    {
+      "fips": "45083",
+      "name": "Spartanburg County"
+    },
+    {
+      "fips": "45087",
+      "name": "Union County"
+    }
+  ],
+  "43940": [
+    {
+      "fips": "46081",
+      "name": "Lawrence County"
+    }
+  ],
+  "43980": [
+    {
+      "fips": "19041",
+      "name": "Clay County"
+    }
+  ],
+  "44020": [
+    {
+      "fips": "19059",
+      "name": "Dickinson County"
+    }
+  ],
+  "44060": [
+    {
+      "fips": "53063",
+      "name": "Spokane County"
+    },
+    {
+      "fips": "53065",
+      "name": "Stevens County"
+    }
+  ],
+  "44100": [
+    {
+      "fips": "17129",
+      "name": "Menard County"
+    },
+    {
+      "fips": "17167",
+      "name": "Sangamon County"
+    }
+  ],
+  "44140": [
+    {
+      "fips": "25013",
+      "name": "Hampden County"
+    }
+  ],
+  "44180": [
+    {
+      "fips": "29043",
+      "name": "Christian County"
+    },
+    {
+      "fips": "29059",
+      "name": "Dallas County"
+    },
+    {
+      "fips": "29077",
+      "name": "Greene County"
+    },
+    {
+      "fips": "29167",
+      "name": "Polk County"
+    },
+    {
+      "fips": "29225",
+      "name": "Webster County"
+    }
+  ],
+  "44220": [
+    {
+      "fips": "39023",
+      "name": "Clark County"
+    }
+  ],
+  "44260": [
+    {
+      "fips": "28105",
+      "name": "Oktibbeha County"
+    },
+    {
+      "fips": "28155",
+      "name": "Webster County"
+    }
+  ],
+  "44300": [
+    {
+      "fips": "42027",
+      "name": "Centre County"
+    }
+  ],
+  "44340": [
+    {
+      "fips": "13031",
+      "name": "Bulloch County"
+    },
+    {
+      "fips": "13109",
+      "name": "Evans County"
+    }
+  ],
+  "44420": [
+    {
+      "fips": "51015",
+      "name": "Augusta County"
+    },
+    {
+      "fips": "51790",
+      "name": "Staunton city"
+    },
+    {
+      "fips": "51820",
+      "name": "Waynesboro city"
+    }
+  ],
+  "44460": [
+    {
+      "fips": "08081",
+      "name": "Moffat County"
+    },
+    {
+      "fips": "08107",
+      "name": "Routt County"
+    }
+  ],
+  "44500": [
+    {
+      "fips": "48143",
+      "name": "Erath County"
+    }
+  ],
+  "44540": [
+    {
+      "fips": "08075",
+      "name": "Logan County"
+    }
+  ],
+  "44580": [
+    {
+      "fips": "17195",
+      "name": "Whiteside County"
+    }
+  ],
+  "44620": [
+    {
+      "fips": "55097",
+      "name": "Portage County"
+    }
+  ],
+  "44660": [
+    {
+      "fips": "40119",
+      "name": "Payne County"
+    }
+  ],
+  "44700": [
+    {
+      "fips": "06077",
+      "name": "San Joaquin County"
+    }
+  ],
+  "44740": [
+    {
+      "fips": "19021",
+      "name": "Buena Vista County"
+    }
+  ],
+  "44780": [
+    {
+      "fips": "26149",
+      "name": "St. Joseph County"
+    }
+  ],
+  "44860": [
+    {
+      "fips": "48223",
+      "name": "Hopkins County"
+    }
+  ],
+  "44900": [
+    {
+      "fips": "13055",
+      "name": "Chattooga County"
+    }
+  ],
+  "44940": [
+    {
+      "fips": "45085",
+      "name": "Sumter County"
+    }
+  ],
+  "44980": [
+    {
+      "fips": "42093",
+      "name": "Montour County"
+    },
+    {
+      "fips": "42097",
+      "name": "Northumberland County"
+    }
+  ],
+  "45000": [
+    {
+      "fips": "06035",
+      "name": "Lassen County"
+    }
+  ],
+  "45020": [
+    {
+      "fips": "48353",
+      "name": "Nolan County"
+    }
+  ],
+  "45060": [
+    {
+      "fips": "36053",
+      "name": "Madison County"
+    },
+    {
+      "fips": "36067",
+      "name": "Onondaga County"
+    },
+    {
+      "fips": "36075",
+      "name": "Oswego County"
+    }
+  ],
+  "45140": [
+    {
+      "fips": "40021",
+      "name": "Cherokee County"
+    }
+  ],
+  "45180": [
+    {
+      "fips": "01037",
+      "name": "Coosa County"
+    },
+    {
+      "fips": "01121",
+      "name": "Talladega County"
+    }
+  ],
+  "45220": [
+    {
+      "fips": "12039",
+      "name": "Gadsden County"
+    },
+    {
+      "fips": "12065",
+      "name": "Jefferson County"
+    },
+    {
+      "fips": "12073",
+      "name": "Leon County"
+    },
+    {
+      "fips": "12129",
+      "name": "Wakulla County"
+    }
+  ],
+  "45300": [
+    {
+      "fips": "12103",
+      "name": "Pinellas County"
+    },
+    {
+      "fips": "12053",
+      "name": "Hernando County"
+    },
+    {
+      "fips": "12057",
+      "name": "Hillsborough County"
+    },
+    {
+      "fips": "12101",
+      "name": "Pasco County"
+    }
+  ],
+  "45340": [
+    {
+      "fips": "35055",
+      "name": "Taos County"
+    }
+  ],
+  "45380": [
+    {
+      "fips": "17021",
+      "name": "Christian County"
+    }
+  ],
+  "45460": [
+    {
+      "fips": "18021",
+      "name": "Clay County"
+    },
+    {
+      "fips": "18153",
+      "name": "Sullivan County"
+    },
+    {
+      "fips": "18165",
+      "name": "Vermillion County"
+    },
+    {
+      "fips": "18167",
+      "name": "Vigo County"
+    }
+  ],
+  "45500": [
+    {
+      "fips": "05081",
+      "name": "Little River County"
+    },
+    {
+      "fips": "05091",
+      "name": "Miller County"
+    },
+    {
+      "fips": "48037",
+      "name": "Bowie County"
+    }
+  ],
+  "45520": [
+    {
+      "fips": "41065",
+      "name": "Wasco County"
+    }
+  ],
+  "45580": [
+    {
+      "fips": "13293",
+      "name": "Upson County"
+    }
+  ],
+  "45620": [
+    {
+      "fips": "13131",
+      "name": "Grady County"
+    },
+    {
+      "fips": "13275",
+      "name": "Thomas County"
+    }
+  ],
+  "45660": [
+    {
+      "fips": "39147",
+      "name": "Seneca County"
+    }
+  ],
+  "45700": [
+    {
+      "fips": "13277",
+      "name": "Tift County"
+    },
+    {
+      "fips": "13287",
+      "name": "Turner County"
+    }
+  ],
+  "45740": [
+    {
+      "fips": "13257",
+      "name": "Stephens County"
+    }
+  ],
+  "45780": [
+    {
+      "fips": "39051",
+      "name": "Fulton County"
+    },
+    {
+      "fips": "39095",
+      "name": "Lucas County"
+    },
+    {
+      "fips": "39173",
+      "name": "Wood County"
+    }
+  ],
+  "45820": [
+    {
+      "fips": "20085",
+      "name": "Jackson County"
+    },
+    {
+      "fips": "20087",
+      "name": "Jefferson County"
+    },
+    {
+      "fips": "20139",
+      "name": "Osage County"
+    },
+    {
+      "fips": "20177",
+      "name": "Shawnee County"
+    },
+    {
+      "fips": "20197",
+      "name": "Wabaunsee County"
+    }
+  ],
+  "45860": [
+    {
+      "fips": "09160",
+      "name": "Northwest Hills Planning Region"
+    }
+  ],
+  "45880": [
+    {
+      "fips": "48389",
+      "name": "Reeves County"
+    }
+  ],
+  "45900": [
+    {
+      "fips": "26019",
+      "name": "Benzie County"
+    },
+    {
+      "fips": "26055",
+      "name": "Grand Traverse County"
+    },
+    {
+      "fips": "26079",
+      "name": "Kalkaska County"
+    },
+    {
+      "fips": "26089",
+      "name": "Leelanau County"
+    }
+  ],
+  "45940": [
+    {
+      "fips": "34021",
+      "name": "Mercer County"
+    }
+  ],
+  "45980": [
+    {
+      "fips": "01109",
+      "name": "Pike County"
+    }
+  ],
+  "46020": [
+    {
+      "fips": "06057",
+      "name": "Nevada County"
+    }
+  ],
+  "46060": [
+    {
+      "fips": "04019",
+      "name": "Pima County"
+    }
+  ],
+  "46100": [
+    {
+      "fips": "47031",
+      "name": "Coffee County"
+    },
+    {
+      "fips": "47127",
+      "name": "Moore County"
+    }
+  ],
+  "46140": [
+    {
+      "fips": "40037",
+      "name": "Creek County"
+    },
+    {
+      "fips": "40111",
+      "name": "Okmulgee County"
+    },
+    {
+      "fips": "40113",
+      "name": "Osage County"
+    },
+    {
+      "fips": "40117",
+      "name": "Pawnee County"
+    },
+    {
+      "fips": "40131",
+      "name": "Rogers County"
+    },
+    {
+      "fips": "40143",
+      "name": "Tulsa County"
+    },
+    {
+      "fips": "40145",
+      "name": "Wagoner County"
+    }
+  ],
+  "46180": [
+    {
+      "fips": "28057",
+      "name": "Itawamba County"
+    },
+    {
+      "fips": "28081",
+      "name": "Lee County"
+    },
+    {
+      "fips": "28117",
+      "name": "Prentiss County"
+    }
+  ],
+  "46220": [
+    {
+      "fips": "01063",
+      "name": "Greene County"
+    },
+    {
+      "fips": "01065",
+      "name": "Hale County"
+    },
+    {
+      "fips": "01107",
+      "name": "Pickens County"
+    },
+    {
+      "fips": "01125",
+      "name": "Tuscaloosa County"
+    }
+  ],
+  "46300": [
+    {
+      "fips": "16053",
+      "name": "Jerome County"
+    },
+    {
+      "fips": "16083",
+      "name": "Twin Falls County"
+    }
+  ],
+  "46340": [
+    {
+      "fips": "48423",
+      "name": "Smith County"
+    }
+  ],
+  "46380": [
+    {
+      "fips": "06045",
+      "name": "Mendocino County"
+    }
+  ],
+  "46460": [
+    {
+      "fips": "47131",
+      "name": "Obion County"
+    }
+  ],
+  "46500": [
+    {
+      "fips": "39021",
+      "name": "Champaign County"
+    }
+  ],
+  "46520": [
+    {
+      "fips": "15003",
+      "name": "Honolulu County"
+    }
+  ],
+  "46540": [
+    {
+      "fips": "36043",
+      "name": "Herkimer County"
+    },
+    {
+      "fips": "36065",
+      "name": "Oneida County"
+    }
+  ],
+  "46580": [
+    {
+      "fips": "72141",
+      "name": "Utuado Municipio"
+    }
+  ],
+  "46620": [
+    {
+      "fips": "48463",
+      "name": "Uvalde County"
+    }
+  ],
+  "46660": [
+    {
+      "fips": "13027",
+      "name": "Brooks County"
+    },
+    {
+      "fips": "13101",
+      "name": "Echols County"
+    },
+    {
+      "fips": "13173",
+      "name": "Lanier County"
+    },
+    {
+      "fips": "13185",
+      "name": "Lowndes County"
+    }
+  ],
+  "46700": [
+    {
+      "fips": "06095",
+      "name": "Solano County"
+    }
+  ],
+  "46780": [
+    {
+      "fips": "39161",
+      "name": "Van Wert County"
+    }
+  ],
+  "46820": [
+    {
+      "fips": "46027",
+      "name": "Clay County"
+    }
+  ],
+  "46860": [
+    {
+      "fips": "49047",
+      "name": "Uintah County"
+    }
+  ],
+  "46900": [
+    {
+      "fips": "48487",
+      "name": "Wilbarger County"
+    }
+  ],
+  "46980": [
+    {
+      "fips": "28149",
+      "name": "Warren County"
+    }
+  ],
+  "47020": [
+    {
+      "fips": "48175",
+      "name": "Goliad County"
+    },
+    {
+      "fips": "48469",
+      "name": "Victoria County"
+    }
+  ],
+  "47080": [
+    {
+      "fips": "13209",
+      "name": "Montgomery County"
+    },
+    {
+      "fips": "13279",
+      "name": "Toombs County"
+    }
+  ],
+  "47180": [
+    {
+      "fips": "18083",
+      "name": "Knox County"
+    }
+  ],
+  "47220": [
+    {
+      "fips": "34011",
+      "name": "Cumberland County"
+    }
+  ],
+  "47240": [
+    {
+      "fips": "25007",
+      "name": "Dukes County"
+    }
+  ],
+  "47260": [
+    {
+      "fips": "37029",
+      "name": "Camden County"
+    },
+    {
+      "fips": "37053",
+      "name": "Currituck County"
+    },
+    {
+      "fips": "37073",
+      "name": "Gates County"
+    },
+    {
+      "fips": "51073",
+      "name": "Gloucester County"
+    },
+    {
+      "fips": "51093",
+      "name": "Isle of Wight County"
+    },
+    {
+      "fips": "51095",
+      "name": "James City County"
+    },
+    {
+      "fips": "51115",
+      "name": "Mathews County"
+    },
+    {
+      "fips": "51181",
+      "name": "Surry County"
+    },
+    {
+      "fips": "51199",
+      "name": "York County"
+    },
+    {
+      "fips": "51550",
+      "name": "Chesapeake city"
+    },
+    {
+      "fips": "51650",
+      "name": "Hampton city"
+    },
+    {
+      "fips": "51700",
+      "name": "Newport News city"
+    },
+    {
+      "fips": "51710",
+      "name": "Norfolk city"
+    },
+    {
+      "fips": "51735",
+      "name": "Poquoson city"
+    },
+    {
+      "fips": "51740",
+      "name": "Portsmouth city"
+    },
+    {
+      "fips": "51800",
+      "name": "Suffolk city"
+    },
+    {
+      "fips": "51810",
+      "name": "Virginia Beach city"
+    },
+    {
+      "fips": "51830",
+      "name": "Williamsburg city"
+    }
+  ],
+  "47300": [
+    {
+      "fips": "06107",
+      "name": "Tulare County"
+    }
+  ],
+  "47340": [
+    {
+      "fips": "18169",
+      "name": "Wabash County"
+    }
+  ],
+  "47380": [
+    {
+      "fips": "48035",
+      "name": "Bosque County"
+    },
+    {
+      "fips": "48145",
+      "name": "Falls County"
+    },
+    {
+      "fips": "48309",
+      "name": "McLennan County"
+    }
+  ],
+  "47420": [
+    {
+      "fips": "27167",
+      "name": "Wilkin County"
+    },
+    {
+      "fips": "38077",
+      "name": "Richland County"
+    }
+  ],
+  "47460": [
+    {
+      "fips": "53071",
+      "name": "Walla Walla County"
+    }
+  ],
+  "47540": [
+    {
+      "fips": "39011",
+      "name": "Auglaize County"
+    }
+  ],
+  "47580": [
+    {
+      "fips": "13153",
+      "name": "Houston County"
+    },
+    {
+      "fips": "13225",
+      "name": "Peach County"
+    }
+  ],
+  "47620": [
+    {
+      "fips": "42123",
+      "name": "Warren County"
+    }
+  ],
+  "47660": [
+    {
+      "fips": "29101",
+      "name": "Johnson County"
+    }
+  ],
+  "47700": [
+    {
+      "fips": "18085",
+      "name": "Kosciusko County"
+    }
+  ],
+  "47780": [
+    {
+      "fips": "18027",
+      "name": "Daviess County"
+    }
+  ],
+  "47820": [
+    {
+      "fips": "37013",
+      "name": "Beaufort County"
+    }
+  ],
+  "47900": [
+    {
+      "fips": "51013",
+      "name": "Arlington County"
+    },
+    {
+      "fips": "51043",
+      "name": "Clarke County"
+    },
+    {
+      "fips": "51047",
+      "name": "Culpeper County"
+    },
+    {
+      "fips": "51059",
+      "name": "Fairfax County"
+    },
+    {
+      "fips": "51061",
+      "name": "Fauquier County"
+    },
+    {
+      "fips": "51107",
+      "name": "Loudoun County"
+    },
+    {
+      "fips": "51153",
+      "name": "Prince William County"
+    },
+    {
+      "fips": "51157",
+      "name": "Rappahannock County"
+    },
+    {
+      "fips": "51177",
+      "name": "Spotsylvania County"
+    },
+    {
+      "fips": "51179",
+      "name": "Stafford County"
+    },
+    {
+      "fips": "51187",
+      "name": "Warren County"
+    },
+    {
+      "fips": "51510",
+      "name": "Alexandria city"
+    },
+    {
+      "fips": "51600",
+      "name": "Fairfax city"
+    },
+    {
+      "fips": "51610",
+      "name": "Falls Church city"
+    },
+    {
+      "fips": "51630",
+      "name": "Fredericksburg city"
+    },
+    {
+      "fips": "51683",
+      "name": "Manassas city"
+    },
+    {
+      "fips": "51685",
+      "name": "Manassas Park city"
+    },
+    {
+      "fips": "54037",
+      "name": "Jefferson County"
+    },
+    {
+      "fips": "24021",
+      "name": "Frederick County"
+    },
+    {
+      "fips": "24031",
+      "name": "Montgomery County"
+    },
+    {
+      "fips": "11001",
+      "name": "District of Columbia"
+    },
+    {
+      "fips": "24017",
+      "name": "Charles County"
+    },
+    {
+      "fips": "24033",
+      "name": "Prince George's County"
+    }
+  ],
+  "47920": [
+    {
+      "fips": "39047",
+      "name": "Fayette County"
+    }
+  ],
+  "47930": [
+    {
+      "fips": "09140",
+      "name": "Naugatuck Valley Planning Region"
+    }
+  ],
+  "47940": [
+    {
+      "fips": "19013",
+      "name": "Black Hawk County"
+    },
+    {
+      "fips": "19017",
+      "name": "Bremer County"
+    },
+    {
+      "fips": "19075",
+      "name": "Grundy County"
+    }
+  ],
+  "47980": [
+    {
+      "fips": "46029",
+      "name": "Codington County"
+    }
+  ],
+  "48020": [
+    {
+      "fips": "55055",
+      "name": "Jefferson County"
+    }
+  ],
+  "48060": [
+    {
+      "fips": "36045",
+      "name": "Jefferson County"
+    }
+  ],
+  "48140": [
+    {
+      "fips": "55073",
+      "name": "Marathon County"
+    }
+  ],
+  "48180": [
+    {
+      "fips": "13229",
+      "name": "Pierce County"
+    },
+    {
+      "fips": "13299",
+      "name": "Ware County"
+    }
+  ],
+  "48200": [
+    {
+      "fips": "37087",
+      "name": "Haywood County"
+    }
+  ],
+  "48220": [
+    {
+      "fips": "40039",
+      "name": "Custer County"
+    },
+    {
+      "fips": "40149",
+      "name": "Washita County"
+    }
+  ],
+  "48260": [
+    {
+      "fips": "39081",
+      "name": "Jefferson County"
+    },
+    {
+      "fips": "54009",
+      "name": "Brooke County"
+    },
+    {
+      "fips": "54029",
+      "name": "Hancock County"
+    }
+  ],
+  "48300": [
+    {
+      "fips": "53007",
+      "name": "Chelan County"
+    },
+    {
+      "fips": "53017",
+      "name": "Douglas County"
+    }
+  ],
+  "48460": [
+    {
+      "fips": "29091",
+      "name": "Howell County"
+    }
+  ],
+  "48540": [
+    {
+      "fips": "39013",
+      "name": "Belmont County"
+    },
+    {
+      "fips": "54051",
+      "name": "Marshall County"
+    },
+    {
+      "fips": "54069",
+      "name": "Ohio County"
+    }
+  ],
+  "48580": [
+    {
+      "fips": "55127",
+      "name": "Walworth County"
+    }
+  ],
+  "48620": [
+    {
+      "fips": "20015",
+      "name": "Butler County"
+    },
+    {
+      "fips": "20079",
+      "name": "Harvey County"
+    },
+    {
+      "fips": "20173",
+      "name": "Sedgwick County"
+    },
+    {
+      "fips": "20191",
+      "name": "Sumner County"
+    }
+  ],
+  "48660": [
+    {
+      "fips": "48009",
+      "name": "Archer County"
+    },
+    {
+      "fips": "48077",
+      "name": "Clay County"
+    },
+    {
+      "fips": "48485",
+      "name": "Wichita County"
+    }
+  ],
+  "48680": [
+    {
+      "fips": "12119",
+      "name": "Sumter County"
+    }
+  ],
+  "48700": [
+    {
+      "fips": "42081",
+      "name": "Lycoming County"
+    }
+  ],
+  "48780": [
+    {
+      "fips": "38105",
+      "name": "Williams County"
+    }
+  ],
+  "48820": [
+    {
+      "fips": "27067",
+      "name": "Kandiyohi County"
+    }
+  ],
+  "48900": [
+    {
+      "fips": "37019",
+      "name": "Brunswick County"
+    },
+    {
+      "fips": "37129",
+      "name": "New Hanover County"
+    },
+    {
+      "fips": "37141",
+      "name": "Pender County"
+    }
+  ],
+  "48940": [
+    {
+      "fips": "39027",
+      "name": "Clinton County"
+    }
+  ],
+  "48980": [
+    {
+      "fips": "37195",
+      "name": "Wilson County"
+    }
+  ],
+  "49010": [
+    {
+      "fips": "47051",
+      "name": "Franklin County"
+    }
+  ],
+  "49020": [
+    {
+      "fips": "51069",
+      "name": "Frederick County"
+    },
+    {
+      "fips": "51840",
+      "name": "Winchester city"
+    },
+    {
+      "fips": "54027",
+      "name": "Hampshire County"
+    }
+  ],
+  "49080": [
+    {
+      "fips": "32013",
+      "name": "Humboldt County"
+    }
+  ],
+  "49100": [
+    {
+      "fips": "27169",
+      "name": "Winona County"
+    }
+  ],
+  "49180": [
+    {
+      "fips": "37057",
+      "name": "Davidson County"
+    },
+    {
+      "fips": "37059",
+      "name": "Davie County"
+    },
+    {
+      "fips": "37067",
+      "name": "Forsyth County"
+    },
+    {
+      "fips": "37169",
+      "name": "Stokes County"
+    },
+    {
+      "fips": "37197",
+      "name": "Yadkin County"
+    }
+  ],
+  "49220": [
+    {
+      "fips": "55141",
+      "name": "Wood County"
+    }
+  ],
+  "49260": [
+    {
+      "fips": "40153",
+      "name": "Woodward County"
+    }
+  ],
+  "49300": [
+    {
+      "fips": "39169",
+      "name": "Wayne County"
+    }
+  ],
+  "49340": [
+    {
+      "fips": "25027",
+      "name": "Worcester County"
+    }
+  ],
+  "49380": [
+    {
+      "fips": "27105",
+      "name": "Nobles County"
+    }
+  ],
+  "49420": [
+    {
+      "fips": "53077",
+      "name": "Yakima County"
+    }
+  ],
+  "49460": [
+    {
+      "fips": "46135",
+      "name": "Yankton County"
+    }
+  ],
+  "49620": [
+    {
+      "fips": "42133",
+      "name": "York County"
+    }
+  ],
+  "49660": [
+    {
+      "fips": "39099",
+      "name": "Mahoning County"
+    },
+    {
+      "fips": "39155",
+      "name": "Trumbull County"
+    }
+  ],
+  "49700": [
+    {
+      "fips": "06101",
+      "name": "Sutter County"
+    },
+    {
+      "fips": "06115",
+      "name": "Yuba County"
+    }
+  ],
+  "49740": [
+    {
+      "fips": "04027",
+      "name": "Yuma County"
+    }
+  ],
+  "49780": [
+    {
+      "fips": "39119",
+      "name": "Muskingum County"
+    }
+  ],
+  "49820": [
+    {
+      "fips": "48505",
+      "name": "Zapata County"
+    }
+  ]
+}

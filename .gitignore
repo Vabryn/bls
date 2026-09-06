@@ -1,3 +1,5 @@
 .DS_Store
 .wrangler
 Learning bls
+node_modules/
+

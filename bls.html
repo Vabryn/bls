@@ -669,6 +669,194 @@ body {
   filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.8));
 }
 
+/* Metro & County Shape Overlay */
+.metro-overlay-path {
+  fill: rgba(56, 189, 248, 0.18);
+  stroke: var(--accent-cyan);
+  stroke-width: 2.2px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.65));
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+[data-theme="light"] .metro-overlay-path {
+  fill: rgba(2, 132, 199, 0.15);
+  stroke: #0284c7;
+  filter: drop-shadow(0 0 8px rgba(2, 132, 199, 0.4));
+}
+.county-overlay-path {
+  fill: transparent;
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 0.9px;
+  stroke-dasharray: 2.5, 2;
+  cursor: pointer;
+  transition: fill 0.15s ease, stroke 0.15s ease;
+}
+[data-theme="light"] .county-overlay-path {
+  stroke: rgba(0, 0, 0, 0.3);
+}
+.county-overlay-path:hover {
+  fill: rgba(56, 189, 248, 0.32);
+  stroke: #ffffff;
+  stroke-dasharray: none;
+}
+[data-theme="light"] .county-overlay-path:hover {
+  fill: rgba(2, 132, 199, 0.25);
+  stroke: #0284c7;
+}
+
+/* Floating Selected Metro HUD Banner */
+.map-selected-hud {
+  position: absolute;
+  top: 52px;
+  left: 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--accent-cyan);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-md);
+  z-index: 20;
+  backdrop-filter: blur(8px);
+}
+.map-selected-hud.active { display: flex; }
+.hud-metro-title {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.hud-metro-counties {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.hud-reset-btn {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--accent-cyan);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.hud-reset-btn:hover {
+  background: var(--accent-cyan);
+  color: #000;
+}
+
+/* County Search Match Hint in Hero Combobox */
+.area-opt-county-hint {
+  font-size: 11px;
+  color: var(--accent-cyan);
+  background: var(--accent-cyan-subtle);
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: auto;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Map Metro & County Search in Map Toolbar */
+.map-metro-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 320px;
+  min-width: 180px;
+}
+.map-search-icon {
+  position: absolute;
+  left: 10px;
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.map-search-input {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 6px 28px 6px 30px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.map-search-input:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 2px var(--accent-cyan-subtle);
+}
+.map-search-clear {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  display: none;
+  padding: 2px;
+}
+.map-search-clear:hover {
+  color: var(--text-primary);
+}
+.map-search-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  max-height: 280px;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
+  display: none;
+}
+.map-search-dropdown.open {
+  display: block;
+}
+.map-search-opt {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.1s ease;
+}
+.map-search-opt:last-child {
+  border-bottom: none;
+}
+.map-search-opt:hover {
+  background: var(--bg-elevated);
+}
+.map-search-opt-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.map-search-opt-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.map-search-opt-county {
+  font-size: 11px;
+  color: var(--accent-cyan);
+  font-weight: 500;
+}
+
 /* Map Legend */
 .map-legend-container {
   padding: 14px 18px;
@@ -1234,9 +1422,27 @@ body {
 
     <!-- Map Canvas Card -->
     <div class="map-card">
+      <!-- Floating Selected Metro HUD Banner -->
+      <div class="map-selected-hud" id="mapSelectedHud">
+        <div>
+          <div class="hud-metro-title" id="hudMetroTitle">Metro Area</div>
+          <div class="hud-metro-counties" id="hudMetroCounties">Constituent counties</div>
+        </div>
+        <button class="hud-reset-btn" id="hudResetBtn" title="Clear metro shape and reset zoom">Reset Zoom ⟲</button>
+      </div>
+
       <div class="map-card-toolbar">
         <div class="map-summary-text" id="mapSummaryStats">
           Loading 393 Metropolitan Statistical Areas...
+        </div>
+        <div class="map-metro-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="map-search-icon">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="mapMetroSearchInput" class="map-search-input" placeholder="Search metro or county on map..." autocomplete="off">
+          <button id="mapMetroSearchClear" class="map-search-clear" aria-label="Clear map search">✕</button>
+          <div id="mapMetroSearchDropdown" class="map-search-dropdown"></div>
         </div>
         <div class="map-zoom-buttons">
           <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in">+</button>
@@ -1248,8 +1454,10 @@ body {
       <!-- Responsive SVG Viewport (Albers USA 975x610) -->
       <div class="map-svg-container" id="mapSvgContainer">
         <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
-          <g id="mapZoomGroup">
+          <g id="mapZoomGroup" style="transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
             <g id="statesLayer"></g>
+            <!-- Metro and County Geographic Shape Overlay Layer -->
+            <g id="metroOverlayLayer"></g>
             <g id="insetsLayer">
               <!-- Puerto Rico Inset Frame -->
               <rect x="872" y="530" width="76" height="42" rx="4" fill="none" stroke="var(--border-subtle)" stroke-dasharray="3,3" />
@@ -1490,6 +1698,7 @@ const state = {
 
   // Map Feature State
   mapData: null,
+  metroShapes: null,
   activeMapSoc: "00-0000",
   activeMapMetric: "median", // 'median' | 'mean' | 'p25' | 'p75'
   mapSizingMode: "emp",      // 'emp' | 'uniform'
@@ -1576,7 +1785,7 @@ async function init() {
     const natArea = state.manifest.find(a => a.id === "99");
     if (natArea) state.nationalTotals = natArea;
 
-    // Load initial area and also boot the metro map
+    // Load initial area and boot the metro map
     await Promise.all([
       loadArea(state.currentAreaId),
       initMetroMap()
@@ -1591,17 +1800,28 @@ async function init() {
 // -------------------------------------------------------------
 async function initMetroMap() {
   try {
-    const [mapRes, statesRes] = await Promise.all([
+    const [mapRes, statesRes, shapesRes] = await Promise.all([
       fetch("data/metro_map.json"),
-      fetch("data/us_states_paths.json")
+      fetch("data/us_states_paths.json"),
+      fetch("data/metro_shapes.json")
     ]);
     state.mapData = await mapRes.json();
     const statesPaths = await statesRes.json();
+    state.metroShapes = await shapesRes.json();
+
+    state.statesById = {};
+    statesPaths.forEach(s => {
+      state.statesById[s.id] = s;
+    });
 
     renderStateBoundaries(statesPaths);
     populateMapJobDropdown();
     setupMapControls();
     await loadMapJob("00-0000");
+
+    if (state.currentAreaId && state.currentAreaId !== "99") {
+      renderMetroShapeOverlay(state.currentAreaId);
+    }
   } catch (err) {
     console.error("Failed to initialize metro map:", err);
     document.getElementById("mapSummaryStats").textContent = "Unable to load metro map data.";
@@ -1792,10 +2012,10 @@ function renderMetroMap() {
       circle.classList.remove("highlighted");
     });
 
-    // Click to switch region
+    // Click to switch region and display county/metro overlay
     circle.addEventListener("click", () => {
       loadArea(m.id);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      renderMetroShapeOverlay(m.id);
     });
 
     layer.appendChild(circle);
@@ -1854,7 +2074,7 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
     </div>
 
     <div style="margin-top: 10px; font-size: 11px; color: var(--text-accent); text-align: center; border-top: 1px solid var(--border-subtle); padding-top: 6px;">
-      Click metro to open full area profile →
+      Click metro to open county overlay & profile →
     </div>
   `;
 
@@ -1930,7 +2150,7 @@ function setupMapControls() {
   };
 
   document.getElementById("mapZoomIn").addEventListener("click", () => {
-    state.mapZoom.scale = Math.min(4, state.mapZoom.scale * 1.35);
+    state.mapZoom.scale = Math.min(6, state.mapZoom.scale * 1.35);
     updateTransform();
   });
 
@@ -1943,10 +2163,132 @@ function setupMapControls() {
     updateTransform();
   });
 
-  document.getElementById("mapZoomReset").addEventListener("click", () => {
+  const resetZoomAndOverlay = () => {
     state.mapZoom = { scale: 1, x: 0, y: 0 };
     updateTransform();
-  });
+    const layer = document.getElementById("metroOverlayLayer");
+    if (layer) layer.innerHTML = "";
+    document.querySelectorAll(".metro-bubble.highlighted").forEach(b => b.classList.remove("highlighted"));
+    const hud = document.getElementById("mapSelectedHud");
+    if (hud) hud.classList.remove("active");
+    const mapMetroInput = document.getElementById("mapMetroSearchInput");
+    if (mapMetroInput) mapMetroInput.value = "";
+    const mapMetroClear = document.getElementById("mapMetroSearchClear");
+    if (mapMetroClear) mapMetroClear.style.display = "none";
+  };
+
+  document.getElementById("mapZoomReset").addEventListener("click", resetZoomAndOverlay);
+
+  const hudResetBtn = document.getElementById("hudResetBtn");
+  if (hudResetBtn) {
+    hudResetBtn.addEventListener("click", resetZoomAndOverlay);
+  }
+
+  // Map Metro & County Search Toolbar Handlers
+  const mapMetroInput = document.getElementById("mapMetroSearchInput");
+  const mapMetroDropdown = document.getElementById("mapMetroSearchDropdown");
+  const mapMetroClear = document.getElementById("mapMetroSearchClear");
+
+  if (mapMetroInput && mapMetroDropdown) {
+    const filterMapMetroDropdown = (q) => {
+      const query = q.toLowerCase().trim();
+      if (!query) {
+        mapMetroDropdown.innerHTML = "";
+        mapMetroDropdown.classList.remove("open");
+        return;
+      }
+
+      let matches = [];
+      // 1. Search in MSAs
+      state.manifest.forEach(a => {
+        if (a.type !== "msa") return;
+        const nameMatch = a.name.toLowerCase().includes(query);
+        const stateMatch = (a.state || "").toLowerCase() === query;
+        let countyMatch = null;
+
+        if (state.metroShapes && state.metroShapes[a.id]) {
+          const counties = state.metroShapes[a.id].counties || [];
+          const foundCounty = counties.find(c => c.name.toLowerCase().includes(query));
+          if (foundCounty) countyMatch = foundCounty.name;
+        }
+
+        if (nameMatch || stateMatch || countyMatch) {
+          matches.push({ area: a, countyMatch });
+        }
+      });
+
+      // 2. Search States
+      state.manifest.forEach(a => {
+        if (a.type !== "state") return;
+        if (a.name.toLowerCase().includes(query) || (a.state || "").toLowerCase() === query) {
+          matches.push({ area: a, isState: true });
+        }
+      });
+
+      matches = matches.slice(0, 15);
+
+      if (matches.length === 0) {
+        mapMetroDropdown.innerHTML = `<div class="map-search-opt" style="color:var(--text-muted); cursor:default;">No matching metro, state, or county found.</div>`;
+        mapMetroDropdown.classList.add("open");
+        return;
+      }
+
+      mapMetroDropdown.innerHTML = "";
+      matches.forEach(m => {
+        const item = document.createElement("div");
+        item.className = "map-search-opt";
+        const metaText = m.isState
+          ? `U.S. State · ${fmt.compact(m.area.emp)} jobs`
+          : (m.countyMatch
+              ? `<span class="map-search-opt-county">Includes ${m.countyMatch}</span> · ${m.area.state || ""}`
+              : `Metropolitan Area · ${fmt.compact(m.area.emp)} jobs`);
+
+        item.innerHTML = `
+          <span class="map-search-opt-name">${m.area.name}</span>
+          <span class="map-search-opt-meta">${metaText}</span>
+        `;
+
+        item.addEventListener("click", () => {
+          loadArea(m.area.id);
+          renderMetroShapeOverlay(m.area.id);
+          mapMetroInput.value = m.area.name;
+          mapMetroDropdown.classList.remove("open");
+          if (mapMetroClear) mapMetroClear.style.display = "block";
+        });
+
+        mapMetroDropdown.appendChild(item);
+      });
+
+      mapMetroDropdown.classList.add("open");
+    };
+
+    mapMetroInput.addEventListener("input", (e) => {
+      const val = e.target.value;
+      if (mapMetroClear) mapMetroClear.style.display = val ? "block" : "none";
+      filterMapMetroDropdown(val);
+    });
+
+    mapMetroInput.addEventListener("focus", (e) => {
+      if (e.target.value.trim()) {
+        filterMapMetroDropdown(e.target.value);
+      }
+    });
+
+    if (mapMetroClear) {
+      mapMetroClear.addEventListener("click", () => {
+        mapMetroInput.value = "";
+        mapMetroClear.style.display = "none";
+        mapMetroDropdown.classList.remove("open");
+        resetZoomAndOverlay();
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".map-metro-search-wrap")) {
+        mapMetroDropdown.classList.remove("open");
+      }
+    });
+  }
 }
 
 function filterMapJobDropdown(query) {
@@ -1963,6 +2305,178 @@ function filterMapJobDropdown(query) {
 
 function closeMapJobDropdown() {
   document.getElementById("mapJobDropdown").classList.remove("open");
+}
+
+// -------------------------------------------------------------
+// METRO & COUNTY BACKGROUND SHAPE OVERLAY
+// -------------------------------------------------------------
+function renderMetroShapeOverlay(areaId) {
+  const layer = document.getElementById("metroOverlayLayer");
+  const hud = document.getElementById("mapSelectedHud");
+  const mapMetroInput = document.getElementById("mapMetroSearchInput");
+  const mapMetroClear = document.getElementById("mapMetroSearchClear");
+  if (!layer) return;
+
+  layer.innerHTML = "";
+
+  // Reset highlighted bubbles in map
+  document.querySelectorAll(".metro-bubble.highlighted").forEach(b => {
+    b.classList.remove("highlighted");
+  });
+
+  // 1. If MSA Metro
+  if (state.metroShapes && state.metroShapes[areaId]) {
+    const shape = state.metroShapes[areaId];
+    const metroMeta = state.manifest.find(a => a.id === areaId) || { name: "Metropolitan Area" };
+
+    if (mapMetroInput) {
+      mapMetroInput.value = metroMeta.name;
+      if (mapMetroClear) mapMetroClear.style.display = "block";
+    }
+
+    // Update HUD Banner
+    if (hud) {
+      document.getElementById("hudMetroTitle").textContent = metroMeta.name;
+      const countyNames = shape.counties.map(c => c.name.replace(/ County$/i, "")).join(", ");
+      document.getElementById("hudMetroCounties").textContent =
+        `${shape.counties.length} constituent counties: ${countyNames}`;
+      hud.classList.add("active");
+    }
+
+    // Render constituent county shapes
+    shape.counties.forEach(c => {
+      if (!c.d) return;
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("class", "county-overlay-path");
+      path.setAttribute("d", c.d);
+      path.setAttribute("data-county", c.name);
+
+      path.addEventListener("mouseenter", (e) => {
+        tooltip.innerHTML = `
+          <div style="font-weight: 700; font-size: 13px; color: var(--accent-cyan);">${c.name}</div>
+          <div style="font-size: 11.5px; color: var(--text-muted);">${metroMeta.name}</div>
+        `;
+        tooltip.style.display = "block";
+        moveTooltip(e);
+      });
+      path.addEventListener("mousemove", moveTooltip);
+      path.addEventListener("mouseleave", hideTooltip);
+
+      layer.appendChild(path);
+    });
+
+    // Render unified outer metro boundary polygon
+    if (shape.d) {
+      const outerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      outerPath.setAttribute("class", "metro-overlay-path");
+      outerPath.setAttribute("d", shape.d);
+      layer.appendChild(outerPath);
+    }
+
+    // Highlight the matching metro circle
+    const targetCircle = document.querySelector(`.metro-bubble[data-id="${areaId}"]`);
+    if (targetCircle) {
+      targetCircle.classList.add("highlighted");
+      targetCircle.parentElement.appendChild(targetCircle);
+    }
+
+    // Smooth Auto-Zoom to Metro Bounding Box
+    if (shape.bounds && shape.bounds.length === 2) {
+      const [[x0, y0], [x1, y1]] = shape.bounds;
+      const dx = Math.max(18, x1 - x0);
+      const dy = Math.max(18, y1 - y0);
+      const cx = (x0 + x1) / 2;
+      const cy = (y0 + y1) / 2;
+
+      const scale = Math.min(5.2, Math.max(1.6, 0.72 / Math.max(dx / 975, dy / 610)));
+      const tx = Math.round(975 / 2 - scale * cx);
+      const ty = Math.round(610 / 2 - scale * cy);
+
+      state.mapZoom = { scale, x: tx, y: ty };
+      const zoomGroup = document.getElementById("mapZoomGroup");
+      if (zoomGroup) {
+        zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
+      }
+    }
+  }
+  // 2. If U.S. State
+  else if (state.statesById && state.statesById[areaId]) {
+    const stateObj = state.statesById[areaId];
+    const stateMeta = state.manifest.find(a => a.id === areaId) || { name: stateObj.name, state: "" };
+
+    if (mapMetroInput) {
+      mapMetroInput.value = stateMeta.name;
+      if (mapMetroClear) mapMetroClear.style.display = "block";
+    }
+
+    // Render outer state boundary path
+    if (stateObj.d) {
+      const outerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      outerPath.setAttribute("class", "metro-overlay-path");
+      outerPath.setAttribute("d", stateObj.d);
+      layer.appendChild(outerPath);
+    }
+
+    // Highlight all metros in this state
+    let countInState = 0;
+    if (state.mapData && state.mapData.metros) {
+      state.mapData.metros.forEach(m => {
+        if (m.state === stateMeta.state) {
+          countInState++;
+          const c = document.querySelector(`.metro-bubble[data-id="${m.id}"]`);
+          if (c) c.classList.add("highlighted");
+        }
+      });
+    }
+
+    // Calculate state bounds from path
+    const nums = stateObj.d.match(/-?\d+\.?\d*/g).map(Number);
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (let i = 0; i < nums.length; i += 2) {
+      const x = nums[i], y = nums[i+1];
+      if (!isNaN(x) && !isNaN(y)) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+
+    if (isFinite(minX) && isFinite(maxX)) {
+      const dx = Math.max(30, maxX - minX);
+      const dy = Math.max(30, maxY - minY);
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+
+      const scale = Math.min(4.5, Math.max(1.3, 0.76 / Math.max(dx / 975, dy / 610)));
+      const tx = Math.round(975 / 2 - scale * cx);
+      const ty = Math.round(610 / 2 - scale * cy);
+
+      state.mapZoom = { scale, x: tx, y: ty };
+      const zoomGroup = document.getElementById("mapZoomGroup");
+      if (zoomGroup) {
+        zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
+      }
+    }
+
+    if (hud) {
+      document.getElementById("hudMetroTitle").textContent = stateMeta.name;
+      document.getElementById("hudMetroCounties").textContent =
+        `${countInState} Metropolitan Statistical Areas in ${stateMeta.name}`;
+      hud.classList.add("active");
+    }
+  }
+  // 3. National benchmark or reset
+  else {
+    if (hud) hud.classList.remove("active");
+    if (mapMetroInput) mapMetroInput.value = "";
+    if (mapMetroClear) mapMetroClear.style.display = "none";
+    state.mapZoom = { scale: 1, x: 0, y: 0 };
+    const zoomGroup = document.getElementById("mapZoomGroup");
+    if (zoomGroup) {
+      zoomGroup.setAttribute("transform", "translate(0, 0) scale(1)");
+    }
+  }
 }
 
 // -------------------------------------------------------------
@@ -2008,6 +2522,7 @@ function renderAll() {
   renderBrowseTable();
   renderEducation();
   renderTopPaying();
+  renderMetroShapeOverlay(state.currentAreaId);
 }
 
 function renderHeroAndKPIs() {
@@ -2219,8 +2734,35 @@ function filterAreaDropdown(query) {
   options.forEach(opt => {
     const name = opt.dataset.name || "";
     const st = opt.dataset.state || "";
-    const matches = !q || name.includes(q) || st === q;
+    let countyMatch = false;
+    let matchingCountyName = "";
+
+    if (q && state.metroShapes && state.metroShapes[opt.dataset.id]) {
+      const counties = state.metroShapes[opt.dataset.id].counties;
+      if (counties) {
+        const found = counties.find(c => c.name.toLowerCase().includes(q));
+        if (found) {
+          countyMatch = true;
+          matchingCountyName = found.name;
+        }
+      }
+    }
+
+    const matches = !q || name.includes(q) || st === q || countyMatch;
     opt.style.display = matches ? "flex" : "none";
+
+    let countyHint = opt.querySelector(".area-opt-county-hint");
+    if (q && countyMatch && !name.includes(q)) {
+      if (!countyHint) {
+        countyHint = document.createElement("span");
+        countyHint.className = "area-opt-county-hint";
+        opt.appendChild(countyHint);
+      }
+      countyHint.textContent = `Includes ${matchingCountyName}`;
+      countyHint.style.display = "inline-block";
+    } else if (countyHint) {
+      countyHint.style.display = "none";
+    }
   });
 
   headers.forEach(h => {
@@ -2253,6 +2795,9 @@ function setupEventListeners() {
       state.activeTab = tabId;
       if (tabId === "map" && state.activeJobPayload) {
         renderMetroMap();
+        if (state.currentAreaId && state.currentAreaId !== "99") {
+          renderMetroShapeOverlay(state.currentAreaId);
+        }
       }
     });
   });
