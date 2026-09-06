@@ -979,6 +979,15 @@ body {
   grid-auto-rows: min-content;
   align-content: start;
 }
+.area-summary-disclosure {
+  margin: 0;
+  padding: 12px 24px 14px;
+  border-top: 1px solid var(--area-rule);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.area-summary-disclosure[hidden] { display: none; }
 .area-metric {
   display: flex;
   flex-direction: column;
@@ -2716,6 +2725,7 @@ body {
                   </div>
                 </div>
               </div>
+          <p class="area-summary-disclosure" id="kpiDisclosure" hidden></p>
         </div>
       </div>
     </div>
@@ -4137,8 +4147,9 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
     </div>
 
     ${(median === null && mean === null) ? `
-      <div style="margin-top: 8px; font-size: 11px; color: var(--text-muted); font-style: italic;">
-        BLS reports hourly wage schedule for this occupation (annual wages not computed).
+      <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-subtle); font-size: 12.5px; line-height: 1.5; color: var(--text-secondary);">
+        BLS publishes only an hourly wage schedule for this occupation, so no
+        annual wage is computed.
       </div>
     ` : ""}
   `;
@@ -4929,10 +4940,7 @@ function renderHeroAndKPIs() {
   if (dataYearNote) {
     const backYears = Array.from(new Set(Object.values(occBackfill))).sort((a, b) => b - a);
     let text = "", tip = "";
-    if (!isAllJobs && occHourly) {
-      text = "annualized from hourly wages";
-      tip = `BLS withholds annual wages for ${occTitle} (workers who don't typically work year-round). Figures shown are the published hourly wages × 2,080 hours.`;
-    } else if (!isAllJobs && backYears.length) {
+    if (!isAllJobs && backYears.length) {
       const flds = Object.keys(occBackfill)
         .map(f => ({ emp: "employment", mean: "mean wage", median: "median wage", p25: "25th pct", p75: "75th pct", lq: "concentration" }[f] || f));
       text = `${backYears.join(" / ")} data`;
@@ -4944,6 +4952,20 @@ function renderHeroAndKPIs() {
     dataYearNote.textContent = text;
     dataYearNote.title = tip;
     dataYearNote.hidden = !text;
+  }
+
+  // Hourly-wage disclosure, in plain readable text, inline in the Summary panel.
+  const disclosure = document.getElementById("kpiDisclosure");
+  if (disclosure) {
+    if (!isAllJobs && occHourly) {
+      disclosure.textContent =
+        `BLS publishes only an hourly wage schedule for ${occTitle} — these workers don't ` +
+        `typically work a standard full year. The annual figures above are those published ` +
+        `hourly wages multiplied by 2,080 hours (40 hours a week for 52 weeks).`;
+      disclosure.hidden = false;
+    } else {
+      disclosure.hidden = true;
+    }
   }
 
   // Card header labels + "picked" highlight (search bars replaced the hero title).
@@ -4985,7 +5007,7 @@ function renderHeroAndKPIs() {
       kpiEmpLabel.textContent = `${shortOcc} Employment`;
       kpiEmpLabel.title = `${occTitle} Employment`;
     }
-    kpiEmpVal.textContent = (occEmp !== null && occEmp > 0) ? fmt.number(occEmp) : "Withheld / N/A";
+    kpiEmpVal.textContent = (occEmp !== null && occEmp > 0) ? fmt.number(occEmp) : "N/A";
 
     if (occEmp && natJobEmp && natJobEmp > 0) {
       const shareOfUS = ((occEmp / natJobEmp) * 100).toFixed(1);
@@ -5042,7 +5064,7 @@ function renderHeroAndKPIs() {
         kpiMedFootnote.textContent = natJobMedian ? `U.S. Nat'l Median: ${fmt.currency(natJobMedian)}` : "50th percentile worker earnings";
       }
     } else {
-      kpiMedVal.textContent = "Withheld / N/A";
+      kpiMedVal.textContent = "N/A";
       kpiMedBadge.textContent = "Unreported";
       kpiMedBadge.className = "area-metric-chip";
       if (kpiMedFootnote) {
@@ -5096,7 +5118,7 @@ function renderHeroAndKPIs() {
         kpiMeanFootnote.textContent = natJobMean ? `U.S. Nat'l Mean: ${fmt.currency(natJobMean)}` : "Average annual compensation";
       }
     } else {
-      kpiMeanVal.textContent = "Withheld / N/A";
+      kpiMeanVal.textContent = "N/A";
       if (kpiMeanBadge) {
         kpiMeanBadge.textContent = "Unreported";
         kpiMeanBadge.className = "area-metric-chip";
@@ -5153,7 +5175,7 @@ function renderHeroAndKPIs() {
         kpiLqFootnote.textContent = `${((1 - occLq) * 100).toFixed(0)}% less concentrated than U.S. average`;
       }
     } else {
-      kpiLqVal.textContent = "Withheld / N/A";
+      kpiLqVal.textContent = "N/A";
       kpiLqBadge.textContent = "Unreported";
       kpiLqBadge.className = "area-metric-chip";
       kpiLqFootnote.textContent = `Concentration below BLS reporting threshold in ${data.name}`;
