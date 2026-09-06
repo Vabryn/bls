@@ -961,8 +961,8 @@ body {
 }
 /* Search bar that now lives on the map / browse card header line. */
 .card-search {
-  flex: 1 1 220px;
-  min-width: 160px;
+  flex: 1 1 170px;
+  min-width: 150px;
   width: auto;
 }
 .card-search .combobox-dropdown { min-width: 260px; }
@@ -1040,7 +1040,10 @@ body {
   padding: 2px 8px;
   border-radius: var(--radius-sm);
   white-space: nowrap;
-  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex-shrink: 1;
 }
 [data-theme="light"] .hud-metro-counties {
   background: var(--bg-elevated);
@@ -1250,7 +1253,9 @@ body {
      label + reset button don't overflow. */
   .card-search { flex-basis: 100%; }
   .hud-metro-counties { display: none; }
-  .map-toolbar-area-info { flex: 1 1 auto; }
+  .map-toolbar-area-info { flex: 1 1 auto; flex-wrap: wrap; }
+  .sel-chip { max-width: 100%; }
+  #hudResetBtn { margin-left: auto; }
 }
 
 .map-svg-container {
@@ -2338,10 +2343,7 @@ body {
                 </div>
               </div>
 
-              <!-- Occupation label kept hidden for code that syncs its text. -->
-              <div class="map-controls-job-meta" hidden>
-                <strong id="sidebarActiveJobTitle">All Occupations</strong>
-              </div>
+              <strong id="sidebarActiveJobTitle" hidden>All Occupations</strong>
             </div>
 
             <!-- Responsive SVG Viewport (Albers USA 975x610) -->
@@ -2831,6 +2833,17 @@ async function init() {
       loadArea(state.currentAreaId),
       initMetroMap()
     ]);
+
+    // ?occ=<soc> deep-link: open that occupation's area breakdown.
+    if (state._pendingOccBreakdown) {
+      const o = state._pendingOccBreakdown;
+      state._pendingOccBreakdown = null;
+      const inp = document.getElementById("mapJobSearchInput");
+      if (inp) inp.value = o.title;
+      const clr = document.getElementById("mapJobClear");
+      if (clr) clr.style.display = "block";
+      try { await openOccupationAreaBreakdown(o.soc, o.title); } catch (e) {}
+    }
   } catch (err) {
     console.error("Failed to load BLS manifest:", err);
   }
@@ -2883,7 +2896,10 @@ async function initMetroMap() {
     renderStateBoundaries(statesPaths);
     populateMapJobDropdown();
     setupMapControls();
-    await loadMapJob("00-0000");
+    const wantOcc = new URLSearchParams(window.location.search).get("occ");
+    const occMeta = wantOcc && state.mapData.occupations && state.mapData.occupations.find(o => o.soc === wantOcc);
+    await loadMapJob(occMeta ? wantOcc : "00-0000");
+    if (occMeta) state._pendingOccBreakdown = occMeta;
 
     if (state.currentAreaId && state.currentAreaId !== "99") {
       renderMetroShapeOverlay(state.currentAreaId);
@@ -4051,12 +4067,12 @@ function setupMapControls() {
       visibleOptions[idx].scrollIntoView({ block: "nearest" });
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (highlighted) {
-        loadMapJob(highlighted.dataset.soc);
+      const pick = highlighted || visibleOptions[0];
+      if (pick) {
+        input.value = pick.querySelector(".area-opt-name") ? pick.querySelector(".area-opt-name").textContent : input.value;
+        if (clearBtn) clearBtn.style.display = "block";
         closeMapJobDropdown();
-      } else if (visibleOptions.length > 0) {
-        loadMapJob(visibleOptions[0].dataset.soc);
-        closeMapJobDropdown();
+        openOccupationAreaBreakdown(pick.dataset.soc, pick.dataset.title || input.value);
       }
     } else if (e.key === "Escape") {
       closeMapJobDropdown();
@@ -4327,8 +4343,14 @@ function filterMapJobDropdown(query) {
     `;
 
     opt.addEventListener("click", () => {
-      loadMapJob(occ.soc);
+      const inp = document.getElementById("mapJobSearchInput");
+      if (inp) inp.value = occ.title;
+      const clr = document.getElementById("mapJobClear");
+      if (clr) clr.style.display = "block";
       closeMapJobDropdown();
+      // Picking an occupation opens its per-area breakdown in the browse panel
+      // and recolors the map (openOccupationAreaBreakdown calls loadMapJob).
+      openOccupationAreaBreakdown(occ.soc, occ.title);
     });
 
     fragment.appendChild(opt);
