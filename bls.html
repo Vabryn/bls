@@ -1677,8 +1677,8 @@ body {
         <!-- Floating Selected Metro HUD Banner -->
         <div class="map-selected-hud" id="mapSelectedHud">
           <div>
-            <div class="hud-metro-title" id="hudMetroTitle">Metro Area</div>
-            <div class="hud-metro-counties" id="hudMetroCounties">Constituent counties</div>
+            <div class="hud-metro-title" id="hudMetroTitle">Statistical Area</div>
+            <div class="hud-metro-counties" id="hudMetroCounties">Statistical Wage Area</div>
           </div>
           <button class="hud-reset-btn" id="hudResetBtn" title="Clear metro shape and reset zoom">Reset Zoom ⟲</button>
         </div>
@@ -2312,19 +2312,6 @@ function renderHeroAreaMapBadge(areaId) {
       const h = Math.max(20, y1 - y0);
       const pad = Math.max(8, Math.max(w, h) * 0.16);
       svg.setAttribute("viewBox", `${x0 - pad} ${y0 - pad} ${w + pad * 2} ${h + pad * 2}`);
-
-      if (shape.counties) {
-        shape.counties.forEach(c => {
-          if (!c.d) return;
-          const cp = document.createElementNS("http://www.w3.org/2000/svg", "path");
-          cp.setAttribute("d", c.d);
-          cp.setAttribute("fill", "rgba(56, 189, 248, 0.2)");
-          cp.setAttribute("stroke", "rgba(255, 255, 255, 0.35)");
-          cp.setAttribute("stroke-width", "0.8");
-          cp.setAttribute("stroke-dasharray", "2,2");
-          svg.appendChild(cp);
-        });
-      }
 
       if (shape.d) {
         const ap = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -3275,35 +3262,14 @@ function renderMetroShapeOverlay(areaId, shouldZoom = false) {
     // Update HUD Banner
     if (hud) {
       document.getElementById("hudMetroTitle").textContent = metroMeta.name;
-      const count = shape.counties ? shape.counties.length : 0;
-      document.getElementById("hudMetroCounties").textContent =
-        count > 0 ? `${count} constituent ${count === 1 ? "county" : "counties"}` : "Statistical Area";
+      const typeLabel = shape.type === "nonmetro"
+        ? "Nonmetropolitan Statistical Area"
+        : (shape.type === "state" ? "Statewide Area" : "Metropolitan Statistical Area");
+      document.getElementById("hudMetroCounties").textContent = typeLabel;
       hud.classList.add("active");
     }
 
-    // Render constituent county shapes
-    shape.counties.forEach(c => {
-      if (!c.d) return;
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("class", "county-overlay-path");
-      path.setAttribute("d", c.d);
-      path.setAttribute("data-county", c.name);
-
-      path.addEventListener("mouseenter", (e) => {
-        tooltip.innerHTML = `
-          <div style="font-weight: 700; font-size: 13px; color: var(--accent-cyan);">${c.name}</div>
-          <div style="font-size: 11.5px; color: var(--text-muted);">${metroMeta.name}</div>
-        `;
-        tooltip.style.display = "block";
-        moveTooltip(e);
-      });
-      path.addEventListener("mousemove", moveTooltip);
-      path.addEventListener("mouseleave", hideTooltip);
-
-      layer.appendChild(path);
-    });
-
-    // Render unified outer metro boundary polygon with refined, subtle outline
+    // Render unified outer statistical wage area boundary polygon
     if (shape.d) {
       const outerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
       outerPath.setAttribute("class", "metro-overlay-path");
