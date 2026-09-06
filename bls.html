@@ -574,13 +574,24 @@ body {
 /* ========================================================= */
 .map-layout-grid {
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr) 250px;
+  grid-template-columns: 200px minmax(0, 1fr) 240px;
   gap: 16px;
   align-items: start;
-  width: min(calc(100% + 490px), calc(100vw - 48px));
+  width: min(calc(100vw - 32px), 1840px);
   position: relative;
   left: 50%;
   transform: translateX(-50%);
+}
+.map-center-split {
+  display: grid;
+  grid-template-columns: minmax(460px, 1.15fr) minmax(420px, 1fr);
+  gap: 14px;
+  align-items: stretch;
+}
+@media (max-width: 1400px) {
+  .map-center-split {
+    grid-template-columns: 1fr;
+  }
 }
 @media (max-width: 1100px) {
   .map-layout-grid {
@@ -855,6 +866,79 @@ body {
   background: #0284c7;
   color: #ffffff;
 }
+.browse-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+}
+.browse-card-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  font-size: 12.5px;
+}
+.browse-toolbar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--text-primary);
+}
+.browse-back-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+  font-family: var(--font-sans);
+}
+.browse-back-btn:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.badge-density {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  display: inline-block;
+}
+.badge-density.high {
+  color: var(--accent-emerald);
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  font-weight: 600;
+}
+.data-table tr.clickable-row {
+  cursor: pointer;
+}
+.data-table tr.clickable-row:hover td {
+  background: var(--bg-elevated);
+}
+.data-table tr.active-area-row td {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
 .map-toolbar-right {
   display: flex;
   align-items: center;
@@ -2052,19 +2136,10 @@ body {
     </div>
   </section>
 
-  <!-- Navigation Tabs -->
-  <nav class="tabs-container" role="tablist" aria-label="Wage Explorer Views">
-    <button id="tab-btn-map" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-map" data-tab="map">Metro Wage Map</button>
-    <button id="tab-btn-spread" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-spread" data-tab="spread">Wage Spread (Percentiles)</button>
-    <button id="tab-btn-browse" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-browse" data-tab="browse">Browse Occupations</button>
-    <button id="tab-btn-education" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-education" data-tab="education">Education Benchmarks</button>
-    <button id="tab-btn-toppay" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-toppay" data-tab="toppay">Highest Paying</button>
-  </nav>
-
   <!-- ======================================================= -->
-  <!-- TAB 0: Metro Wage Map (USA Geographic Visualizer)       -->
+  <!-- MAIN COCKPIT: Map & Browse Visualizer                   -->
   <!-- ======================================================= -->
-  <section id="tab-map" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-map">
+  <section id="tab-map" class="tab-panel active" role="region" aria-label="Wage Visualizer">
     <div class="map-layout-grid">
       <!-- Left Controls Sidebar (Wage Metric & Map Style) -->
       <aside class="map-sidebar-controls">
@@ -2098,91 +2173,175 @@ body {
         </div>
       </aside>
 
-      <!-- Right Column: Map Canvas Card -->
+      <!-- Center Column: Map & Browse Visualizers Side by Side -->
       <div class="map-canvas-column">
-        <div class="map-card">
-          <div class="map-card-toolbar">
-            <div class="map-toolbar-area-info" id="mapToolbarAreaInfo">
-              <span class="map-toolbar-area-dot"></span>
-              <span class="hud-metro-title" id="hudMetroTitle">United States</span>
-              <span class="hud-metro-counties" id="hudMetroCounties">National View</span>
-              <button class="hud-reset-btn" id="hudResetBtn" title="Reset map zoom to National view" style="display: none;">Reset Zoom ⟲</button>
+        <div class="map-center-split">
+          <!-- Left Visualizer: Interactive Wage Map -->
+          <div class="map-card">
+            <div class="map-card-toolbar">
+              <div class="map-toolbar-area-info" id="mapToolbarAreaInfo">
+                <span class="map-toolbar-area-dot"></span>
+                <span class="hud-metro-title" id="hudMetroTitle">United States</span>
+                <span class="hud-metro-counties" id="hudMetroCounties">National View</span>
+                <button class="hud-reset-btn" id="hudResetBtn" title="Reset map zoom to National view" style="display: none;">Reset Zoom ⟲</button>
+              </div>
+              <div class="map-toolbar-right">
+                <div class="map-zoom-buttons" id="mapZoomButtonsGroup">
+                  <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+                  <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+                </div>
+              </div>
             </div>
-            <div class="map-toolbar-right">
-              <div class="map-zoom-buttons">
-                <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
-                <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+
+            <!-- Responsive SVG Viewport (Albers USA 975x610) -->
+            <div class="map-svg-container" id="mapSvgContainer">
+              <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
+                <g id="mapZoomGroup" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
+                  <!-- Base US States Layer -->
+                  <g id="statesLayer"></g>
+                  <!-- Mode 1: Statistical Areas (MSAs & Non-Metro) Area Lines & Choropleth Layer -->
+                  <g id="areasLayer"></g>
+                  <!-- Mode 2: Metro Bubbles Layer -->
+                  <g id="bubblesLayer" style="display: none;"></g>
+                  <!-- Mode 3: 3D Extruded Bar Columns Layer -->
+                  <g id="barsLayer" style="display: none;"></g>
+                  <!-- Selected Metro and County Geographic Shape Overlay Layer -->
+                  <g id="metroOverlayLayer"></g>
+                  <g id="insetsLayer">
+                    <!-- Puerto Rico Inset Frame -->
+                    <rect x="872" y="530" width="76" height="42" rx="4" fill="none" stroke="var(--border-subtle)" stroke-dasharray="3,3" />
+                    <text x="910" y="542" font-size="8.5" text-anchor="middle" fill="var(--text-muted)" font-family="var(--font-mono)">PUERTO RICO</text>
+                  </g>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Continuous Color Scale Legend -->
+            <div class="map-legend-container">
+              <div class="map-legend-wrapper">
+                <!-- Min Wage on the Left -->
+                <span id="legendMinLabel" class="tabular legend-edge-wage">$0</span>
+
+                <!-- Center Column with Two Pucks (Area Above, US Below) and Color Bar in the middle -->
+                <div class="map-legend-center-col">
+                  <!-- Selected Area Puck (Above line, arrow points down ▼) -->
+                  <div class="map-legend-puck-track map-legend-puck-track-top">
+                    <div class="map-legend-puck map-legend-puck-top" id="mapLegendAreaPuck" style="display: none;">
+                      <div class="legend-puck-badge" id="legendAreaPuckBadge">
+                        <span class="puck-area-name" id="puckAreaName">Border Region of Texas</span>
+                        <span class="puck-value tabular" id="puckAreaValue">$0</span>
+                        <span class="puck-comparison tabular" id="puckAreaComparison"></span>
+                      </div>
+                      <div class="legend-puck-arrow-down" id="legendAreaPuckArrow"></div>
+                    </div>
+                  </div>
+
+                  <!-- Slimmed Down Color Bar Track -->
+                  <div class="map-legend-gradient-track">
+                    <div class="map-legend-gradient-bar"></div>
+                  </div>
+
+                  <!-- U.S. Puck (Below line, arrow points up ▲) -->
+                  <div class="map-legend-puck-track map-legend-puck-track-bottom">
+                    <div class="map-legend-puck map-legend-puck-bottom" id="mapLegendUsPuck">
+                      <div class="legend-puck-arrow-up" id="legendUsPuckArrow"></div>
+                      <div class="legend-puck-badge" id="legendUsPuckBadge">
+                        <span class="puck-area-name" id="puckUsName">U.S. National Median</span>
+                        <span class="puck-value tabular" id="puckUsValue">$0</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Max Wage on the Right -->
+                <span id="legendMaxLabel" class="tabular legend-edge-wage">$250,000+</span>
               </div>
             </div>
           </div>
 
-      <!-- Responsive SVG Viewport (Albers USA 975x610) -->
-      <div class="map-svg-container" id="mapSvgContainer">
-
-        <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
-          <g id="mapZoomGroup" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
-            <!-- Base US States Layer -->
-            <g id="statesLayer"></g>
-            <!-- Mode 1: Statistical Areas (MSAs & Non-Metro) Area Lines & Choropleth Layer -->
-            <g id="areasLayer"></g>
-            <!-- Mode 2: Metro Bubbles Layer -->
-            <g id="bubblesLayer" style="display: none;"></g>
-            <!-- Mode 3: 3D Extruded Bar Columns Layer -->
-            <g id="barsLayer" style="display: none;"></g>
-            <!-- Selected Metro and County Geographic Shape Overlay Layer -->
-            <g id="metroOverlayLayer"></g>
-            <g id="insetsLayer">
-              <!-- Puerto Rico Inset Frame -->
-              <rect x="872" y="530" width="76" height="42" rx="4" fill="none" stroke="var(--border-subtle)" stroke-dasharray="3,3" />
-              <text x="910" y="542" font-size="8.5" text-anchor="middle" fill="var(--text-muted)" font-family="var(--font-mono)">PUERTO RICO</text>
-            </g>
-          </g>
-        </svg>
-      </div>
-
-      <!-- Continuous Color Scale Legend -->
-      <div class="map-legend-container">
-        <div class="map-legend-wrapper">
-          <!-- Min Wage on the Left -->
-          <span id="legendMinLabel" class="tabular legend-edge-wage">$0</span>
-
-          <!-- Center Column with Two Pucks (Area Above, US Below) and Color Bar in the middle -->
-          <div class="map-legend-center-col">
-            <!-- Selected Area Puck (Above line, arrow points down ▼) -->
-            <div class="map-legend-puck-track map-legend-puck-track-top">
-              <div class="map-legend-puck map-legend-puck-top" id="mapLegendAreaPuck" style="display: none;">
-                <div class="legend-puck-badge" id="legendAreaPuckBadge">
-                  <span class="puck-area-name" id="puckAreaName">Border Region of Texas</span>
-                  <span class="puck-value tabular" id="puckAreaValue">$0</span>
-                  <span class="puck-comparison tabular" id="puckAreaComparison"></span>
-                </div>
-                <div class="legend-puck-arrow-down" id="legendAreaPuckArrow"></div>
+          <!-- Right Visualizer: Browse Occupations & Regional Area Breakdown -->
+          <div class="browse-card">
+            <!-- Browse Toolbar -->
+            <div class="browse-card-toolbar">
+              <div class="browse-toolbar-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                <span id="browseCardHeading">Occupations & Wages</span>
               </div>
+              <div id="browseCounter" class="tabular" style="font-size: 11.5px; color: var(--text-muted);"></div>
             </div>
 
-            <!-- Slimmed Down Color Bar Track -->
-            <div class="map-legend-gradient-track">
-              <div class="map-legend-gradient-bar"></div>
+            <!-- Browse Filter Controls Bar -->
+            <div class="control-bar" id="browseControlBar" style="padding: 10px 14px; border-bottom: 1px solid var(--border-subtle); display: flex; gap: 8px; align-items: center; background: var(--bg-surface); flex-wrap: wrap;">
+              <input type="text" id="browseQuery" class="control-input" placeholder="Search occupations by title..." style="max-width: 260px; flex: 1; min-width: 150px;">
+              <select id="browseEduFilter" class="control-select" style="max-width: 165px;">
+                <option value="-1">All Education Tiers</option>
+                <option value="0">No Formal Requirement</option>
+                <option value="1">High School / GED</option>
+                <option value="2">Certificate / License</option>
+                <option value="3">Associate's Degree</option>
+                <option value="4">Bachelor's Degree</option>
+                <option value="5">Master's Degree</option>
+                <option value="6">Doctoral / Professional</option>
+              </select>
+              <select id="browseGroupFilter" class="control-select" style="max-width: 165px;">
+                <option value="-1">All 22 Major Sectors</option>
+              </select>
             </div>
 
-            <!-- U.S. Puck (Below line, arrow points up ▲) -->
-            <div class="map-legend-puck-track map-legend-puck-track-bottom">
-              <div class="map-legend-puck map-legend-puck-bottom" id="mapLegendUsPuck">
-                <div class="legend-puck-arrow-up" id="legendUsPuckArrow"></div>
-                <div class="legend-puck-badge" id="legendUsPuckBadge">
-                  <span class="puck-area-name" id="puckUsName">U.S. National Median</span>
-                  <span class="puck-value tabular" id="puckUsValue">$0</span>
-                </div>
+            <!-- Drilldown header when an occupation row is clicked -->
+            <div id="browseDrilldownBar" style="display: none; align-items: center; justify-content: space-between; padding: 9px 14px; background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); gap: 10px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+                <button id="browseDrilldownBackBtn" class="browse-back-btn" title="Return to all occupations in this area">
+                  ← All Occupations
+                </button>
+                <span style="font-weight: 700; color: var(--text-primary); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="browseDrilldownTitle"></span>
+                <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); white-space: nowrap;">Areas</span>
               </div>
+              <div id="browseDrilldownCounter" class="tabular" style="font-size: 11px; color: var(--text-muted); white-space: nowrap;"></div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-responsive" id="browseTableResponsive" style="flex: 1; max-height: 520px; overflow: auto;">
+              <!-- Table A: Occupations in Area -->
+              <table class="data-table" id="occupationsTable">
+                <thead>
+                  <tr>
+                    <th data-col="title">Occupation Title</th>
+                    <th data-col="grp">Major Sector</th>
+                    <th data-col="edu">Min. Education</th>
+                    <th data-col="emp" style="text-align: right;">Employment</th>
+                    <th data-col="median" style="text-align: right;">Median Wage</th>
+                    <th data-col="mean" style="text-align: right;">Mean Wage</th>
+                    <th data-col="lq" style="text-align: right;">Density</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+
+              <!-- Table B: Areas for Clicked Profession -->
+              <table class="data-table" id="occupationAreasTable" style="display: none;">
+                <thead>
+                  <tr>
+                    <th data-col="name">Statistical Area / Region</th>
+                    <th data-col="emp" style="text-align: right;">Employment</th>
+                    <th data-col="median" style="text-align: right;">Median Wage</th>
+                    <th data-col="mean" style="text-align: right;">Mean Wage</th>
+                    <th data-col="lq" style="text-align: right;">Density</th>
+                  </tr>
+                </thead>
+                <tbody id="occupationAreasTableBody"></tbody>
+              </table>
             </div>
           </div>
-
-          <!-- Max Wage on the Right -->
-          <span id="legendMaxLabel" class="tabular legend-edge-wage">$250,000+</span>
         </div>
       </div>
-    </div>
-  </div>
 
       <!-- Right Sidebar: Occupation Statistics -->
       <aside class="map-sidebar-stats" id="kpiBar">
@@ -2228,153 +2387,6 @@ body {
         </div>
       </aside>
     </div>
-  </section>
-
-  <!-- TAB 1: Wage Spread (Percentiles P10-P90) -->
-  <section id="tab-spread" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-spread">
-    <div class="control-bar">
-      <input type="text" id="spreadQuery" class="control-input" placeholder="Search occupations by title (e.g. Software, Nurse, Electrician)...">
-      <select id="spreadEduFilter" class="control-select">
-        <option value="-1">All Education Tiers</option>
-        <option value="0">No Formal Requirement</option>
-        <option value="1">High School / GED</option>
-        <option value="2">Certificate / License</option>
-        <option value="3">Associate's Degree</option>
-        <option value="4">Bachelor's Degree</option>
-        <option value="5">Master's Degree</option>
-        <option value="6">Doctoral / Professional</option>
-      </select>
-      <select id="spreadGroupFilter" class="control-select">
-        <option value="-1">All 22 Major Sectors</option>
-      </select>
-      <select id="spreadSort" class="control-select">
-        <option value="median_desc">Sort: Median Wage ↓</option>
-        <option value="mean_desc">Sort: Mean Wage ↓</option>
-        <option value="spread_desc">Sort: Wage Spread (P90−P10) ↓</option>
-        <option value="p90_desc">Sort: P90 Ceiling ↓</option>
-        <option value="emp_desc">Sort: Total Employment ↓</option>
-        <option value="edu_desc">Sort: Education Level ↓</option>
-        <option value="name_asc">Sort: Title A–Z</option>
-      </select>
-      <select id="spreadLimit" class="control-select">
-        <option value="30">Show 30</option>
-        <option value="60" selected>Show 60</option>
-        <option value="120">Show 120</option>
-        <option value="9999">Show All</option>
-      </select>
-    </div>
-
-    <div class="chart-legend-bar">
-      <div class="legend-items">
-        <div class="legend-item">
-          <span class="legend-marker-diamond"></span>
-          <span>Median (50th percentile)</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-marker-box" style="background: var(--accent-cyan); opacity: 0.85;"></span>
-          <span>Full Spread: 10th percentile floor → 90th percentile ceiling</span>
-        </div>
-      </div>
-      <div id="spreadCounter" class="tabular">Loading occupations...</div>
-    </div>
-
-    <div class="spread-container" id="spreadList"></div>
-  </section>
-
-  <!-- TAB 2: Browse Occupations Table -->
-  <section id="tab-browse" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-browse">
-    <div class="control-bar">
-      <input type="text" id="browseQuery" class="control-input" placeholder="Search occupation title or SOC code...">
-      <select id="browseEduFilter" class="control-select">
-        <option value="-1">All Education Tiers</option>
-        <option value="0">No Formal Requirement</option>
-        <option value="1">High School / GED</option>
-        <option value="2">Certificate / License</option>
-        <option value="3">Associate's Degree</option>
-        <option value="4">Bachelor's Degree</option>
-        <option value="5">Master's Degree</option>
-        <option value="6">Doctoral / Professional</option>
-      </select>
-      <select id="browseGroupFilter" class="control-select">
-        <option value="-1">All 22 Major Sectors</option>
-      </select>
-      <div id="browseCounter" class="tabular" style="font-size: 12px; color: var(--text-muted); margin-left: auto;"></div>
-    </div>
-
-    <div class="table-card">
-      <div class="table-responsive">
-        <table class="data-table" id="occupationsTable">
-          <thead>
-            <tr>
-              <th data-col="soc">SOC Code</th>
-              <th data-col="title">Occupation Title</th>
-              <th data-col="grp">Major Sector</th>
-              <th data-col="edu">Min. Education</th>
-              <th data-col="emp" style="text-align: right;">Employment</th>
-              <th data-col="lq" style="text-align: right;">Location Quotient</th>
-              <th data-col="median" style="text-align: right;">Median Wage</th>
-              <th style="text-align: center; width: 140px;">P10 — P90 Range</th>
-              <th data-col="mean" style="text-align: right;">Mean Wage</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 3: Education Benchmarks -->
-  <section id="tab-education" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-education">
-    <div class="edu-analysis-grid">
-      <div class="edu-summary-card">
-        <h3 class="edu-card-title">Educational Credential Wage Premiums</h3>
-        <p class="edu-card-desc">
-          Median earnings and wage spreads across all minimum entry-level education requirements in this region.
-        </p>
-        <div id="eduBenchmarkList" style="display: flex; flex-direction: column; gap: 12px;"></div>
-      </div>
-
-      <div class="edu-summary-card">
-        <h3 class="edu-card-title">Regional Employment Share by Credential</h3>
-        <p class="edu-card-desc">
-          Total job counts and proportion of the regional workforce across each educational qualification.
-        </p>
-        <div id="eduEmploymentList" style="display: flex; flex-direction: column; gap: 12px;"></div>
-      </div>
-    </div>
-
-    <div class="table-card">
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Education Tier</th>
-              <th style="text-align: right;">Occupations Tracked</th>
-              <th style="text-align: right;">Regional Employment</th>
-              <th style="text-align: right;">Workforce Share</th>
-              <th style="text-align: right;">Median Annual Wage</th>
-              <th style="text-align: right;">Mean Annual Wage</th>
-              <th style="text-align: right;">P10 Floor</th>
-              <th style="text-align: right;">P90 Ceiling</th>
-            </tr>
-          </thead>
-          <tbody id="eduTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 4: Top Paying Occupations -->
-  <section id="tab-toppay" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-toppay">
-    <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
-      <p style="font-size: 13.5px; color: var(--text-secondary);">
-        The 25 highest-earning occupations ranked by annual median compensation in this region.
-      </p>
-      <div style="font-size: 12px; font-family: var(--font-mono); color: var(--text-muted);">
-        *Capped at $239,200 (BLS disclosure threshold)
-      </div>
-    </div>
-    <div class="top-paying-grid" id="topPayingGrid"></div>
   </section>
 
   <!-- Rich Floating Hover Tooltip -->
@@ -2441,6 +2453,9 @@ const state = {
   nationalMajorShares: null,
   activeTab: "map",
   tableSort: { col: "median", asc: false },
+  drilldownSoc: null,
+  drilldownTitle: "",
+  areaTableSort: { col: "median", asc: false },
 
   // Map Feature State
   mapData: null,
@@ -4100,7 +4115,8 @@ async function loadArea(areaId, shouldZoom = true) {
     return;
   }
 
-  document.getElementById("spreadCounter").textContent = "Loading area data...";
+  const sc = document.getElementById("spreadCounter");
+  if (sc) sc.textContent = "Loading area data...";
 
   try {
     const res = await fetch(`data/areas/${areaId}.json`);
@@ -4115,15 +4131,7 @@ async function loadArea(areaId, shouldZoom = true) {
 
 function renderAll(shouldZoom = false) {
   renderHeroAndKPIs();
-  if (state.activeTab === "spread") {
-    renderSpread();
-  } else if (state.activeTab === "browse") {
-    renderBrowseTable();
-  } else if (state.activeTab === "education") {
-    renderEducation();
-  } else if (state.activeTab === "toppay") {
-    renderTopPaying();
-  }
+  renderBrowseTable();
   if (state.activeJobPayload) {
     renderMetroMap();
   }
@@ -4587,10 +4595,8 @@ function setupDropdowns() {
   const spreadGf = document.getElementById("spreadGroupFilter");
   const browseGf = document.getElementById("browseGroupFilter");
   GROUPS.forEach((name, idx) => {
-    const opt1 = new Option(name, idx);
-    const opt2 = new Option(name, idx);
-    spreadGf.add(opt1);
-    browseGf.add(opt2);
+    if (spreadGf) spreadGf.add(new Option(name, idx));
+    if (browseGf) browseGf.add(new Option(name, idx));
   });
 }
 
@@ -4724,12 +4730,17 @@ function setupEventListeners() {
     });
   });
 
-  // Spread Filters
-  document.getElementById("spreadQuery").addEventListener("input", renderSpread);
-  document.getElementById("spreadEduFilter").addEventListener("change", renderSpread);
-  document.getElementById("spreadGroupFilter").addEventListener("change", renderSpread);
-  document.getElementById("spreadSort").addEventListener("change", renderSpread);
-  document.getElementById("spreadLimit").addEventListener("change", renderSpread);
+  // Spread Filters (if present)
+  const sq = document.getElementById("spreadQuery");
+  if (sq) sq.addEventListener("input", renderSpread);
+  const sef = document.getElementById("spreadEduFilter");
+  if (sef) sef.addEventListener("change", renderSpread);
+  const sgf = document.getElementById("spreadGroupFilter");
+  if (sgf) sgf.addEventListener("change", renderSpread);
+  const sst = document.getElementById("spreadSort");
+  if (sst) sst.addEventListener("change", renderSpread);
+  const slm = document.getElementById("spreadLimit");
+  if (slm) slm.addEventListener("change", renderSpread);
 
   // Browse Filters
   document.getElementById("browseQuery").addEventListener("input", renderBrowseTable);
@@ -4744,12 +4755,32 @@ function setupEventListeners() {
         state.tableSort.asc = !state.tableSort.asc;
       } else {
         state.tableSort.col = col;
-        state.tableSort.asc = (col === "title" || col === "soc");
+        state.tableSort.asc = (col === "title");
       }
       updateTableSortHeaders();
       renderBrowseTable();
     });
   });
+
+  // Area Breakdown Table Sort Headers
+  document.querySelectorAll("#occupationAreasTable th[data-col]").forEach(th => {
+    th.addEventListener("click", () => {
+      const col = th.dataset.col;
+      if (state.areaTableSort.col === col) {
+        state.areaTableSort.asc = !state.areaTableSort.asc;
+      } else {
+        state.areaTableSort.col = col;
+        state.areaTableSort.asc = (col === "name");
+      }
+      renderOccupationAreasTable();
+    });
+  });
+
+  // Back Button from Occupation Area Breakdown
+  const backBtn = document.getElementById("browseDrilldownBackBtn");
+  if (backBtn) {
+    backBtn.addEventListener("click", closeOccupationAreaBreakdown);
+  }
 }
 
 function setupTheme() {
@@ -4906,13 +4937,19 @@ function renderBrowseTable() {
   const data = state.areaData;
   if (!data || !data.occupations) return;
 
+  // If currently viewing drilldown for a clicked occupation, keep drilldown active
+  if (state.drilldownSoc) {
+    renderOccupationAreasTable();
+    return;
+  }
+
   const q = document.getElementById("browseQuery").value.toLowerCase().trim();
   const eduF = parseInt(document.getElementById("browseEduFilter").value);
   const grpF = parseInt(document.getElementById("browseGroupFilter").value);
 
   let filtered = data.occupations.filter(row => {
     const [soc, title, grpIdx, eduLvl] = row;
-    if (q && !title.toLowerCase().includes(q) && !soc.includes(q)) return false;
+    if (q && !title.toLowerCase().includes(q)) return false;
     if (eduF !== -1 && eduLvl !== eduF) return false;
     if (grpF !== -1 && grpIdx !== grpF) return false;
     return true;
@@ -4922,7 +4959,6 @@ function renderBrowseTable() {
   filtered.sort((a, b) => {
     let vA, vB;
     switch (col) {
-      case "soc": vA = a[0]; vB = b[0]; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
       case "title": vA = a[1]; vB = b[1]; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
       case "grp": vA = GROUPS[a[2]] || ""; vB = GROUPS[b[2]] || ""; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
       case "edu": vA = a[3]; vB = b[3]; break;
@@ -4940,7 +4976,6 @@ function renderBrowseTable() {
   const tbody = document.getElementById("tableBody");
   tbody.innerHTML = "";
 
-  const maxWageScale = 250000;
   const fragment = document.createDocumentFragment();
 
   filtered.slice(0, 300).forEach(row => {
@@ -4948,17 +4983,13 @@ function renderBrowseTable() {
     const eduInfo = EDU_LEVELS[eduLvl] || EDU_LEVELS[1];
     const grpName = GROUPS[grpIdx] || "General";
 
-    const posMedian = Math.max(0, Math.min(100, ((median || 0) / maxWageScale) * 100));
-    const leftP10 = Math.max(0, Math.min(100, ((p10 || median * 0.6) / maxWageScale) * 100));
-    const rightP90 = Math.max(0, Math.min(100, ((p90 || median * 1.5) / maxWageScale) * 100));
-    const safeLeft = Math.min(leftP10, posMedian);
-    const safeRight = Math.max(rightP90, posMedian);
-    const widthBar = Math.max(2, safeRight - safeLeft);
-
     const tr = document.createElement("tr");
+    tr.className = "clickable-row";
+    tr.title = `Click to view regional area breakdown for ${title}`;
     tr.innerHTML = `
-      <td class="tabular" style="color: var(--text-muted); font-size: 12px;">${soc}</td>
-      <td style="font-weight: 500; color: var(--text-primary); max-width: 260px; overflow: hidden; text-overflow: ellipsis;" title="${title}">${title}</td>
+      <td style="font-weight: 600; color: var(--text-primary); max-width: 280px; overflow: hidden; text-overflow: ellipsis;">
+        <span style="color: var(--accent-cyan); margin-right: 4px;">›</span>${title}
+      </td>
       <td style="color: var(--text-secondary); font-size: 12px;">${grpName}</td>
       <td>
         <span class="badge-edu" style="background: ${eduInfo.color}22; color: ${eduInfo.color}; border: 1px solid ${eduInfo.color}44;">
@@ -4966,30 +4997,160 @@ function renderBrowseTable() {
         </span>
       </td>
       <td style="text-align: right;" class="tabular">${fmt.number(emp)}</td>
+      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(median)}</td>
+      <td style="text-align: right; color: var(--text-secondary);" class="tabular">${fmt.currency(mean)}</td>
       <td style="text-align: right;">
-        <span class="badge-lq ${lq && lq >= 1.25 ? 'high' : ''}">
+        <span class="badge-density ${lq && lq >= 1.25 ? 'high' : ''}">
           ${fmt.lq(lq)}
         </span>
       </td>
-      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(median)}</td>
-      <td>
-        <div style="width: 130px; height: 14px; background: var(--bg-subtle); border-radius: 3px; position: relative; margin: 0 auto;">
-          <div style="position: absolute; left: ${safeLeft}%; width: ${widthBar}%; top: 0; bottom: 0; background: ${eduInfo.color}; border-radius: 3px; opacity: 0.8;"></div>
-          <div style="position: absolute; left: ${posMedian}%; top: 50%; width: 6px; height: 6px; transform: translate(-50%, -50%) rotate(45deg); background: var(--text-primary);"></div>
-        </div>
-      </td>
-      <td style="text-align: right; color: var(--text-secondary);" class="tabular">${fmt.currency(mean)}</td>
     `;
+
+    tr.addEventListener("click", () => {
+      openOccupationAreaBreakdown(soc, title);
+    });
 
     fragment.appendChild(tr);
   });
 
   tbody.appendChild(fragment);
+  updateTableSortHeaders();
 }
 
 function updateTableSortHeaders() {
   const { col, asc } = state.tableSort;
   document.querySelectorAll("#occupationsTable th[data-col]").forEach(th => {
+    th.classList.remove("sorted-asc", "sorted-desc");
+    if (th.dataset.col === col) {
+      th.classList.add(asc ? "sorted-asc" : "sorted-desc");
+    }
+  });
+}
+
+// -------------------------------------------------------------
+// OCCUPATION AREA BREAKDOWN (Drilldown in Browse Visualizer)
+// -------------------------------------------------------------
+async function openOccupationAreaBreakdown(soc, title) {
+  state.drilldownSoc = soc;
+  state.drilldownTitle = title;
+
+  // Sync with global Map job
+  if (state.activeMapSoc !== soc) {
+    await loadMapJob(soc);
+  }
+
+  // Switch display from Table A to Table B
+  document.getElementById("occupationsTable").style.display = "none";
+  document.getElementById("browseControlBar").style.display = "none";
+
+  const drilldownBar = document.getElementById("browseDrilldownBar");
+  drilldownBar.style.display = "flex";
+  document.getElementById("browseDrilldownTitle").textContent = title;
+
+  const tableAreas = document.getElementById("occupationAreasTable");
+  tableAreas.style.display = "";
+
+  renderOccupationAreasTable();
+}
+
+function closeOccupationAreaBreakdown() {
+  state.drilldownSoc = null;
+  state.drilldownTitle = "";
+
+  document.getElementById("browseDrilldownBar").style.display = "none";
+  document.getElementById("occupationAreasTable").style.display = "none";
+
+  document.getElementById("browseControlBar").style.display = "flex";
+  document.getElementById("occupationsTable").style.display = "";
+
+  renderBrowseTable();
+}
+
+function renderOccupationAreasTable() {
+  if (!state.drilldownSoc || !state.activeJobPayload) return;
+
+  const payload = state.activeJobPayload;
+  const metrosMap = (state.mapData && state.mapData.metros) ? state.mapData.metros : [];
+  const metroNamesById = {};
+  metrosMap.forEach(m => {
+    metroNamesById[m.id] = m.name;
+  });
+
+  const rows = [];
+  if (payload.metros) {
+    Object.keys(payload.metros).forEach(areaId => {
+      const stats = payload.metros[areaId]; // [emp, mean, median, p25, p75, lq]
+      const rawName = metroNamesById[areaId] || (state.manifest ? (state.manifest.find(a => a.id === areaId)?.name) : areaId) || `Area ${areaId}`;
+      const name = formatAreaName(rawName);
+
+      rows.push({
+        id: areaId,
+        name: name,
+        emp: stats[0] || 0,
+        mean: stats[1] || 0,
+        median: stats[2] || 0,
+        p25: stats[3] || 0,
+        p75: stats[4] || 0,
+        lq: stats[5] || 0
+      });
+    });
+  }
+
+  const { col, asc } = state.areaTableSort;
+  rows.sort((a, b) => {
+    let vA, vB;
+    switch (col) {
+      case "name": vA = a.name; vB = b.name; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
+      case "emp": vA = a.emp; vB = b.emp; break;
+      case "mean": vA = a.mean; vB = b.mean; break;
+      case "median": vA = a.median; vB = b.median; break;
+      case "lq": vA = a.lq; vB = b.lq; break;
+      default: vA = a.median; vB = b.median;
+    }
+    return asc ? vA - vB : vB - vA;
+  });
+
+  document.getElementById("browseDrilldownCounter").textContent = `${rows.length} reporting areas`;
+
+  const tbody = document.getElementById("occupationAreasTableBody");
+  tbody.innerHTML = "";
+  const fragment = document.createDocumentFragment();
+
+  rows.forEach(r => {
+    const isSelected = r.id === state.currentAreaId;
+    const tr = document.createElement("tr");
+    tr.className = `clickable-row ${isSelected ? 'active-area-row' : ''}`;
+    tr.dataset.id = r.id;
+    tr.title = `Click to select ${r.name} on the map`;
+
+    tr.innerHTML = `
+      <td style="font-weight: 500; color: ${isSelected ? 'var(--accent-cyan)' : 'var(--text-primary)'}; max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
+        ${isSelected ? '📍 ' : ''}${r.name}
+      </td>
+      <td style="text-align: right;" class="tabular">${fmt.number(r.emp)}</td>
+      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(r.median)}</td>
+      <td style="text-align: right; color: var(--text-secondary);" class="tabular">${fmt.currency(r.mean)}</td>
+      <td style="text-align: right;">
+        <span class="badge-density ${r.lq >= 1.25 ? 'high' : ''}">
+          ${fmt.lq(r.lq)}
+        </span>
+      </td>
+    `;
+
+    tr.addEventListener("click", () => {
+      loadArea(r.id, true);
+      document.querySelectorAll("#occupationAreasTableBody tr").forEach(rowEl => {
+        rowEl.classList.toggle("active-area-row", rowEl.dataset.id === r.id);
+      });
+    });
+
+    fragment.appendChild(tr);
+  });
+
+  tbody.appendChild(fragment);
+
+  // Update sort headers for occupationAreasTable
+  document.querySelectorAll("#occupationAreasTable th[data-col]").forEach(th => {
     th.classList.remove("sorted-asc", "sorted-desc");
     if (th.dataset.col === col) {
       th.classList.add(asc ? "sorted-asc" : "sorted-desc");
