@@ -574,132 +574,195 @@ body {
 /* ========================================================= */
 .map-layout-grid {
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr) 240px;
+  grid-template-columns: minmax(0, 1fr) 250px;
   gap: 16px;
   align-items: start;
-  width: min(calc(100vw - 32px), 1840px);
+  width: min(calc(100vw - 80px), 1640px);
+  max-width: 1640px;
+  margin: 0 auto;
   position: relative;
-  left: 50%;
-  transform: translateX(-50%);
 }
 .map-center-split {
-  display: grid;
-  grid-template-columns: minmax(460px, 1.15fr) minmax(420px, 1fr);
-  gap: 14px;
+  display: flex;
+  flex-direction: row;
   align-items: stretch;
+  position: relative;
+  width: 100%;
+  gap: 0;
+  --map-split-width: 52%;
 }
-@media (max-width: 1400px) {
-  .map-center-split {
-    grid-template-columns: 1fr;
-  }
+.map-center-split > .map-card {
+  flex: 0 0 var(--map-split-width);
+  min-width: 380px;
+  max-width: calc(100% - 340px);
 }
-@media (max-width: 1100px) {
+.map-center-split > .browse-card {
+  flex: 1 1 0;
+  min-width: 340px;
+}
+
+/* Draggable Splitter Divider & Handle Puck */
+.split-divider {
+  width: 16px;
+  margin: 0 -2px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.split-divider::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  background: var(--border-subtle);
+  transition: background 0.15s ease, width 0.15s ease;
+}
+.split-divider:hover::before,
+.split-divider.is-dragging::before {
+  background: var(--accent-cyan);
+  width: 2px;
+}
+.split-handle-puck {
+  width: 16px;
+  height: 40px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 2;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: col-resize;
+}
+.split-handle-puck::after {
+  content: "⋮";
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-muted);
+  letter-spacing: -1px;
+  font-weight: 700;
+  transition: color 0.15s ease;
+}
+.split-divider:hover .split-handle-puck,
+.split-divider.is-dragging .split-handle-puck {
+  border-color: var(--accent-cyan);
+  background: var(--bg-elevated);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+  transform: scale(1.1);
+}
+.split-divider:hover .split-handle-puck::after,
+.split-divider.is-dragging .split-handle-puck::after {
+  color: var(--accent-cyan);
+}
+[data-theme="light"] .split-handle-puck {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] .split-divider:hover .split-handle-puck,
+[data-theme="light"] .split-divider.is-dragging .split-handle-puck {
+  border-color: #0284c7;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.3);
+}
+
+@media (max-width: 1200px) {
   .map-layout-grid {
+    grid-template-columns: minmax(0, 1fr) 230px;
     width: 100%;
-    left: 0;
-    transform: none;
-    grid-template-columns: 190px minmax(0, 1fr) 230px;
+    margin: 0;
     gap: 12px;
   }
 }
-@media (max-width: 900px) {
-  .map-layout-grid {
+@media (max-width: 990px) {
+  .map-center-split {
+    flex-direction: column;
+  }
+  .map-center-split > .map-card,
+  .map-center-split > .browse-card {
+    flex: 1 1 auto;
     width: 100%;
-    left: 0;
-    transform: none;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .split-divider {
+    display: none;
+  }
+  .map-layout-grid {
     grid-template-columns: 1fr;
     gap: 14px;
   }
 }
-.map-sidebar-controls {
+
+/* Map Card Controls Bar (Wage Metric & Map Style directly above the map) */
+.map-card-controls-bar {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 18px;
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 16px;
+  border-bottom: 1px solid var(--border-subtle);
 }
-@media (max-width: 900px) {
-  .map-sidebar-controls {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 14px;
-    align-items: flex-start;
-  }
-}
-.map-control-group {
+.map-controls-cluster {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: 100%;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
-@media (max-width: 900px) {
-  .map-control-group {
-    width: auto;
-    flex: 1;
-    min-width: 160px;
-  }
-}
-.map-control-label {
-  font-size: 11px;
+.map-controls-label {
+  font-size: 10.5px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-muted);
   font-family: var(--font-mono);
+  white-space: nowrap;
 }
-.segmented-control.vertical {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 2px;
+.map-card-controls-bar .segmented-control {
   background: var(--bg-elevated);
-  padding: 3px;
+  padding: 2px;
   border-radius: var(--radius-sm);
+  display: inline-flex;
+  gap: 1px;
 }
-@media (max-width: 900px) {
-  .segmented-control.vertical {
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: auto;
-  }
-}
-.segmented-control.vertical .segmented-btn {
-  text-align: left;
-  width: 100%;
-  padding: 7px 10px;
-  font-size: 12px;
+.map-card-controls-bar .segmented-btn {
+  padding: 4px 9px;
+  font-size: 11.5px;
+  font-family: var(--font-sans);
   border-radius: var(--radius-sm);
+  white-space: nowrap;
 }
-@media (max-width: 900px) {
-  .segmented-control.vertical .segmented-btn {
-    text-align: center;
-    width: auto;
-    padding: 6px 10px;
-  }
-}
-.map-sidebar-info {
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 14px;
+.map-controls-job-meta {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-.sidebar-info-label {
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
   color: var(--text-muted);
-  font-size: 10px;
-  text-transform: uppercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.05em;
-  margin-bottom: 2px;
+  white-space: nowrap;
+  margin-left: auto;
 }
-.sidebar-info-value {
+.map-controls-job-meta strong {
   color: var(--text-primary);
-  font-size: 12px;
   font-weight: 600;
-  line-height: 1.35;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 /* Right Sidebar: Occupation Statistics */
@@ -2141,43 +2204,11 @@ body {
   <!-- ======================================================= -->
   <section id="tab-map" class="tab-panel active" role="region" aria-label="Wage Visualizer">
     <div class="map-layout-grid">
-      <!-- Left Controls Sidebar (Wage Metric & Map Style) -->
-      <aside class="map-sidebar-controls">
-        <!-- Wage Metric Picker -->
-        <div class="map-control-group">
-          <label class="map-control-label">Wage Metric</label>
-          <div class="segmented-control vertical" id="mapMetricTabs">
-            <button class="segmented-btn active" data-metric="median">Median Wage</button>
-            <button class="segmented-btn" data-metric="mean">Mean Wage</button>
-            <button class="segmented-btn" data-metric="p25">Bottom 25% (P25)</button>
-            <button class="segmented-btn" data-metric="p75">Top 25% (P75)</button>
-          </div>
-        </div>
-
-        <!-- Map Style Picker -->
-        <div class="map-control-group">
-          <label class="map-control-label">Map Style</label>
-          <div class="segmented-control vertical" id="mapModeTabs">
-            <button class="segmented-btn active" data-mode="area">Area Map</button>
-            <button class="segmented-btn" data-mode="bubble">Bubble Map</button>
-            <button class="segmented-btn" data-mode="bar">3D Bar Map</button>
-          </div>
-        </div>
-
-        <!-- Sidebar Info -->
-        <div class="map-sidebar-info">
-          <div>
-            <div class="sidebar-info-label">Active Occupation</div>
-            <div class="sidebar-info-value" id="sidebarActiveJobTitle">All Occupations</div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- Center Column: Map & Browse Visualizers Side by Side -->
+      <!-- Center Column: Map & Browse Visualizers Side by Side with Draggable Resizer Puck -->
       <div class="map-canvas-column">
-        <div class="map-center-split">
+        <div class="map-center-split" id="mapCenterSplit">
           <!-- Left Visualizer: Interactive Wage Map -->
-          <div class="map-card">
+          <div class="map-card" id="mapCardContainer">
             <div class="map-card-toolbar">
               <div class="map-toolbar-area-info" id="mapToolbarAreaInfo">
                 <span class="map-toolbar-area-dot"></span>
@@ -2190,6 +2221,36 @@ body {
                   <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
                   <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
                 </div>
+              </div>
+            </div>
+
+            <!-- Horizontal Map Controls Bar: Wage Metric & Map Style -->
+            <div class="map-card-controls-bar">
+              <!-- Wage Metric Tabs -->
+              <div class="map-controls-cluster">
+                <span class="map-controls-label">Metric</span>
+                <div class="segmented-control" id="mapMetricTabs">
+                  <button class="segmented-btn active" data-metric="median">Median Wage</button>
+                  <button class="segmented-btn" data-metric="mean">Mean Wage</button>
+                  <button class="segmented-btn" data-metric="p25">P25 (Bottom 25%)</button>
+                  <button class="segmented-btn" data-metric="p75">P75 (Top 25%)</button>
+                </div>
+              </div>
+
+              <!-- Map Style Tabs -->
+              <div class="map-controls-cluster">
+                <span class="map-controls-label">Style</span>
+                <div class="segmented-control" id="mapModeTabs">
+                  <button class="segmented-btn active" data-mode="area">Area Map</button>
+                  <button class="segmented-btn" data-mode="bubble">Bubble Map</button>
+                  <button class="segmented-btn" data-mode="bar">3D Bar</button>
+                </div>
+              </div>
+
+              <!-- Active Occupation Badge (kept for sync & awareness) -->
+              <div class="map-controls-job-meta">
+                <span>Job:</span>
+                <strong id="sidebarActiveJobTitle">All Occupations</strong>
               </div>
             </div>
 
@@ -2236,7 +2297,7 @@ body {
                     </div>
                   </div>
 
-                  <!-- Slimmed Down Color Bar Track -->
+                  <!-- The Continuous Gradient Bar -->
                   <div class="map-legend-gradient-track">
                     <div class="map-legend-gradient-bar"></div>
                   </div>
@@ -2259,8 +2320,13 @@ body {
             </div>
           </div>
 
+          <!-- Dynamic Resizer Puck Divider between Map and Search/Browse -->
+          <div class="split-divider" id="mapBrowseDivider" title="Drag to adjust Map and Browse sizes" role="separator" aria-orientation="vertical">
+            <div class="split-handle-puck" aria-hidden="true"></div>
+          </div>
+
           <!-- Right Visualizer: Browse Occupations & Regional Area Breakdown -->
-          <div class="browse-card">
+          <div class="browse-card" id="browseCardContainer">
             <!-- Browse Toolbar -->
             <div class="browse-card-toolbar">
               <div class="browse-toolbar-title">
@@ -3855,7 +3921,76 @@ function setupMapControls() {
     hudResetBtn.addEventListener("click", resetMapZoom);
   }
 
+  // -------------------------------------------------------------
+  // Dynamic Splitter Puck between Map and Search/Browse
+  // -------------------------------------------------------------
+  setupSplitterPuck();
+}
 
+function setupSplitterPuck() {
+  const divider = document.getElementById("mapBrowseDivider");
+  const splitParent = document.getElementById("mapCenterSplit");
+  if (!divider || !splitParent) return;
+
+  let isDraggingSplitter = false;
+  let startClientX = 0;
+  let initialMapWidth = 0;
+  let splitParentWidth = 0;
+
+  const onSplitPointerDown = (e) => {
+    if (e.button && e.button !== 0) return;
+    isDraggingSplitter = true;
+    divider.classList.add("is-dragging");
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+
+    startClientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const splitRect = splitParent.getBoundingClientRect();
+    splitParentWidth = splitRect.width;
+
+    const mapCard = document.getElementById("mapCardContainer");
+    if (mapCard) {
+      initialMapWidth = mapCard.getBoundingClientRect().width;
+    }
+
+    if (e.cancelable && e.type === "touchstart") {
+      e.preventDefault();
+    }
+  };
+
+  const onSplitPointerMove = (e) => {
+    if (!isDraggingSplitter) return;
+    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const dx = clientX - startClientX;
+
+    if (splitParentWidth > 0) {
+      const newWidthPx = initialMapWidth + dx;
+      // Clamp between 32% and 68% of the container width
+      const minPx = Math.max(340, splitParentWidth * 0.32);
+      const maxPx = Math.min(splitParentWidth - 340, splitParentWidth * 0.68);
+      const clampedPx = Math.max(minPx, Math.min(maxPx, newWidthPx));
+      const pct = (clampedPx / splitParentWidth) * 100;
+
+      splitParent.style.setProperty("--map-split-width", `${pct.toFixed(2)}%`);
+    }
+  };
+
+  const onSplitPointerUp = () => {
+    if (!isDraggingSplitter) return;
+    isDraggingSplitter = false;
+    divider.classList.remove("is-dragging");
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+  };
+
+  divider.addEventListener("mousedown", onSplitPointerDown);
+  window.addEventListener("mousemove", onSplitPointerMove);
+  window.addEventListener("mouseup", onSplitPointerUp);
+
+  divider.addEventListener("touchstart", onSplitPointerDown, { passive: false });
+  window.addEventListener("touchmove", onSplitPointerMove, { passive: true });
+  window.addEventListener("touchend", onSplitPointerUp, { passive: true });
+  window.addEventListener("touchcancel", onSplitPointerUp, { passive: true });
 }
 
 function filterMapJobDropdown(query) {
