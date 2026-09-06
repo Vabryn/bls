@@ -909,10 +909,10 @@ body {
    ============================================================ */
 .area-summary {
   --area-rule: rgba(255, 255, 255, 0.14);
-  /* Hug the content by default (no dead space below the metrics); the
-     horizontal resizer sets an explicit --summary-h in px when dragged. */
-  flex: 0 0 auto;
-  height: var(--summary-h, auto);
+  /* Fixed height so clicking around never resizes the map above it (that read
+     as the map "jumping"). The horizontal resizer overrides --summary-h; extra
+     content like the hourly disclosure scrolls inside. */
+  flex: 0 0 var(--summary-h, 216px);
   min-height: 0;
   overflow: auto;
   border: 1px solid var(--border-subtle);
@@ -3775,13 +3775,22 @@ function renderMetroMap() {
   // earlier release that has the figure (mirrors the Area Summary). Kick the
   // prior-year fetch off if it hasn't run yet — ensurePriorJobYears re-renders.
   if (soc && soc !== "00-0000" && !state.jobPrior.has(soc)) ensurePriorJobYears(soc);
-  const jobRows = {};
-  const priorYearByAid = {};
-  metros.forEach(m => {
-    const r = resolveMetroRow(soc, m.id, payload.metros[m.id]);
-    if (r.row.some(v => v > 0)) jobRows[m.id] = r.row;
-    if (r.priorYear) priorYearByAid[m.id] = r.priorYear;
-  });
+  // Resolving 500+ metro rows is pure function of (payload, soc, prior-years,
+  // year) — cache it so rapid map clicks don't recompute every frame.
+  const rowsKey = `${soc}|${state.jobPrior.has(soc) ? "p" : ""}|${state.year}`;
+  let cache = state._jobRowsCache;
+  if (!cache || cache.key !== rowsKey || cache.payload !== payload) {
+    const jobRows = {};
+    const priorYearByAid = {};
+    metros.forEach(m => {
+      const r = resolveMetroRow(soc, m.id, payload.metros[m.id]);
+      if (r.row.some(v => v > 0)) jobRows[m.id] = r.row;
+      if (r.priorYear) priorYearByAid[m.id] = r.priorYear;
+    });
+    cache = state._jobRowsCache = { key: rowsKey, payload, jobRows, priorYearByAid };
+  }
+  const jobRows = cache.jobRows;
+  const priorYearByAid = cache.priorYearByAid;
   state._mapJobRows = jobRows;
   state._mapPriorYear = priorYearByAid;
 
@@ -4596,9 +4605,10 @@ function precommitAreaZoom(areaId) {
   const scale = Math.min(5.2, Math.max(1.6, 0.72 / Math.max(dx / 975, dy / 610)));
   const tx = Math.round(975 / 2 - scale * cx);
   const ty = Math.round(610 / 2 - scale * cy);
+  // Only stage the zoom state so the bubble layer sizes correctly. The single
+  // transform write (and its transition) is left to renderMetroShapeOverlay so
+  // the map animates once, not twice.
   state.mapZoom = { scale, x: tx, y: ty };
-  const zoomGroup = document.getElementById("mapZoomGroup");
-  if (zoomGroup) zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
 }
 
 // -------------------------------------------------------------
