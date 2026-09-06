@@ -956,9 +956,65 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
 }
+/* Search bar that now lives on the map / browse card header line. */
+.card-search {
+  flex: 1 1 220px;
+  min-width: 160px;
+  width: auto;
+}
+.card-search .combobox-dropdown { min-width: 260px; }
+
+/* Removable selection chip — the active area / occupation, wherever one is shown. */
+.sel-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: 300px;
+  padding: 3px 5px 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-cyan) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 42%, transparent);
+  color: var(--accent-cyan);
+  font-weight: 600;
+  font-size: 12.5px;
+  line-height: 1.2;
+}
+.sel-chip .sel-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sel-chip .sel-chip-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.sel-chip .sel-chip-x:hover {
+  background: color-mix(in srgb, var(--accent-cyan) 28%, transparent);
+}
+.sel-chip.is-empty {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-secondary);
+  padding-left: 0;
+}
+.sel-chip.is-empty .sel-chip-x { display: none; }
 .map-toolbar-area-dot {
   width: 8px;
   height: 8px;
@@ -1068,20 +1124,22 @@ body {
 .browse-card-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
+  flex-wrap: wrap;
   padding: 10px 18px;
   border-bottom: 1px solid var(--border-subtle);
   background: var(--bg-elevated);
   font-size: 12.5px;
 }
 .browse-toolbar-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  flex: 0 1 auto;
+  min-width: 0;
   font-weight: 700;
-  font-size: 13.5px;
-  color: var(--text-primary);
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .browse-back-btn {
   background: var(--bg-surface);
@@ -1174,7 +1232,8 @@ body {
   color: var(--accent-blue);
 }
 @media (max-width: 640px) {
-  .map-card-toolbar {
+  .map-card-toolbar,
+  .browse-card-toolbar {
     padding: 10px 14px;
   }
   .map-zoom-btn {
@@ -1187,6 +1246,11 @@ body {
     max-width: none;
     min-width: 0;
   }
+  /* Stack the card-header search onto its own full-width line on phones so the
+     label + reset button don't overflow. */
+  .card-search { flex-basis: 100%; }
+  .hud-metro-counties { display: none; }
+  .map-toolbar-area-info { flex: 1 1 auto; }
 }
 
 .map-svg-container {
@@ -2193,13 +2257,7 @@ body {
         </div>
         <span class="brand-title">BLS Wage Explorer</span>
       </a>
-      <span class="masthead-tag">OEWS</span>
-      <select class="year-select" id="yearSelect" aria-label="OEWS data year">
-        <option value="2025">May 2025</option>
-        <option value="2024">May 2024</option>
-        <option value="2023">May 2023</option>
-        <option value="2022">May 2022</option>
-      </select>
+      <span class="masthead-tag">OEWS · May 2025</span>
     </div>
     <div class="masthead-right">
       <span class="source-label" id="sourceLabel">U.S. Bureau of Labor Statistics May 2025 Release</span>
@@ -2222,58 +2280,7 @@ body {
 
 <main class="page-container">
 
-  <!-- Hero & Geographic Selector -->
-  <section class="hero-editorial">
-    <div class="hero-title-row">
-      <div class="hero-title-cluster">
-        <div>
-          <h1 class="hero-heading" id="heroAreaTitle">United States (National)</h1>
-        </div>
-      </div>
-    </div>
-
-    <!-- Dual Global Search Bars: Area (with ZIP) & Occupation -->
-    <div class="dual-search-bar">
-      <!-- 1. Searchable Area / ZIP Combobox -->
-      <div class="search-field-group area-picker-wrapper">
-        <label class="search-field-label" for="areaSearchInput">Area or ZIP Code</label>
-        <div class="combobox-input-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" id="areaSearchInput" class="combobox-input" placeholder="Search state, metro area, or 5-digit ZIP..." autocomplete="off">
-          <button id="areaSearchClear" class="combobox-clear" aria-label="Clear area search">✕</button>
-        </div>
-        <div id="areaDropdown" class="combobox-dropdown"></div>
-      </div>
-
-      <!-- 2. Searchable Occupation Combobox -->
-      <div class="search-field-group job-picker-wrapper map-job-picker">
-        <label class="search-field-label" for="mapJobSearchInput">Occupation</label>
-        <div class="combobox-input-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" id="mapJobSearchInput" class="combobox-input" placeholder="Search occupation (e.g. Software Developers)..." autocomplete="off">
-          <button id="mapJobClear" class="combobox-clear" aria-label="Clear occupation search">✕</button>
-        </div>
-        <div id="mapJobDropdown" class="combobox-dropdown"></div>
-      </div>
-    </div>
-
-    <div class="quick-pills">
-      <button class="quick-pill active" data-id="99">United States</button>
-      <button class="quick-pill" data-id="06">California</button>
-      <button class="quick-pill" data-id="48">Texas</button>
-      <button class="quick-pill" data-id="36">New York</button>
-      <button class="quick-pill" data-id="35620">New York-Newark MSA</button>
-      <button class="quick-pill" data-id="41860">San Francisco Bay Area</button>
-      <button class="quick-pill" data-id="12420">Austin, TX</button>
-      <button class="quick-pill" data-id="42660">Seattle, WA</button>
-    </div>
-  </section>
+  <!-- Area & Occupation search now live in their own card headers below. -->
 
   <!-- ======================================================= -->
   <!-- MAIN COCKPIT: Map & Browse Visualizer                   -->
@@ -2286,14 +2293,26 @@ body {
           <!-- Left Visualizer: Interactive Wage Map -->
           <div class="map-card" id="mapCardContainer">
             <div class="map-card-toolbar">
+              <div class="search-field-group card-search" id="areaPickerWrap">
+                <div class="combobox-input-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" id="areaSearchInput" class="combobox-input" placeholder="Search state, metro area, or 5-digit ZIP..." autocomplete="off">
+                  <button id="areaSearchClear" class="combobox-clear" aria-label="Clear area search">✕</button>
+                </div>
+                <div id="areaDropdown" class="combobox-dropdown"></div>
+              </div>
               <div class="map-toolbar-area-info" id="mapToolbarAreaInfo">
                 <span class="map-toolbar-area-dot"></span>
-                <span class="hud-metro-title" id="hudMetroTitle">United States</span>
+                <span class="sel-chip is-empty" id="areaSelChip">
+                  <span class="hud-metro-title sel-chip-label" id="hudMetroTitle">United States</span>
+                  <button type="button" class="sel-chip-x" id="areaSelChipClear" aria-label="Clear selected area" title="Clear selected area">✕</button>
+                </span>
                 <span class="hud-metro-counties" id="hudMetroCounties">National View</span>
               </div>
-              <div class="map-toolbar-right">
-                <button class="hud-reset-btn" id="hudResetBtn" title="Reset map zoom to National view" style="display: none;">Reset zoom</button>
-              </div>
+              <button class="hud-reset-btn" id="hudResetBtn" title="Reset map zoom to National view" style="display: none;">Reset zoom</button>
             </div>
 
             <!-- Horizontal Map Controls Bar: Wage Metric & Map Style -->
@@ -2305,6 +2324,8 @@ body {
                   <button class="segmented-btn" data-metric="mean">Mean</button>
                   <button class="segmented-btn" data-metric="p25">Bottom 25%</button>
                   <button class="segmented-btn" data-metric="p75">Top 25%</button>
+                  <button class="segmented-btn" data-metric="emp">Employment</button>
+                  <button class="segmented-btn" data-metric="lq">Density</button>
                 </div>
               </div>
 
@@ -2317,9 +2338,8 @@ body {
                 </div>
               </div>
 
-              <!-- Active Occupation Badge (kept for sync & awareness) -->
-              <div class="map-controls-job-meta">
-                <span>Job:</span>
+              <!-- Occupation label kept hidden for code that syncs its text. -->
+              <div class="map-controls-job-meta" hidden>
                 <strong id="sidebarActiveJobTitle">All Occupations</strong>
               </div>
             </div>
@@ -2402,25 +2422,26 @@ body {
           <div class="browse-card" id="browseCardContainer">
             <!-- Browse Toolbar -->
             <div class="browse-card-toolbar">
-              <div class="browse-toolbar-title">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="8" y1="6" x2="21" y2="6"></line>
-                  <line x1="8" y1="12" x2="21" y2="12"></line>
-                  <line x1="8" y1="18" x2="21" y2="18"></line>
-                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                </svg>
-                <span id="browseCardHeading">Occupations & Wages</span>
+              <div class="search-field-group card-search" id="jobPickerWrap">
+                <div class="combobox-input-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" id="mapJobSearchInput" class="combobox-input" placeholder="Search occupation (e.g. Registered Nurses)..." autocomplete="off">
+                  <button id="mapJobClear" class="combobox-clear" aria-label="Clear occupation search">✕</button>
+                </div>
+                <div id="mapJobDropdown" class="combobox-dropdown"></div>
               </div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <button id="browseResetBtn" class="hud-reset-btn" title="Reset all search filters and return to All Occupations">Reset ⟲</button>
-              </div>
+              <span class="sel-chip is-empty browse-toolbar-title" id="jobSelChip">
+                <span class="sel-chip-label" id="browseCardHeading">All occupations</span>
+                <button type="button" class="sel-chip-x" id="jobSelChipClear" aria-label="Clear selected occupation" title="Clear selected occupation">✕</button>
+              </span>
+              <button id="browseResetBtn" class="hud-reset-btn" title="Reset all search filters and return to All Occupations">Reset ⟲</button>
             </div>
 
             <!-- Browse Filter Controls Bar -->
             <div class="control-bar" id="browseControlBar" style="padding: 10px 14px; border-bottom: 1px solid var(--border-subtle); display: flex; gap: 8px; align-items: center; background: var(--bg-surface); flex-wrap: wrap;">
-              <input type="text" id="browseQuery" class="control-input" placeholder="Search occupations..." style="flex: 1 1 130px; min-width: 110px;">
               <select id="browseEduFilter" class="control-select" style="flex: 0 1 140px; min-width: 96px;">
                 <option value="-1">All Education Tiers</option>
                 <option value="0">No Formal Requirement</option>
@@ -3189,7 +3210,34 @@ async function ensurePriorJobYears(soc) {
   }));
   state.jobPrior.set(soc, bag);
   state._priorLoading.delete(soc);
-  if (state.activeMapSoc === soc) renderHeroAndKPIs();
+  if (state.activeMapSoc === soc) {
+    renderHeroAndKPIs();
+    renderMetroMap();          // the choropleth fills its holes from these too
+  }
+}
+
+// One metro's row for the active occupation, with every missing field filled
+// from the most recent earlier release that has it (same rule the Area Summary
+// uses). Returns the six-slot row plus `priorYear` = the newest release any
+// filled figure came from, or null when nothing was borrowed.
+function resolveMetroRow(soc, aid, curRow) {
+  const row = (curRow ? curRow.slice(0, 6) : [null, null, null, null, null, null]);
+  const bag = soc && state.jobPrior.get(soc);
+  if (!bag) return { row, priorYear: null };
+  let priorYear = null;
+  const need = () => [0, 1, 2, 3, 4, 5].some(i => !(row[i] > 0));
+  if (need()) {
+    for (const y of PRIOR_YEARS()) {
+      const s = occAreaStats(bag[y], aid);
+      if (!s) continue;
+      const vals = [s.emp, s.mean, s.median, s.p25, s.p75, s.lq];
+      for (let i = 0; i < 6; i++) {
+        if (!(row[i] > 0) && vals[i] > 0) { row[i] = vals[i]; if (!priorYear) priorYear = y; }
+      }
+      if (!need()) break;
+    }
+  }
+  return { row, priorYear };
 }
 
 // Resolve one area's figures for the active occupation, filling any hole from
@@ -3357,13 +3405,13 @@ function updateMapLegend() {
   const payload = state.activeJobPayload;
   if (!payload || !state.mapLegendScale) return;
 
-  const { minVal, maxVal, natVal, isEmploymentMapping, metricName, metricIdx, metric } = state.mapLegendScale;
+  const { minVal, maxVal, natVal, isEmploymentMapping, metricKind = (isEmploymentMapping ? "emp" : "wage"), metricName, metricIdx, metric } = state.mapLegendScale;
 
-  // 1. Min and Max wage labels on left and right edges
+  // 1. Min and Max labels on left and right edges
   const minEl = document.getElementById("legendMinLabel");
   const maxEl = document.getElementById("legendMaxLabel");
-  if (minEl) minEl.textContent = isEmploymentMapping ? fmt.number(minVal) : fmt.currency(minVal);
-  if (maxEl) maxEl.textContent = isEmploymentMapping ? fmt.number(maxVal) : fmt.currency(maxVal);
+  if (minEl) minEl.textContent = fmtMetric(minVal, metricKind);
+  if (maxEl) maxEl.textContent = fmtMetric(maxVal, metricKind);
 
   // 2. U.S. Puck (Below line, arrow points up ▲)
   const usPuck = document.getElementById("mapLegendUsPuck");
@@ -3383,12 +3431,13 @@ function updateMapLegend() {
       if (occName.length > 24) occName = occName.slice(0, 22) + "…";
     }
 
+    const natWord = metricKind === "emp" ? "Total" : metricName;
     if (isAllJobs) {
-      usNameEl.textContent = isEmploymentMapping ? "U.S. National Total" : `U.S. National ${metricName}`;
+      usNameEl.textContent = `U.S. National ${natWord}`;
     } else {
-      usNameEl.textContent = isEmploymentMapping ? `U.S. Total (${occName})` : `U.S. ${metricName} (${occName})`;
+      usNameEl.textContent = `U.S. ${natWord} (${occName})`;
     }
-    usValEl.textContent = isEmploymentMapping ? fmt.number(natVal) : fmt.currency(natVal);
+    usValEl.textContent = fmtMetric(natVal, metricKind);
 
     // Edge clamping so badge does not clip off container boundaries
     if (natPct < 12) {
@@ -3429,9 +3478,10 @@ function updateMapLegend() {
   const curAreaId = state.currentAreaId;
   const isSpecificArea = curAreaId && curAreaId !== "99";
 
-  if (isSpecificArea && payload.metros && payload.metros[curAreaId]) {
-    const areaStats = payload.metros[curAreaId];
-    const displayVal = isEmploymentMapping ? areaStats[0] : areaStats[metricIdx];
+  const curAreaRow = (state._mapJobRows && state._mapJobRows[curAreaId]) || (payload.metros && payload.metros[curAreaId]);
+  if (isSpecificArea && curAreaRow) {
+    const areaStats = curAreaRow;
+    const displayVal = areaStats[metricIdx];
     const areaMeta = state.manifest ? state.manifest.find(a => a.id === curAreaId) : null;
     const rawName = areaMeta ? areaMeta.name : "Selected Area";
     const cleanName = formatAreaName(rawName);
@@ -3442,9 +3492,9 @@ function updateMapLegend() {
       areaPuck.style.display = "flex";
 
       areaNameEl.textContent = cleanName;
-      areaValEl.textContent = isEmploymentMapping ? fmt.number(displayVal) : fmt.currency(displayVal);
+      areaValEl.textContent = fmtMetric(displayVal, metricKind);
 
-      if (natVal && !isEmploymentMapping && natVal > 0) {
+      if (natVal && metricKind === "wage" && natVal > 0) {
         const diffVal = displayVal - natVal;
         const diffPct = ((displayVal - natVal) / natVal) * 100;
         const sign = diffPct >= 0 ? "+" : "";
@@ -3452,6 +3502,13 @@ function updateMapLegend() {
         areaCompEl.textContent = `${sign}${diffPct.toFixed(1)}% vs U.S.`;
         areaCompEl.className = "puck-comparison tabular " + (Math.abs(diffPct) < 0.2 ? "neutral" : (diffPct > 0 ? "pos" : "neg"));
         areaCompEl.title = `U.S. ${metricName}: ${fmt.currency(natVal)} (Diff: ${sign}${fmt.currency(diffVal)})`;
+      } else if (metricKind === "density" && displayVal > 0) {
+        const pctv = (displayVal - 1) * 100;
+        const sign = pctv >= 0 ? "+" : "";
+        areaCompEl.style.display = "inline-block";
+        areaCompEl.textContent = `${sign}${pctv.toFixed(0)}% vs U.S. avg`;
+        areaCompEl.className = "puck-comparison tabular " + (Math.abs(pctv) < 1 ? "neutral" : (pctv > 0 ? "pos" : "neg"));
+        areaCompEl.title = "";
       } else {
         areaCompEl.style.display = "none";
       }
@@ -3506,22 +3563,47 @@ function refreshBubblesForZoom() {
   }, 160);
 }
 
+// Format a map value by what the active metric represents.
+function fmtMetric(v, kind) {
+  kind = kind || (state.mapLegendScale && state.mapLegendScale.metricKind) || "wage";
+  if (v === null || v === undefined || isNaN(v) || v <= 0) return "—";
+  if (kind === "emp") return fmt.number(v);
+  if (kind === "density") return v.toFixed(2) + "×";
+  return fmt.currency(v);
+}
+
 function renderMetroMap() {
   const payload = state.activeJobPayload;
   if (!payload || !state.mapData) return;
 
-  const metric = state.activeMapMetric; // 'median' | 'mean' | 'p25' | 'p75'
+  const metric = state.activeMapMetric; // 'median' | 'mean' | 'p25' | 'p75' | 'emp' | 'lq'
   const metros = state.mapData.metros;
   const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+  const soc = state.activeMapSoc;
 
   // Metric index map in row: [emp=0, mean=1, median=2, p25=3, p75=4, lq=5]
-  const metricIdx = { mean: 1, median: 2, p25: 3, p75: 4 }[metric] ?? 2;
-  const metricName = { median: "Median", mean: "Mean", p25: "Bottom 25%", p75: "Top 25%" }[metric];
+  let metricIdx = { emp: 0, mean: 1, median: 2, p25: 3, p75: 4, lq: 5 }[metric] ?? 2;
+  let metricName = { median: "Median", mean: "Mean", p25: "Bottom 25%", p75: "Top 25%", emp: "Employment", lq: "Density" }[metric] || "Median";
+  let metricKind = metric === "emp" ? "emp" : metric === "lq" ? "density" : "wage";
 
-  // Extract all valid wages across statistical areas to calculate range and ranks
+  // Every metro's row for this occupation, with holes filled from the most recent
+  // earlier release that has the figure (mirrors the Area Summary). Kick the
+  // prior-year fetch off if it hasn't run yet — ensurePriorJobYears re-renders.
+  if (soc && soc !== "00-0000" && !state.jobPrior.has(soc)) ensurePriorJobYears(soc);
+  const jobRows = {};
+  const priorYearByAid = {};
+  metros.forEach(m => {
+    const r = resolveMetroRow(soc, m.id, payload.metros[m.id]);
+    if (r.row.some(v => v > 0)) jobRows[m.id] = r.row;
+    if (r.priorYear) priorYearByAid[m.id] = r.priorYear;
+  });
+  state._mapJobRows = jobRows;
+  state._mapPriorYear = priorYearByAid;
+
+  // Extract all valid values across statistical areas to calculate range and ranks
   let validMetros = [];
   metros.forEach(m => {
-    const jobStats = payload.metros[m.id];
+    const jobStats = jobRows[m.id];
     if (jobStats && jobStats[metricIdx] && jobStats[metricIdx] > 0) {
       validMetros.push({
         metro: m,
@@ -3532,31 +3614,32 @@ function renderMetroMap() {
     }
   });
 
-  let isEmploymentMapping = false;
-  if (validMetros.length === 0) {
-    // If no annual wage data exists for this occupation (e.g. Actors, Athletes, Dancers),
-    // automatically map by employment density
+  // isEmploymentMapping keeps its old meaning: "size/format as a count, not a
+  // wage". True for the Employment metric and for the auto-fallback below.
+  let isEmploymentMapping = (metric === "emp");
+  if (validMetros.length === 0 && metricKind === "wage") {
+    // No annual wage data for this occupation anywhere (Actors, Athletes…) —
+    // fall back to mapping by employment so the map still says something.
+    metricIdx = 0;
+    metricName = "Employment";
+    metricKind = "emp";
+    isEmploymentMapping = true;
     metros.forEach(m => {
-      const jobStats = payload.metros[m.id];
+      const jobStats = jobRows[m.id];
       if (jobStats && jobStats[0] && jobStats[0] > 0) {
-        validMetros.push({
-          metro: m,
-          val: jobStats[0],
-          emp: jobStats[0],
-          stats: jobStats
-        });
+        validMetros.push({ metro: m, val: jobStats[0], emp: jobStats[0], stats: jobStats });
       }
     });
-    if (validMetros.length > 0) {
-      isEmploymentMapping = true;
-    }
   }
 
   validMetros.sort((a, b) => b.val - a.val);
 
-  const maxVal = validMetros.length ? validMetros[0].val : (isEmploymentMapping ? 10000 : 150000);
-  const minVal = validMetros.length ? validMetros[validMetros.length - 1].val : (isEmploymentMapping ? 10 : 30000);
-  const natVal = payload.nat ? (isEmploymentMapping ? payload.nat.emp : payload.nat[metric]) : null;
+  const wageFallbackMax = metricKind === "density" ? 3 : 150000;
+  const wageFallbackMin = metricKind === "density" ? 0.2 : 30000;
+  const maxVal = validMetros.length ? validMetros[0].val : (isEmploymentMapping ? 10000 : wageFallbackMax);
+  const minVal = validMetros.length ? validMetros[validMetros.length - 1].val : (isEmploymentMapping ? 10 : wageFallbackMin);
+  const natVal = metricKind === "density" ? 1.0
+    : (payload.nat ? (isEmploymentMapping ? payload.nat.emp : payload.nat[metric]) : null);
 
   // Store Legend Scale and Update Dynamic Puck & Min/Max Labels
   state.mapLegendScale = {
@@ -3564,6 +3647,7 @@ function renderMetroMap() {
     maxVal,
     natVal,
     isEmploymentMapping,
+    metricKind,
     metricName,
     metricIdx,
     metric
@@ -3581,9 +3665,9 @@ function renderMetroMap() {
   if (bubblesLayer) bubblesLayer.style.display = mode === "bubble" ? "block" : "none";
 
   if (mode === "area") {
-    renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping);
+    renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping, metricKind);
   } else {
-    renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping);
+    renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping, metricKind);
   }
 }
 
@@ -3606,14 +3690,15 @@ function bindMapLayerDelegation(layer, selector, kind) {
     const ctx = state._mapCtx;
     if (!ctx) return;
     const aid = el.dataset.id;
-    const jobStats = ctx.payload.metros[aid];
-    const val = jobStats ? (ctx.isEmploymentMapping ? jobStats[0] : jobStats[ctx.metricIdx]) : null;
+    const jobStats = (state._mapJobRows && state._mapJobRows[aid]) || ctx.payload.metros[aid];
+    const val = jobStats ? jobStats[ctx.metricIdx] : null;
     const rank = ctx.rankByAid.get(aid);
     const rankText = rank ? `#${rank} of ${ctx.validCount}` : "Unreported";
     const meta = kind === "area"
       ? state.metroShapes[aid]
       : (state.mapData.metros.find(m => m.id === aid) || { name: aid });
-    showMetroTooltip(e, meta, ctx.payload, jobStats, ctx.metricName, val, rankText, ctx.natVal, ctx.isEmploymentMapping);
+    const priorYear = state._mapPriorYear && state._mapPriorYear[aid];
+    showMetroTooltip(e, meta, ctx.payload, jobStats, ctx.metricName, val, rankText, ctx.natVal, ctx.isEmploymentMapping, ctx.metricKind, priorYear);
   });
 
   layer.addEventListener("mousemove", (e) => {
@@ -3637,13 +3722,13 @@ function bindMapLayerDelegation(layer, selector, kind) {
   });
 }
 
-function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping = false) {
+function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping = false, metricKind = "wage") {
   const areasLayer = document.getElementById("areasLayer");
   if (!areasLayer || !state.metroShapes) return;
 
   const rankByAid = new Map();
   validMetros.forEach((v, i) => rankByAid.set(v.metro.id, i + 1));
-  state._mapCtx = { payload, metricIdx, metricName, natVal, isEmploymentMapping, rankByAid, validCount: validMetros.length };
+  state._mapCtx = { payload, metricIdx, metricName, natVal, isEmploymentMapping, metricKind, rankByAid, validCount: validMetros.length };
   bindMapLayerDelegation(areasLayer, ".area-boundary-shape", "area");
 
   // Build the polygon elements once; reuse thereafter.
@@ -3668,8 +3753,8 @@ function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, m
   const subAreaSelected = state.currentAreaId && String(state.currentAreaId).length > 2;
   state._areaEls.forEach((path, aid) => {
     const shape = state.metroShapes[aid];
-    const jobStats = payload.metros[aid];
-    const val = jobStats ? (isEmploymentMapping ? jobStats[0] : jobStats[metricIdx]) : null;
+    const jobStats = (state._mapJobRows && state._mapJobRows[aid]) || payload.metros[aid];
+    const val = jobStats ? jobStats[metricIdx] : null;
     path.setAttribute("fill", getChoroplethFill(val, minVal, maxVal, isDark, isEmploymentMapping));
     path.classList.toggle("selected", state.currentAreaId === aid);
     if (state.focusedState) {
@@ -3685,14 +3770,14 @@ function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, m
 // -------------------------------------------------------------
 // MODE 2: BUBBLE MAP LAYER (Centroid Circles)
 // -------------------------------------------------------------
-function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping = false) {
+function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping = false, metricKind = "wage") {
   const bubblesLayer = document.getElementById("bubblesLayer");
   if (!bubblesLayer || !state.mapData) return;
   bubblesLayer.innerHTML = "";
 
   const rankByAid = new Map();
   validMetros.forEach((v, i) => rankByAid.set(v.metro.id, i + 1));
-  state._mapCtx = { payload, metricIdx, metricName, natVal, isEmploymentMapping, rankByAid, validCount: validMetros.length };
+  state._mapCtx = { payload, metricIdx, metricName, natVal, isEmploymentMapping, metricKind, rankByAid, validCount: validMetros.length };
   bindMapLayerDelegation(bubblesLayer, ".metro-bubble", "bubble");
 
   const placed = []; // { circle, cx, cy, r } — positions finalised after spiderfy
@@ -3709,8 +3794,8 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
     const cy = (shape && shape.cy) || m.cy;
     if (!cx || !cy) return;
 
-    const jobStats = payload.metros[m.id];
-    const val = jobStats ? (isEmploymentMapping ? jobStats[0] : jobStats[metricIdx]) : null;
+    const jobStats = (state._mapJobRows && state._mapJobRows[m.id]) || payload.metros[m.id];
+    const val = jobStats ? jobStats[metricIdx] : null;
     if (!val || val <= 0) return;
 
     const fill = getChoroplethColor(val, minVal, maxVal, isEmploymentMapping);
@@ -3799,29 +3884,43 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
   bubblesLayer.appendChild(circles);
 }
 
-function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, rankText, natVal, isEmploymentMapping = false) {
+function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, rankText, natVal, isEmploymentMapping = false, metricKind = "wage", priorYear = null) {
   const [emp, mean, median, p25, p75, lq] = stats || [null, null, null, null, null, null];
+  if (metricKind === "wage" && !(isEmploymentMapping)) metricKind = "wage";
+  else if (isEmploymentMapping) metricKind = "emp";
 
   let deltaHtml = "";
-  if (!isEmploymentMapping && metricVal && natVal && natVal > 0) {
+  if (metricKind === "wage" && metricVal && natVal && natVal > 0) {
     const diffPct = ((metricVal - natVal) / natVal) * 100;
     const sign = diffPct >= 0 ? "+" : "";
     const color = diffPct >= 0 ? "var(--accent-emerald)" : "var(--accent-rose)";
     deltaHtml = `<span style="color: ${color}; font-weight: 600;">${sign}${diffPct.toFixed(1)}% vs U.S.</span>`;
-  } else if (isEmploymentMapping && emp && natVal && natVal > 0) {
+  } else if (metricKind === "emp" && emp && natVal && natVal > 0) {
     const sharePct = ((emp / natVal) * 100).toFixed(1);
     deltaHtml = `<span style="color: var(--accent-cyan); font-weight: 600;">${sharePct}% of U.S. Total</span>`;
+  } else if (metricKind === "density" && metricVal > 0) {
+    const pct = ((metricVal - 1) * 100);
+    const sign = pct >= 0 ? "+" : "";
+    const color = pct >= 0 ? "var(--accent-emerald)" : "var(--accent-rose)";
+    deltaHtml = `<span style="color: ${color}; font-weight: 600;">${sign}${pct.toFixed(0)}% vs U.S. avg</span>`;
   }
 
-  const primaryLabel = isEmploymentMapping ? "Employment Density" : `${metricName} Wage`;
-  const primaryValue = isEmploymentMapping ? `${fmt.number(metricVal)} Employed` : fmt.currency(metricVal);
+  const primaryLabel = metricKind === "emp" ? "Metro Employment"
+    : metricKind === "density" ? "Employment Density"
+    : `${metricName} Wage`;
+  const primaryValue = metricKind === "emp" ? `${fmt.number(metricVal)} Employed`
+    : metricKind === "density" ? `${(metricVal || 0).toFixed(2)}×`
+    : fmt.currency(metricVal);
+  const priorTag = priorYear
+    ? `<span style="display:inline-block; margin-left:6px; font-family:var(--font-mono); font-size:10px; color:var(--accent-cyan); border:1px solid var(--accent-cyan); border-radius:4px; padding:0 4px;">${priorYear} data</span>`
+    : "";
 
   tooltip.innerHTML = `
     <div style="font-weight: 700; font-size: 13.5px; color: var(--text-primary); margin-bottom: 2px;">
       ${formatAreaName(metro.name)}
     </div>
     <div style="font-size: 11.5px; color: var(--accent-cyan); font-weight: 600; margin-bottom: 8px;">
-      ${jobPayload.title}
+      ${jobPayload.title}${priorTag}
     </div>
 
     <div style="background: var(--bg-elevated); padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 8px;">
@@ -3914,6 +4013,8 @@ function setupMapControls() {
     clearBtn.style.display = q ? "block" : "none";
     filterMapJobDropdown(q);
     dropdown.classList.add("open");
+    // This box doubles as the Browse list filter now that the two searches merged.
+    if (!state.drilldownSoc && typeof renderBrowseTable === "function") renderBrowseTable();
   });
 
   clearBtn.addEventListener("click", () => {
@@ -3921,6 +4022,7 @@ function setupMapControls() {
     clearBtn.style.display = "none";
     filterMapJobDropdown("");
     loadMapJob("00-0000");
+    if (!state.drilldownSoc && typeof renderBrowseTable === "function") renderBrowseTable();
     input.focus();
   });
 
@@ -3962,7 +4064,7 @@ function setupMapControls() {
   });
 
   document.addEventListener("click", (e) => {
-    if (!e.target.closest(".map-job-picker")) {
+    if (!e.target.closest("#jobPickerWrap")) {
       closeMapJobDropdown();
     }
   });
@@ -4563,15 +4665,15 @@ function renderHeroAndKPIs() {
     const backYears = Array.from(new Set(Object.values(occBackfill))).sort((a, b) => b - a);
     let text = "", tip = "";
     if (!isAllJobs && occHourly) {
-      text = "annualized from hourly wages ?";
+      text = "annualized from hourly wages";
       tip = `BLS withholds annual wages for ${occTitle} (workers who don't typically work year-round). Figures shown are the published hourly wages × 2,080 hours.`;
     } else if (!isAllJobs && backYears.length) {
       const flds = Object.keys(occBackfill)
         .map(f => ({ emp: "employment", mean: "mean wage", median: "median wage", p25: "25th pct", p75: "75th pct", lq: "concentration" }[f] || f));
-      text = `${backYears.join(" / ")} data ?`;
+      text = `${backYears.join(" / ")} data`;
       tip = `BLS didn't publish ${flds.join(", ")} for ${occTitle} here in May ${state.year}. Those figures come from the most recent earlier release (${backYears.join(", ")}).`;
     } else if (!isAllJobs && state.jobDataYear && state.jobDataYear !== state.year) {
-      text = `${state.jobDataYear} data · ${state.year} incomplete ?`;
+      text = `${state.jobDataYear} data · ${state.year} incomplete`;
       tip = `BLS has not published data for ${occTitle} in the May ${state.year} release. Showing the most recent year with data (${state.jobDataYear}).`;
     }
     dataYearNote.textContent = text;
@@ -4579,11 +4681,20 @@ function renderHeroAndKPIs() {
     dataYearNote.hidden = !text;
   }
 
-  // Hero area title
-  document.getElementById("heroAreaTitle").textContent =
-    isAllJobs ? cleanAreaTitle : `${occTitle} in ${cleanAreaTitle}`;
-  document.getElementById("areaSearchInput").value = "";
-  document.getElementById("areaSearchInput").placeholder = data.name;
+  // Card header labels + "picked" highlight (search bars replaced the hero title).
+  const hudTitleEl = document.getElementById("hudMetroTitle");
+  if (hudTitleEl) hudTitleEl.textContent = cleanAreaTitle;
+  const areaSelChipEl = document.getElementById("areaSelChip");
+  if (areaSelChipEl) areaSelChipEl.classList.toggle("is-empty", data.id === "99");
+  const browseHeadingEl = document.getElementById("browseCardHeading");
+  if (browseHeadingEl) browseHeadingEl.textContent = isAllJobs ? "All occupations" : occTitle;
+  const jobSelChipEl = document.getElementById("jobSelChip");
+  if (jobSelChipEl) jobSelChipEl.classList.toggle("is-empty", isAllJobs);
+  const areaInputEl = document.getElementById("areaSearchInput");
+  if (areaInputEl && document.activeElement !== areaInputEl) {
+    areaInputEl.value = "";
+    areaInputEl.placeholder = data.name;
+  }
 
   const statsJobTitle = document.getElementById("sidebarStatsJobTitle");
   if (statsJobTitle) {
@@ -4952,7 +5063,7 @@ function setupDropdowns() {
   });
 
   document.addEventListener("click", (e) => {
-    if (!e.target.closest(".area-picker-wrapper")) {
+    if (!e.target.closest("#areaPickerWrap")) {
       closeAreaDropdown();
     }
   });
@@ -5105,7 +5216,8 @@ function renderBrowseTable() {
     return;
   }
 
-  const q = document.getElementById("browseQuery").value.toLowerCase().trim();
+  const jobSearchEl = document.getElementById("mapJobSearchInput");
+  const q = (jobSearchEl ? jobSearchEl.value : "").toLowerCase().trim();
   const eduF = parseInt(document.getElementById("browseEduFilter").value);
   const grpF = parseInt(document.getElementById("browseGroupFilter").value);
 
@@ -5351,15 +5463,27 @@ async function openOccupationAreaBreakdown(soc, title) {
 }
 
 function setupEventListeners() {
-  // Quick pills in Hero
-  document.querySelectorAll(".quick-pills .quick-pill").forEach(pill => {
-    pill.addEventListener("click", () => {
-      loadArea(pill.dataset.id, true);
-    });
+  // Selection chips — clear the active area / occupation.
+  const areaChipX = document.getElementById("areaSelChipClear");
+  if (areaChipX) areaChipX.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (typeof resetMapZoom === "function") resetMapZoom();
+    else loadArea("99", false);
+  });
+  const jobChipX = document.getElementById("jobSelChipClear");
+  if (jobChipX) jobChipX.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const ji = document.getElementById("mapJobSearchInput");
+    if (ji) ji.value = "";
+    const jc = document.getElementById("mapJobClear");
+    if (jc) jc.style.display = "none";
+    if (state.drilldownSoc) closeOccupationAreaBreakdown();
+    loadMapJob("00-0000");
+    renderBrowseTable();
   });
 
-  // Browse Filters
-  document.getElementById("browseQuery").addEventListener("input", debounce(renderBrowseTable));
+  // Browse Filters (the occupation text search now lives in #mapJobSearchInput,
+  // wired in setupMapControls).
   document.getElementById("browseEduFilter").addEventListener("change", renderBrowseTable);
   document.getElementById("browseGroupFilter").addEventListener("change", renderBrowseTable);
 
@@ -5426,9 +5550,11 @@ function setupEventListeners() {
   const browseResetBtn = document.getElementById("browseResetBtn");
   if (browseResetBtn) {
     browseResetBtn.addEventListener("click", () => {
-      // Clear input query
-      const queryInput = document.getElementById("browseQuery");
+      // Clear the merged occupation search box
+      const queryInput = document.getElementById("mapJobSearchInput");
       if (queryInput) queryInput.value = "";
+      const queryClear = document.getElementById("mapJobClear");
+      if (queryClear) queryClear.style.display = "none";
 
       // Reset selects
       const eduSelect = document.getElementById("browseEduFilter");
