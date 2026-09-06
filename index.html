@@ -236,12 +236,6 @@ body {
   gap: 14px;
   flex: 1;
 }
-.hero-area-map-badge {
-  display: none;
-}
-.hero-area-mini-svg { display: none; }
-.hero-badge-tag { display: none; }
-
 .hero-heading {
   font-size: 17px;
   line-height: 1.25;
@@ -2384,13 +2378,8 @@ body {
   <section class="hero-editorial">
     <div class="hero-title-row">
       <div class="hero-title-cluster">
-        <div id="heroAreaMapBadge" class="hero-area-map-badge" aria-hidden="true">
-          <svg id="heroAreaMiniSvg" class="hero-area-mini-svg" preserveAspectRatio="xMidYMid meet"></svg>
-          <span class="hero-badge-tag" id="heroBadgeTag">USA</span>
-        </div>
         <div>
           <h1 class="hero-heading" id="heroAreaTitle">United States (National)</h1>
-          <div class="hero-subheading" id="heroOccupationSub" style="display: none; font-size: 13.5px; font-weight: 500; color: var(--accent-cyan); margin-top: 3px; font-family: var(--font-sans);"></div>
         </div>
       </div>
     </div>
@@ -3023,7 +3012,6 @@ async function initMetroMap() {
     setupMapControls();
     await loadMapJob("00-0000");
 
-    renderHeroAreaMapBadge(state.currentAreaId);
     if (state.currentAreaId && state.currentAreaId !== "99") {
       renderMetroShapeOverlay(state.currentAreaId);
     }
@@ -3089,143 +3077,6 @@ function getPathBounds(d) {
     width: Math.max(10, maxX - minX),
     height: Math.max(10, maxY - minY)
   };
-}
-
-// -------------------------------------------------------------
-// HERO AREA MINI MAP HIGHLIGHT BADGE
-// -------------------------------------------------------------
-function renderHeroAreaMapBadge(areaId) {
-  const badge = document.getElementById("heroAreaMapBadge");
-  const svg = document.getElementById("heroAreaMiniSvg");
-  const tag = document.getElementById("heroBadgeTag");
-  if (!badge || !svg) return;
-
-  svg.innerHTML = "";
-
-  // Wire click to jump smoothly to map
-  if (!badge._bound) {
-    badge._bound = true;
-    badge.addEventListener("click", () => {
-      const mapTabBtn = document.querySelector('.tab-btn[data-tab="map"]');
-      if (mapTabBtn) mapTabBtn.click();
-      const mapSection = document.getElementById("tab-map");
-      if (mapSection) {
-        mapSection.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-      if (state.currentAreaId && state.currentAreaId !== "99") {
-        renderMetroShapeOverlay(state.currentAreaId);
-      }
-    });
-  }
-
-  // 1. National
-  if (!areaId || areaId === "99") {
-    if (tag) tag.textContent = "USA";
-    svg.setAttribute("viewBox", "0 0 975 610");
-    badge.setAttribute("title", "United States (National Overview) · Click to view on map");
-
-    if (state.statesById) {
-      Object.values(state.statesById).forEach(s => {
-        if (!s.d) return;
-        const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        p.setAttribute("d", s.d);
-        p.setAttribute("fill", "rgba(56, 189, 248, 0.12)");
-        p.setAttribute("stroke", "rgba(56, 189, 248, 0.45)");
-        p.setAttribute("stroke-width", "1.2");
-        svg.appendChild(p);
-      });
-    }
-    return;
-  }
-
-  // 2. U.S. State
-  if (state.statesById && state.statesById[areaId]) {
-    if (tag) tag.textContent = "STATE";
-    const s = state.statesById[areaId];
-    badge.setAttribute("title", `${s.name} · Click to focus on map`);
-    const b = getPathBounds(s.d);
-    const padX = Math.max(16, b.width * 0.12);
-    const padY = Math.max(16, b.height * 0.12);
-    svg.setAttribute(
-      "viewBox",
-      `${b.minX - padX} ${b.minY - padY} ${b.width + padX * 2} ${b.height + padY * 2}`
-    );
-
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", s.d);
-    path.setAttribute("fill", "rgba(56, 189, 248, 0.35)");
-    path.setAttribute("stroke", "var(--accent-cyan)");
-    path.setAttribute("stroke-width", "1.8");
-    svg.appendChild(path);
-    return;
-  }
-
-  // 3. Statistical Area (e.g. Killeen-Temple, TX)
-  if (state.metroShapes && state.metroShapes[areaId]) {
-    const shape = state.metroShapes[areaId];
-    const isMsa = (shape.type || "msa") === "msa";
-    if (tag) tag.textContent = isMsa ? "MSA" : "RURAL";
-    badge.setAttribute("title", `${shape.name} · Click to focus on map`);
-
-    const stateCode = shape.state;
-    const parentState = stateCode ? (state.stateByCode[stateCode] || state.statesById[stateCode]) : null;
-
-    if (parentState && parentState.d) {
-      // Area highlighted within parent state context!
-      const b = getPathBounds(parentState.d);
-      const padX = Math.max(14, b.width * 0.1);
-      const padY = Math.max(14, b.height * 0.1);
-      svg.setAttribute(
-        "viewBox",
-        `${b.minX - padX} ${b.minY - padY} ${b.width + padX * 2} ${b.height + padY * 2}`
-      );
-
-      // Parent state outline
-      const statePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      statePath.setAttribute("d", parentState.d);
-      statePath.setAttribute("fill", "rgba(255, 255, 255, 0.06)");
-      statePath.setAttribute("stroke", "rgba(255, 255, 255, 0.22)");
-      statePath.setAttribute("stroke-width", "1.4");
-      svg.appendChild(statePath);
-
-      // Highlighted Statistical Area in glowing cyan
-      if (shape.d) {
-        const areaPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        areaPath.setAttribute("d", shape.d);
-        areaPath.setAttribute("fill", "rgba(56, 189, 248, 0.7)");
-        areaPath.setAttribute("stroke", "#38bdf8");
-        areaPath.setAttribute("stroke-width", "2.2");
-        areaPath.setAttribute("filter", "drop-shadow(0 0 4px rgba(56, 189, 248, 0.9))");
-        svg.appendChild(areaPath);
-      }
-
-      // Centroid radar beacon dot
-      if (shape.cx && shape.cy) {
-        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        dot.setAttribute("cx", shape.cx);
-        dot.setAttribute("cy", shape.cy);
-        dot.setAttribute("r", "3.2");
-        dot.setAttribute("fill", "#ffffff");
-        dot.setAttribute("filter", "drop-shadow(0 0 3px #38bdf8)");
-        svg.appendChild(dot);
-      }
-    } else if (shape.bounds) {
-      const [[x0, y0], [x1, y1]] = shape.bounds;
-      const w = Math.max(20, x1 - x0);
-      const h = Math.max(20, y1 - y0);
-      const pad = Math.max(8, Math.max(w, h) * 0.16);
-      svg.setAttribute("viewBox", `${x0 - pad} ${y0 - pad} ${w + pad * 2} ${h + pad * 2}`);
-
-      if (shape.d) {
-        const ap = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        ap.setAttribute("d", shape.d);
-        ap.setAttribute("fill", "rgba(56, 189, 248, 0.55)");
-        ap.setAttribute("stroke", "var(--accent-cyan)");
-        ap.setAttribute("stroke-width", "1.6");
-        svg.appendChild(ap);
-      }
-    }
-  }
 }
 
 function zoomToState(stateIdOrCode) {
@@ -3331,7 +3182,6 @@ function resetMapZoom() {
   if (subEl) subEl.textContent = "National View";
   if (resetBtn) resetBtn.style.display = "none";
 
-  renderHeroAreaMapBadge("99");
 
   if (state.currentAreaId && state.currentAreaId !== "99") {
     loadArea("99", false);
@@ -4525,7 +4375,6 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     if (targetBubble) targetBubble.classList.add("highlighted");
 
     // Update Hero Area Map Badge next to main area header
-    renderHeroAreaMapBadge(areaId);
 
     // Smooth Auto-Zoom to Metro Bounding Box
     if (shouldZoom && shape.bounds && shape.bounds.length === 2) {
@@ -4574,7 +4423,6 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
       c.classList.toggle("bubble-dimmed", !inState);
     });
 
-    renderHeroAreaMapBadge(areaId);
 
     // Calculate state bounds
     const b = getPathBounds(stateObj.d);
@@ -4619,7 +4467,6 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     document.querySelectorAll(".metro-bubble").forEach(c => {
       c.classList.remove("bubble-focused", "bubble-dimmed", "highlighted");
     });
-    renderHeroAreaMapBadge("99");
     if (shouldZoom) {
       state.mapZoom = { scale: 1, x: 0, y: 0 };
       const zoomGroup = document.getElementById("mapZoomGroup");
@@ -4779,15 +4626,9 @@ function renderHeroAndKPIs() {
     }
   }
 
-  // Hero Area Title, Subheading & Badges
-  const heroAreaTitleEl = document.getElementById("heroAreaTitle");
-  const heroOccSubEl = document.getElementById("heroOccupationSub");
-  heroAreaTitleEl.textContent = isAllJobs ? cleanAreaTitle : `${occTitle} in ${cleanAreaTitle}`;
-  if (heroOccSubEl) {
-    heroOccSubEl.textContent = "";
-    heroOccSubEl.style.display = "none";
-  }
-  renderHeroAreaMapBadge(data.id);
+  // Hero area title
+  document.getElementById("heroAreaTitle").textContent =
+    isAllJobs ? cleanAreaTitle : `${occTitle} in ${cleanAreaTitle}`;
   document.getElementById("areaSearchInput").value = "";
   document.getElementById("areaSearchInput").placeholder = data.name;
 
@@ -5303,54 +5144,12 @@ function closeAreaDropdown() {
 }
 
 function setupEventListeners() {
-  // Tabs
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach(b => {
-        b.classList.remove("active");
-        b.setAttribute("aria-selected", "false");
-      });
-      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-      btn.classList.add("active");
-      btn.setAttribute("aria-selected", "true");
-      const tabId = btn.dataset.tab;
-      document.getElementById("tab-" + tabId).classList.add("active");
-      state.activeTab = tabId;
-      if (tabId === "map" && state.activeJobPayload) {
-        renderMetroMap();
-        if (state.currentAreaId && state.currentAreaId !== "99") {
-          renderMetroShapeOverlay(state.currentAreaId, false);
-        }
-      } else if (tabId === "spread") {
-        renderSpread();
-      } else if (tabId === "browse") {
-        renderBrowseTable();
-      } else if (tabId === "education") {
-        renderEducation();
-      } else if (tabId === "toppay") {
-        renderTopPaying();
-      }
-    });
-  });
-
   // Quick pills in Hero
   document.querySelectorAll(".quick-pills .quick-pill").forEach(pill => {
     pill.addEventListener("click", () => {
       loadArea(pill.dataset.id, true);
     });
   });
-
-  // Spread Filters (if present)
-  const sq = document.getElementById("spreadQuery");
-  if (sq) sq.addEventListener("input", debounce(renderSpread));
-  const sef = document.getElementById("spreadEduFilter");
-  if (sef) sef.addEventListener("change", renderSpread);
-  const sgf = document.getElementById("spreadGroupFilter");
-  if (sgf) sgf.addEventListener("change", renderSpread);
-  const sst = document.getElementById("spreadSort");
-  if (sst) sst.addEventListener("change", renderSpread);
-  const slm = document.getElementById("spreadLimit");
-  if (slm) slm.addEventListener("change", renderSpread);
 
   // Browse Filters
   document.getElementById("browseQuery").addEventListener("input", debounce(renderBrowseTable));
@@ -5483,591 +5282,8 @@ function applyTheme(isDark) {
     renderMetroMap();
   }
 }
-
-// -------------------------------------------------------------
-// TAB 1: Wage Spread (Percentiles P10 -> P90)
-// -------------------------------------------------------------
-function renderSpread() {
-  const data = state.areaData;
-  if (!data || !data.occupations) return;
-
-  const q = document.getElementById("spreadQuery").value.toLowerCase().trim();
-  const eduF = parseInt(document.getElementById("spreadEduFilter").value);
-  const grpF = parseInt(document.getElementById("spreadGroupFilter").value);
-  const sortMode = document.getElementById("spreadSort").value;
-  const limit = parseInt(document.getElementById("spreadLimit").value);
-
-  let filtered = data.occupations.filter(row => {
-    const [soc, title, grpIdx, eduLvl, emp, mean, median] = row;
-    if (q && scoreOccupation(title, soc, q) <= 0) return false;
-    if (eduF !== -1 && eduLvl !== eduF) return false;
-    if (grpF !== -1 && grpIdx !== grpF) return false;
-    return median !== null && median > 0;
-  });
-
-  filtered.sort((a, b) => {
-    const [socA, titleA, grpA, eduA, empA, meanA, medA, p10A, p25A, p75A, p90A] = a;
-    const [socB, titleB, grpB, eduB, empB, meanB, medB, p10B, p25B, p75B, p90B] = b;
-
-    switch (sortMode) {
-      case "median_desc": return (medB || 0) - (medA || 0);
-      case "mean_desc": return (meanB || 0) - (meanA || 0);
-      case "spread_desc":
-        const spA = (p90A && p10A) ? (p90A - p10A) : 0;
-        const spB = (p90B && p10B) ? (p90B - p10B) : 0;
-        return spB - spA;
-      case "p90_desc": return (p90B || 0) - (p90A || 0);
-      case "emp_desc": return (empB || 0) - (empA || 0);
-      case "edu_desc": return eduB - eduA;
-      case "name_asc": return titleA.localeCompare(titleB);
-      default: return (medB || 0) - (medA || 0);
-    }
-  });
-
-  document.getElementById("spreadCounter").textContent =
-    `Showing ${Math.min(filtered.length, limit)} of ${filtered.length} matched occupations`;
-
-  const container = document.getElementById("spreadList");
-  container.innerHTML = "";
-
-  if (filtered.length === 0) {
-    container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);">No occupations match the selected criteria.</div>`;
-    return;
-  }
-
-  const maxWageScale = 250000;
-  const displayList = filtered.slice(0, limit);
-  const fragment = document.createDocumentFragment();
-
-  displayList.forEach(row => {
-    const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90] = row;
-    const eduInfo = EDU_LEVELS[eduLvl] || EDU_LEVELS[1];
-    const grpName = GROUPS[grpIdx] || "General";
-
-    const posMedian = Math.max(0, Math.min(100, ((median || 0) / maxWageScale) * 100));
-    const leftP10 = Math.max(0, Math.min(100, ((p10 || median * 0.6) / maxWageScale) * 100));
-    const rightP90 = Math.max(0, Math.min(100, ((p90 || median * 1.5) / maxWageScale) * 100));
-    const safeLeft = Math.min(leftP10, posMedian);
-    const safeRight = Math.max(rightP90, posMedian);
-    const widthBar = Math.max(2, safeRight - safeLeft);
-
-    const rangeLabel = (p10 && p90)
-      ? `${fmt.currency(p10)} – ${fmt.currency(p90)}`
-      : (p10 ? `≥ ${fmt.currency(p10)}` : (p90 ? `≤ ${fmt.currency(p90)}` : "Percentiles withheld"));
-
-    const rowEl = document.createElement("div");
-    rowEl.className = "spread-row";
-
-    rowEl.innerHTML = `
-      <div class="spread-meta">
-        <div class="spread-title" title="${title}">${title}</div>
-        <div class="spread-submeta">
-          <span style="color: ${eduInfo.color}; font-weight: 600;">${eduInfo.short}</span>
-          <span>·</span>
-          <span>${grpName}</span>
-          ${emp ? `<span>·</span><span>${fmt.compact(emp)} jobs</span>` : ""}
-        </div>
-      </div>
-
-      <div class="spread-chart-col">
-        <div class="spread-track">
-          <div class="spread-bar" style="left: ${safeLeft}%; width: ${widthBar}%; background: ${eduInfo.color};"></div>
-          <div class="spread-median-dot" style="left: ${posMedian}%;"></div>
-        </div>
-      </div>
-
-      <div class="spread-stat-col">
-        <div class="spread-median-val">${fmt.currency(median)}</div>
-        <div class="spread-range-label">${rangeLabel}</div>
-      </div>
-    `;
-
-    rowEl.addEventListener("mouseenter", (e) => showSpreadTooltip(e, row, eduInfo, grpName));
-    rowEl.addEventListener("mousemove", moveTooltip);
-    rowEl.addEventListener("mouseleave", hideTooltip);
-
-    fragment.appendChild(rowEl);
-  });
-
-  container.appendChild(fragment);
-}
-
-// -------------------------------------------------------------
-// TAB 2: Browse Occupations Table
-// -------------------------------------------------------------
-function renderBrowseTable() {
-  const data = state.areaData;
-  if (!data || !data.occupations) return;
-
-  // If currently viewing drilldown for a clicked occupation, keep drilldown active
-  if (state.drilldownSoc) {
-    renderOccupationAreasTable();
-    return;
-  }
-
-  const q = document.getElementById("browseQuery").value.toLowerCase().trim();
-  const eduF = parseInt(document.getElementById("browseEduFilter").value);
-  const grpF = parseInt(document.getElementById("browseGroupFilter").value);
-
-  let filtered = data.occupations.filter(row => {
-    const [soc, title, grpIdx, eduLvl] = row;
-    if (q && scoreOccupation(title, soc, q) <= 0) return false;
-    if (eduF !== -1 && eduLvl !== eduF) return false;
-    if (grpF !== -1 && grpIdx !== grpF) return false;
-    return true;
-  });
-
-  const { col, asc } = state.tableSort;
-  const wIdx = wageMetric().occIdx;
-  filtered.sort((a, b) => {
-    let vA, vB;
-    switch (col) {
-      case "title": vA = a[1]; vB = b[1]; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
-      case "emp": vA = a[4] || 0; vB = b[4] || 0; break;
-      case "lq": vA = a[11] || 0; vB = b[11] || 0; break;
-      case "wage": vA = a[wIdx] || 0; vB = b[wIdx] || 0; break;
-      default: vA = a[wIdx] || 0; vB = b[wIdx] || 0;
-    }
-    return asc ? vA - vB : vB - vA;
-  });
-
-  document.getElementById("browseCounter").textContent = `${filtered.length} occupations listed`;
-
-  const tbody = document.getElementById("tableBody");
-  tbody.innerHTML = "";
-
-  const fragment = document.createDocumentFragment();
-
-  const wIdx2 = wageMetric().occIdx;
-  filtered.slice(0, 300).forEach(row => {
-    const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90, lq] = row;
-    const wageVal = row[wIdx2];
-
-    const tr = document.createElement("tr");
-    tr.className = "clickable-row";
-    tr.title = `Click to view regional area breakdown for ${title}`;
-    tr.innerHTML = `
-      <td style="font-weight: 600; color: var(--text-primary); max-width: 280px; overflow: hidden; text-overflow: ellipsis;">
-        <span style="color: var(--accent-cyan); margin-right: 4px;">›</span>${title}
-      </td>
-      <td style="text-align: right;" class="tabular">${fmt.number(emp)}</td>
-      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(wageVal)}</td>
-      <td style="text-align: right;">
-        <span class="badge-density ${lq && lq >= 1.25 ? 'high' : ''}">
-          ${fmt.lq(lq)}
-        </span>
-      </td>
-    `;
-
-    tr.addEventListener("click", () => {
-      openOccupationAreaBreakdown(soc, title);
-    });
-
-    fragment.appendChild(tr);
-  });
-
-  tbody.appendChild(fragment);
-  updateTableSortHeaders();
-}
-
-function updateTableSortHeaders() {
-  const { col, asc } = state.tableSort;
-  document.querySelectorAll("#occupationsTable th[data-col]").forEach(th => {
-    th.classList.remove("sorted-asc", "sorted-desc");
-    if (th.dataset.col === col) {
-      th.classList.add(asc ? "sorted-asc" : "sorted-desc");
-    }
-  });
-}
-
-// -------------------------------------------------------------
-// OCCUPATION AREA BREAKDOWN (Drilldown in Browse Visualizer)
-// -------------------------------------------------------------
-async function openOccupationAreaBreakdown(soc, title) {
-  state.drilldownSoc = soc;
-  state.drilldownTitle = title;
-
-  // Sync with global Map job
-  if (state.activeMapSoc !== soc) {
-    await loadMapJob(soc);
-  }
-
-  // Switch display from Table A to Table B
-  document.getElementById("occupationsTable").style.display = "none";
-  document.getElementById("browseControlBar").style.display = "none";
-
-  const drilldownBar = document.getElementById("browseDrilldownBar");
-  drilldownBar.style.display = "flex";
-  document.getElementById("browseDrilldownTitle").textContent = title;
-
-  state.drilldownRegion = "ALL";
-  populateDrilldownRegionFilter();
-
-  syncWageColHeaders();
-
-  const tableAreas = document.getElementById("occupationAreasTable");
-  tableAreas.style.display = "";
-
-  renderOccupationAreasTable();
-}
-
-// Fill the drilldown "All Regions / by region" selector with the states that
-// actually report the active occupation, so a user can narrow the breakdown
-// to a single state's metro + non-metro areas.
-function populateDrilldownRegionFilter() {
-  const sel = document.getElementById("drilldownRegionFilter");
-  const payload = state.activeJobPayload;
-  if (!sel || !payload || !payload.metros) return;
-
-  const stateMetaByCode = {};
-  (state.mapData && state.mapData.metros ? state.mapData.metros : []).forEach(m => {
-    if (m.state) stateMetaByCode[m.id] = m.state;
-  });
-
-  const codeToName = {};
-  Object.values(state.statesById || {}).forEach(s => {
-    if (s && s.state && s.name) codeToName[s.state] = s.name;
-  });
-
-  const present = new Set();
-  Object.keys(payload.metros).forEach(areaId => {
-    const code = stateMetaByCode[areaId];
-    if (code) present.add(code);
-  });
-
-  const options = Array.from(present)
-    .map(code => ({ code, name: codeToName[code] || code }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  sel.innerHTML = '<option value="ALL">All Regions</option>' +
-    options.map(o => `<option value="${o.code}">${o.name}</option>`).join("");
-  sel.value = "ALL";
-}
-
-function closeOccupationAreaBreakdown() {
-  state.drilldownSoc = null;
-  state.drilldownTitle = "";
-  state.drilldownRegion = "ALL";
-
-  document.getElementById("browseDrilldownBar").style.display = "none";
-  document.getElementById("occupationAreasTable").style.display = "none";
-
-  document.getElementById("browseControlBar").style.display = "flex";
-  document.getElementById("occupationsTable").style.display = "";
-
-  renderBrowseTable();
-}
-
-function renderOccupationAreasTable() {
-  if (!state.drilldownSoc || !state.activeJobPayload) return;
-
-  const payload = state.activeJobPayload;
-  const metrosMap = (state.mapData && state.mapData.metros) ? state.mapData.metros : [];
-  const metroNamesById = {};
-  const metroStateById = {};
-  metrosMap.forEach(m => {
-    metroNamesById[m.id] = m.name;
-    if (m.state) metroStateById[m.id] = m.state;
-  });
-
-  const regionFilter = state.drilldownRegion && state.drilldownRegion !== "ALL" ? state.drilldownRegion : null;
-
-  const rows = [];
-  if (payload.metros) {
-    Object.keys(payload.metros).forEach(areaId => {
-      if (regionFilter && metroStateById[areaId] !== regionFilter) return;
-      const stats = payload.metros[areaId]; // [emp, mean, median, p25, p75, lq]
-      const rawName = metroNamesById[areaId] || (state.manifest ? (state.manifest.find(a => a.id === areaId)?.name) : areaId) || `Area ${areaId}`;
-      const name = formatAreaName(rawName);
-
-      rows.push({
-        id: areaId,
-        name: name,
-        emp: stats[0] || 0,
-        mean: stats[1] || 0,
-        median: stats[2] || 0,
-        p25: stats[3] || 0,
-        p75: stats[4] || 0,
-        lq: stats[5] || 0
-      });
-    });
-  }
-
-  const wKey = wageMetric().v === "mean" ? "mean"
-             : wageMetric().v === "p25" ? "p25"
-             : wageMetric().v === "p75" ? "p75" : "median";
-  const { col, asc } = state.areaTableSort;
-  rows.sort((a, b) => {
-    let vA, vB;
-    switch (col) {
-      case "name": vA = a.name; vB = b.name; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
-      case "emp": vA = a.emp; vB = b.emp; break;
-      case "lq": vA = a.lq; vB = b.lq; break;
-      case "wage": vA = a[wKey]; vB = b[wKey]; break;
-      default: vA = a[wKey]; vB = b[wKey];
-    }
-    return asc ? vA - vB : vB - vA;
-  });
-
-  document.getElementById("browseDrilldownCounter").textContent =
-    regionFilter ? `${rows.length} areas in region` : `${rows.length} reporting areas`;
-
-  const tbody = document.getElementById("occupationAreasTableBody");
-  tbody.innerHTML = "";
-  const fragment = document.createDocumentFragment();
-
-  rows.forEach(r => {
-    const isSelected = r.id === state.currentAreaId;
-    const tr = document.createElement("tr");
-    tr.className = `clickable-row ${isSelected ? 'active-area-row' : ''}`;
-    tr.dataset.id = r.id;
-    tr.title = `Click to select ${r.name} on the map`;
-
-    tr.innerHTML = `
-      <td style="font-weight: 500; color: ${isSelected ? 'var(--accent-cyan)' : 'var(--text-primary)'}; max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
-        ${r.name}
-      </td>
-      <td style="text-align: right;" class="tabular">${fmt.number(r.emp)}</td>
-      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(r[wKey])}</td>
-      <td style="text-align: right;">
-        <span class="badge-density ${r.lq >= 1.25 ? 'high' : ''}">
-          ${fmt.lq(r.lq)}
-        </span>
-      </td>
-    `;
-
-    tr.addEventListener("click", () => {
-      loadArea(r.id, true);
-      document.querySelectorAll("#occupationAreasTableBody tr").forEach(rowEl => {
-        rowEl.classList.toggle("active-area-row", rowEl.dataset.id === r.id);
-      });
-    });
-
-    fragment.appendChild(tr);
-  });
-
-  tbody.appendChild(fragment);
-
-  // Update sort headers for occupationAreasTable
-  document.querySelectorAll("#occupationAreasTable th[data-col]").forEach(th => {
-    th.classList.remove("sorted-asc", "sorted-desc");
-    if (th.dataset.col === col) {
-      th.classList.add(asc ? "sorted-asc" : "sorted-desc");
-    }
-  });
-}
-
-// -------------------------------------------------------------
-// TAB 3: Education Benchmarks
-// -------------------------------------------------------------
-function renderEducation() {
-  const data = state.areaData;
-  if (!data || !data.occupations) return;
-
-  const eduStats = EDU_LEVELS.map((lvl, idx) => ({
-    level: idx,
-    name: lvl.name,
-    short: lvl.short,
-    color: lvl.color,
-    count: 0,
-    emp: 0,
-    weightedMeanSum: 0,
-    weightedMeanEmp: 0,
-    medians: [],
-    means: [],
-    p10s: [],
-    p90s: []
-  }));
-
-  let totalRegionalJobs = 0;
-
-  data.occupations.forEach(row => {
-    const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90] = row;
-    if (eduLvl >= 0 && eduLvl < eduStats.length) {
-      const s = eduStats[eduLvl];
-      s.count++;
-      if (emp && emp > 0) {
-        s.emp += emp;
-        totalRegionalJobs += emp;
-      }
-      if (median && median > 0) s.medians.push(median);
-      if (mean && mean > 0) {
-        s.means.push(mean);
-        if (emp && emp > 0) {
-          s.weightedMeanSum += mean * emp;
-          s.weightedMeanEmp += emp;
-        }
-      }
-      if (p10 && p10 > 0) s.p10s.push(p10);
-      if (p90 && p90 > 0) s.p90s.push(p90);
-    }
-  });
-
-  eduStats.forEach(s => {
-    s.medianWage = s.medians.length ? medianArray(s.medians) : 0;
-    s.meanWage = s.weightedMeanEmp > 0
-      ? Math.round(s.weightedMeanSum / s.weightedMeanEmp)
-      : (s.means.length ? Math.round(s.means.reduce((a, b) => a + b, 0) / s.means.length) : 0);
-    s.p10Floor = s.p10s.length ? medianArray(s.p10s) : 0;
-    s.p90Ceil = s.p90s.length ? medianArray(s.p90s) : 0;
-    s.empShare = totalRegionalJobs > 0 ? (s.emp / totalRegionalJobs) : 0;
-  });
-
-  const benchList = document.getElementById("eduBenchmarkList");
-  benchList.innerHTML = "";
-  const maxTierWage = Math.max(...eduStats.map(s => s.medianWage), 160000);
-  const benchFrag = document.createDocumentFragment();
-
-  eduStats.forEach(s => {
-    const barWidth = Math.max(3, (s.medianWage / maxTierWage) * 100);
-    const item = document.createElement("div");
-    item.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <span style="font-weight: 600; font-size: 13px; color: ${s.color};">${s.name}</span>
-        <span class="tabular" style="font-weight: 700; font-size: 13.5px; color: var(--text-primary);">${fmt.currency(s.medianWage)}</span>
-      </div>
-      <div style="height: 10px; background: var(--bg-subtle); border-radius: 5px; overflow: hidden; margin-bottom: 2px;">
-        <div style="width: ${barWidth}%; height: 100%; background: ${s.color}; border-radius: 5px;"></div>
-      </div>
-      <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted);">
-        <span>Spread: ${fmt.currency(s.p10Floor)} – ${fmt.currency(s.p90Ceil)}</span>
-        <span>${s.count} occupations</span>
-      </div>
-    `;
-    benchFrag.appendChild(item);
-  });
-  benchList.appendChild(benchFrag);
-
-  const empList = document.getElementById("eduEmploymentList");
-  empList.innerHTML = "";
-  const empFrag = document.createDocumentFragment();
-
-  eduStats.forEach(s => {
-    const sharePct = (s.empShare * 100).toFixed(1);
-    const item = document.createElement("div");
-    item.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <span style="font-weight: 500; font-size: 13px;">${s.name}</span>
-        <span class="tabular" style="font-weight: 600; font-size: 13px;">${sharePct}% <span style="font-size: 11px; color: var(--text-muted);">(${fmt.compact(s.emp)})</span></span>
-      </div>
-      <div style="height: 8px; background: var(--bg-subtle); border-radius: 4px; overflow: hidden;">
-        <div style="width: ${sharePct}%; height: 100%; background: ${s.color}; border-radius: 4px;"></div>
-      </div>
-    `;
-    empFrag.appendChild(item);
-  });
-  empList.appendChild(empFrag);
-
-  const eduTbody = document.getElementById("eduTableBody");
-  eduTbody.innerHTML = "";
-  const tbodyFrag = document.createDocumentFragment();
-
-  eduStats.forEach(s => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>
-        <span class="badge-edu" style="background: ${s.color}22; color: ${s.color}; border: 1px solid ${s.color}44;">
-          ${s.name}
-        </span>
-      </td>
-      <td style="text-align: right;" class="tabular">${s.count}</td>
-      <td style="text-align: right;" class="tabular">${fmt.number(s.emp)}</td>
-      <td style="text-align: right;" class="tabular">${fmt.pct(s.empShare)}</td>
-      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(s.medianWage)}</td>
-      <td style="text-align: right;" class="tabular">${fmt.currency(s.meanWage)}</td>
-      <td style="text-align: right; color: var(--text-muted);" class="tabular">${fmt.currency(s.p10Floor)}</td>
-      <td style="text-align: right; color: var(--text-muted);" class="tabular">${fmt.currency(s.p90Ceil)}</td>
-    `;
-    tbodyFrag.appendChild(tr);
-  });
-  eduTbody.appendChild(tbodyFrag);
-}
-
-function medianArray(arr) {
-  if (!arr.length) return 0;
-  const s = [...arr].sort((a, b) => a - b);
-  const mid = Math.floor(s.length / 2);
-  return s.length % 2 !== 0 ? s[mid] : Math.round((s[mid - 1] + s[mid]) / 2);
-}
-
-// -------------------------------------------------------------
-// TAB 4: Top Paying Occupations
-// -------------------------------------------------------------
-function renderTopPaying() {
-  const data = state.areaData;
-  if (!data || !data.occupations) return;
-
-  const valid = data.occupations.filter(r => r[6] && r[6] > 0);
-  valid.sort((a, b) => (b[6] || 0) - (a[6] || 0));
-
-  const top25 = valid.slice(0, 25);
-  const grid = document.getElementById("topPayingGrid");
-  grid.innerHTML = "";
-
-  top25.forEach((row, idx) => {
-    const [soc, title, grpIdx, eduLvl, emp, mean, median] = row;
-    const eduInfo = EDU_LEVELS[eduLvl] || EDU_LEVELS[1];
-    const grpName = GROUPS[grpIdx] || "General";
-
-    const card = document.createElement("div");
-    card.className = "top-pay-card";
-
-    card.innerHTML = `
-      <div class="top-pay-rank">#${idx + 1}</div>
-      <div class="top-pay-info">
-        <div class="top-pay-title" title="${title}">${title}</div>
-        <div class="top-pay-sub">
-          <span style="color: ${eduInfo.color}; font-weight: 600;">${eduInfo.short}</span>
-          <span>·</span>
-          <span>${grpName}</span>
-          ${emp ? `<span>·</span><span>${fmt.compact(emp)} jobs</span>` : ""}
-        </div>
-      </div>
-      <div class="top-pay-figures">
-        <div class="top-pay-wage">${fmt.currency(median)}</div>
-        <div class="top-pay-natcomp">Mean: ${fmt.currency(mean)}</div>
-      </div>
-    `;
-
-    grid.appendChild(card);
-  });
-}
-
 // Tooltip positioning & handlers
 const tooltip = document.getElementById("chartTooltip");
-
-function showSpreadTooltip(e, row, eduInfo, grpName) {
-  const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90, lq] = row;
-
-  tooltip.innerHTML = `
-    <div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: var(--text-primary);">${title}</div>
-    <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">SOC ${soc} · ${grpName}</div>
-    <div style="display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-family: var(--font-mono); font-size: 12px;">
-      <span style="color: var(--text-muted);">Median (P50):</span>
-      <strong style="text-align: right; color: var(--accent-cyan);">${fmt.currency(median)}</strong>
-      <span style="color: var(--text-muted);">Mean Wage:</span>
-      <span style="text-align: right;">${fmt.currency(mean)}</span>
-      <span style="color: var(--text-muted);">10th Percentile:</span>
-      <span style="text-align: right;">${fmt.currency(p10)}</span>
-      <span style="color: var(--text-muted);">90th Percentile:</span>
-      <span style="text-align: right;">${fmt.currency(p90)}</span>
-      <span style="color: var(--text-muted);">Spread (P90−P10):</span>
-      <span style="text-align: right;">${fmt.currency((p90 && p10) ? p90 - p10 : null)}</span>
-      <span style="color: var(--text-muted);">Min. Education:</span>
-      <span style="text-align: right; color: ${eduInfo.color}; font-weight: 600;">${eduInfo.name}</span>
-      ${emp ? `
-        <span style="color: var(--text-muted);">Regional Jobs:</span>
-        <span style="text-align: right;">${fmt.number(emp)}</span>
-      ` : ""}
-      ${lq ? `
-        <span style="color: var(--text-muted);">Location Quotient:</span>
-        <span style="text-align: right; color: ${lq >= 1.25 ? 'var(--accent-emerald)' : 'var(--text-primary)'}; font-weight: 600;">${fmt.lq(lq)}</span>
-      ` : ""}
-    </div>
-  `;
-  tooltip.style.display = "block";
-  moveTooltip(e);
-}
 
 function moveTooltip(e) {
   const x = e.clientX + 16;
