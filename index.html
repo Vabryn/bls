@@ -5004,6 +5004,266 @@ function closeAreaDropdown() {
   document.getElementById("areaDropdown").classList.remove("open");
 }
 
+// -------------------------------------------------------------
+// BROWSE TABLE + OCCUPATION AREA DRILLDOWN
+// -------------------------------------------------------------
+function renderBrowseTable() {
+  const data = state.areaData;
+  if (!data || !data.occupations) return;
+
+  // If currently viewing drilldown for a clicked occupation, keep drilldown active
+  if (state.drilldownSoc) {
+    renderOccupationAreasTable();
+    return;
+  }
+
+  const q = document.getElementById("browseQuery").value.toLowerCase().trim();
+  const eduF = parseInt(document.getElementById("browseEduFilter").value);
+  const grpF = parseInt(document.getElementById("browseGroupFilter").value);
+
+  let filtered = data.occupations.filter(row => {
+    const [soc, title, grpIdx, eduLvl] = row;
+    if (q && scoreOccupation(title, soc, q) <= 0) return false;
+    if (eduF !== -1 && eduLvl !== eduF) return false;
+    if (grpF !== -1 && grpIdx !== grpF) return false;
+    return true;
+  });
+
+  const { col, asc } = state.tableSort;
+  const wIdx = wageMetric().occIdx;
+  filtered.sort((a, b) => {
+    let vA, vB;
+    switch (col) {
+      case "title": vA = a[1]; vB = b[1]; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
+      case "emp": vA = a[4] || 0; vB = b[4] || 0; break;
+      case "lq": vA = a[11] || 0; vB = b[11] || 0; break;
+      case "wage": vA = a[wIdx] || 0; vB = b[wIdx] || 0; break;
+      default: vA = a[wIdx] || 0; vB = b[wIdx] || 0;
+    }
+    return asc ? vA - vB : vB - vA;
+  });
+
+  document.getElementById("browseCounter").textContent = `${filtered.length} occupations listed`;
+
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
+
+  const fragment = document.createDocumentFragment();
+
+  const wIdx2 = wageMetric().occIdx;
+  filtered.slice(0, 300).forEach(row => {
+    const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90, lq] = row;
+    const wageVal = row[wIdx2];
+
+    const tr = document.createElement("tr");
+    tr.className = "clickable-row";
+    tr.title = `Click to view regional area breakdown for ${title}`;
+    tr.innerHTML = `
+      <td style="font-weight: 600; color: var(--text-primary); max-width: 280px; overflow: hidden; text-overflow: ellipsis;">
+        <span style="color: var(--accent-cyan); margin-right: 4px;">›</span>${title}
+      </td>
+      <td style="text-align: right;" class="tabular">${fmt.number(emp)}</td>
+      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(wageVal)}</td>
+      <td style="text-align: right;">
+        <span class="badge-density ${lq && lq >= 1.25 ? 'high' : ''}">
+          ${fmt.lq(lq)}
+        </span>
+      </td>
+    `;
+
+    tr.addEventListener("click", () => {
+      openOccupationAreaBreakdown(soc, title);
+    });
+
+    fragment.appendChild(tr);
+  });
+
+  tbody.appendChild(fragment);
+  updateTableSortHeaders();
+}
+
+function updateTableSortHeaders() {
+  const { col, asc } = state.tableSort;
+  document.querySelectorAll("#occupationsTable th[data-col]").forEach(th => {
+    th.classList.remove("sorted-asc", "sorted-desc");
+    if (th.dataset.col === col) {
+      th.classList.add(asc ? "sorted-asc" : "sorted-desc");
+    }
+  });
+}
+
+function populateDrilldownRegionFilter() {
+  const sel = document.getElementById("drilldownRegionFilter");
+  const payload = state.activeJobPayload;
+  if (!sel || !payload || !payload.metros) return;
+
+  const stateMetaByCode = {};
+  (state.mapData && state.mapData.metros ? state.mapData.metros : []).forEach(m => {
+    if (m.state) stateMetaByCode[m.id] = m.state;
+  });
+
+  const codeToName = {};
+  Object.values(state.statesById || {}).forEach(s => {
+    if (s && s.state && s.name) codeToName[s.state] = s.name;
+  });
+
+  const present = new Set();
+  Object.keys(payload.metros).forEach(areaId => {
+    const code = stateMetaByCode[areaId];
+    if (code) present.add(code);
+  });
+
+  const options = Array.from(present)
+    .map(code => ({ code, name: codeToName[code] || code }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  sel.innerHTML = '<option value="ALL">All Regions</option>' +
+    options.map(o => `<option value="${o.code}">${o.name}</option>`).join("");
+  sel.value = "ALL";
+}
+
+function closeOccupationAreaBreakdown() {
+  state.drilldownSoc = null;
+  state.drilldownTitle = "";
+  state.drilldownRegion = "ALL";
+
+  document.getElementById("browseDrilldownBar").style.display = "none";
+  document.getElementById("occupationAreasTable").style.display = "none";
+
+  document.getElementById("browseControlBar").style.display = "flex";
+  document.getElementById("occupationsTable").style.display = "";
+
+  renderBrowseTable();
+}
+
+function renderOccupationAreasTable() {
+  if (!state.drilldownSoc || !state.activeJobPayload) return;
+
+  const payload = state.activeJobPayload;
+  const metrosMap = (state.mapData && state.mapData.metros) ? state.mapData.metros : [];
+  const metroNamesById = {};
+  const metroStateById = {};
+  metrosMap.forEach(m => {
+    metroNamesById[m.id] = m.name;
+    if (m.state) metroStateById[m.id] = m.state;
+  });
+
+  const regionFilter = state.drilldownRegion && state.drilldownRegion !== "ALL" ? state.drilldownRegion : null;
+
+  const rows = [];
+  if (payload.metros) {
+    Object.keys(payload.metros).forEach(areaId => {
+      if (regionFilter && metroStateById[areaId] !== regionFilter) return;
+      const stats = payload.metros[areaId]; // [emp, mean, median, p25, p75, lq]
+      const rawName = metroNamesById[areaId] || (state.manifest ? (state.manifest.find(a => a.id === areaId)?.name) : areaId) || `Area ${areaId}`;
+      const name = formatAreaName(rawName);
+
+      rows.push({
+        id: areaId,
+        name: name,
+        emp: stats[0] || 0,
+        mean: stats[1] || 0,
+        median: stats[2] || 0,
+        p25: stats[3] || 0,
+        p75: stats[4] || 0,
+        lq: stats[5] || 0
+      });
+    });
+  }
+
+  const wKey = wageMetric().v === "mean" ? "mean"
+             : wageMetric().v === "p25" ? "p25"
+             : wageMetric().v === "p75" ? "p75" : "median";
+  const { col, asc } = state.areaTableSort;
+  rows.sort((a, b) => {
+    let vA, vB;
+    switch (col) {
+      case "name": vA = a.name; vB = b.name; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
+      case "emp": vA = a.emp; vB = b.emp; break;
+      case "lq": vA = a.lq; vB = b.lq; break;
+      case "wage": vA = a[wKey]; vB = b[wKey]; break;
+      default: vA = a[wKey]; vB = b[wKey];
+    }
+    return asc ? vA - vB : vB - vA;
+  });
+
+  document.getElementById("browseDrilldownCounter").textContent =
+    regionFilter ? `${rows.length} areas in region` : `${rows.length} reporting areas`;
+
+  const tbody = document.getElementById("occupationAreasTableBody");
+  tbody.innerHTML = "";
+  const fragment = document.createDocumentFragment();
+
+  rows.forEach(r => {
+    const isSelected = r.id === state.currentAreaId;
+    const tr = document.createElement("tr");
+    tr.className = `clickable-row ${isSelected ? 'active-area-row' : ''}`;
+    tr.dataset.id = r.id;
+    tr.title = `Click to select ${r.name} on the map`;
+
+    tr.innerHTML = `
+      <td style="font-weight: 500; color: ${isSelected ? 'var(--accent-cyan)' : 'var(--text-primary)'}; max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
+        ${r.name}
+      </td>
+      <td style="text-align: right;" class="tabular">${fmt.number(r.emp)}</td>
+      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(r[wKey])}</td>
+      <td style="text-align: right;">
+        <span class="badge-density ${r.lq >= 1.25 ? 'high' : ''}">
+          ${fmt.lq(r.lq)}
+        </span>
+      </td>
+    `;
+
+    tr.addEventListener("click", () => {
+      loadArea(r.id, true);
+      document.querySelectorAll("#occupationAreasTableBody tr").forEach(rowEl => {
+        rowEl.classList.toggle("active-area-row", rowEl.dataset.id === r.id);
+      });
+    });
+
+    fragment.appendChild(tr);
+  });
+
+  tbody.appendChild(fragment);
+
+  // Update sort headers for occupationAreasTable
+  document.querySelectorAll("#occupationAreasTable th[data-col]").forEach(th => {
+    th.classList.remove("sorted-asc", "sorted-desc");
+    if (th.dataset.col === col) {
+      th.classList.add(asc ? "sorted-asc" : "sorted-desc");
+    }
+  });
+}
+
+
+async function openOccupationAreaBreakdown(soc, title) {
+  state.drilldownSoc = soc;
+  state.drilldownTitle = title;
+
+  // Sync with global Map job
+  if (state.activeMapSoc !== soc) {
+    await loadMapJob(soc);
+  }
+
+  // Switch display from Table A to Table B
+  document.getElementById("occupationsTable").style.display = "none";
+  document.getElementById("browseControlBar").style.display = "none";
+
+  const drilldownBar = document.getElementById("browseDrilldownBar");
+  drilldownBar.style.display = "flex";
+  document.getElementById("browseDrilldownTitle").textContent = title;
+
+  state.drilldownRegion = "ALL";
+  populateDrilldownRegionFilter();
+
+  syncWageColHeaders();
+
+  const tableAreas = document.getElementById("occupationAreasTable");
+  tableAreas.style.display = "";
+
+  renderOccupationAreasTable();
+}
+
 function setupEventListeners() {
   // Quick pills in Hero
   document.querySelectorAll(".quick-pills .quick-pill").forEach(pill => {
