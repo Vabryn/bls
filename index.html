@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLS Wage Explorer · Occupational Employment & Wage Statistics 2025</title>
-<meta name="description" content="Explore comprehensive U.S. wage distributions, employment figures, percentile spreads (P10 to P90), and minimum education requirements across all 50 states and 393 metro areas. Data from the Bureau of Labor Statistics (BLS OEWS May 2025).">
+<meta name="description" content="Explore comprehensive U.S. wage distributions, percentile spreads (P10 to P90), minimum education requirements, and interactive metro-specified USA wage maps across all 50 states and 393 metro areas. Data from the Bureau of Labor Statistics (BLS OEWS May 2025).">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
@@ -26,6 +26,9 @@
   --accent-gold: #f59e0b;
   --accent-emerald: #10b981;
   --accent-rose: #f43f5e;
+  --map-state-fill: #131926;
+  --map-state-stroke: rgba(255, 255, 255, 0.09);
+  --map-state-hover: #1e283d;
   --font-serif: "Newsreader", Georgia, serif;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
@@ -53,6 +56,9 @@
   --accent-gold: #d97706;
   --accent-emerald: #059669;
   --accent-rose: #e11d48;
+  --map-state-fill: #eef2f6;
+  --map-state-stroke: rgba(0, 0, 0, 0.12);
+  --map-state-hover: #e2e8f0;
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.1);
@@ -71,7 +77,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tabular numbers for financial stats */
 .num, .tabular {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
@@ -425,7 +430,7 @@ body {
   line-height: 1.4;
 }
 
-/* Segmented Navigation Tabs */
+/* Navigation Tabs */
 .tabs-container {
   display: flex;
   align-items: center;
@@ -505,7 +510,238 @@ body {
 }
 .control-select:focus { border-color: var(--accent-cyan); }
 
-/* Legend Bar */
+/* Segmented Control Component */
+.segmented-control {
+  display: inline-flex;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  gap: 2px;
+}
+.segmented-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-family: var(--font-sans);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s ease;
+}
+.segmented-btn:hover { color: var(--text-primary); }
+.segmented-btn.active {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ========================================================= */
+/* METRO MAP TAB STYLING                                      */
+/* ========================================================= */
+.map-controls-header {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+@media (min-width: 960px) {
+  .map-controls-header {
+    grid-template-columns: 1.4fr 1.6fr auto;
+    align-items: flex-end;
+  }
+}
+.map-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+.map-control-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.map-quick-jobs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+/* Map Card & SVG */
+.map-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+.map-card-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  font-size: 12.5px;
+}
+.map-summary-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.map-zoom-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.map-zoom-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.map-zoom-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-medium);
+  background: var(--bg-elevated);
+}
+
+.map-svg-container {
+  width: 100%;
+  position: relative;
+  background: var(--bg-surface);
+  user-select: none;
+  cursor: grab;
+  touch-action: none;
+}
+.map-svg-container:active { cursor: grabbing; }
+#usMetroSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.state-boundary {
+  fill: var(--map-state-fill);
+  stroke: var(--map-state-stroke);
+  stroke-width: 0.85px;
+  transition: fill 0.15s ease;
+}
+.state-boundary:hover {
+  fill: var(--map-state-hover);
+}
+
+.metro-bubble {
+  cursor: pointer;
+  transition: r 0.15s ease, stroke-width 0.1s ease, opacity 0.15s ease;
+  stroke: rgba(255, 255, 255, 0.4);
+  stroke-width: 1px;
+}
+[data-theme="light"] .metro-bubble {
+  stroke: rgba(0, 0, 0, 0.35);
+}
+.metro-bubble:hover, .metro-bubble.highlighted {
+  stroke: #ffffff !important;
+  stroke-width: 2.8px !important;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.8));
+}
+
+/* Map Legend */
+.map-legend-container {
+  padding: 14px 18px;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border-subtle);
+}
+.map-legend-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.map-legend-gradient-track {
+  position: relative;
+  height: 12px;
+  border-radius: 6px;
+  overflow: visible;
+}
+.map-legend-gradient-bar {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #312e81 0%, #0284c7 25%, #0d9488 50%, #10b981 75%, #fbbf24 100%);
+}
+.map-legend-nat-marker {
+  position: absolute;
+  top: -8px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+.legend-pin {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--text-primary);
+}
+.legend-pin-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  background: var(--bg-surface);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  margin-top: 2px;
+}
+
+/* Tooltip overlay */
+.custom-tooltip {
+  position: fixed;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-size: 12px;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+  z-index: 1000;
+  display: none;
+  min-width: 250px;
+  max-width: 340px;
+  backdrop-filter: blur(8px);
+}
+
+/* Legend Bar for Spread Tab */
 .chart-legend-bar {
   display: flex;
   align-items: center;
@@ -543,7 +779,7 @@ body {
   background: var(--text-primary);
 }
 
-/* Wage Spread Visualization Rows */
+/* Wage Spread Rows */
 .spread-container {
   display: flex;
   flex-direction: column;
@@ -570,9 +806,7 @@ body {
   background: var(--bg-elevated);
   border-color: var(--border-medium);
 }
-.spread-meta {
-  overflow: hidden;
-}
+.spread-meta { overflow: hidden; }
 .spread-title {
   font-size: 13.5px;
   font-weight: 600;
@@ -705,7 +939,7 @@ body {
   font-weight: 600;
 }
 
-/* Education Analysis Tab Cards */
+/* Education Analysis */
 .edu-analysis-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -733,7 +967,7 @@ body {
   margin-bottom: 16px;
 }
 
-/* Top Paying Grid */
+/* Top Paying */
 .top-paying-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -765,10 +999,7 @@ body {
   width: 28px;
   flex-shrink: 0;
 }
-.top-pay-info {
-  flex: 1;
-  overflow: hidden;
-}
+.top-pay-info { flex: 1; overflow: hidden; }
 .top-pay-title {
   font-size: 13.5px;
   font-weight: 600;
@@ -798,21 +1029,6 @@ body {
 .top-pay-natcomp {
   font-size: 11px;
   color: var(--text-muted);
-}
-
-/* Tooltip overlay */
-.custom-tooltip {
-  position: fixed;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  font-size: 12px;
-  box-shadow: var(--shadow-lg);
-  pointer-events: none;
-  z-index: 1000;
-  display: none;
-  min-width: 220px;
 }
 
 /* Footer */
@@ -953,14 +1169,117 @@ body {
 
   <!-- Navigation Tabs -->
   <nav class="tabs-container" role="tablist">
-    <button class="tab-btn active" data-tab="spread">Wage Spread (Percentiles)</button>
+    <button class="tab-btn active" data-tab="map">Metro Wage Map</button>
+    <button class="tab-btn" data-tab="spread">Wage Spread (Percentiles)</button>
     <button class="tab-btn" data-tab="browse">Browse Occupations</button>
     <button class="tab-btn" data-tab="education">Education Benchmarks</button>
     <button class="tab-btn" data-tab="toppay">Highest Paying</button>
   </nav>
 
-  <!-- Tab 1: Wage Spread (Percentiles P10-P90) -->
-  <section id="tab-spread" class="tab-panel active">
+  <!-- ======================================================= -->
+  <!-- TAB 0: Metro Wage Map (USA Geographic Visualizer)       -->
+  <!-- ======================================================= -->
+  <section id="tab-map" class="tab-panel active">
+    <!-- Map Controls Toolbar -->
+    <div class="map-controls-header">
+      <!-- 1. Job Selector Combobox -->
+      <div class="map-control-group">
+        <label class="map-control-label" for="mapJobSearchInput">1. Parse by Occupation</label>
+        <div class="combobox-input-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="mapJobSearchInput" class="control-input" placeholder="Search occupation (e.g. Software Developers, Registered Nurses)..." autocomplete="off">
+          <button id="mapJobClear" class="combobox-clear" aria-label="Clear job search">✕</button>
+        </div>
+        <div id="mapJobDropdown" class="combobox-dropdown"></div>
+      </div>
+
+      <!-- 2. Wage Metric Segmented Picker -->
+      <div class="map-control-group">
+        <label class="map-control-label">2. Select Wage Metric</label>
+        <div class="segmented-control" id="mapMetricTabs">
+          <button class="segmented-btn active" data-metric="median">Median Wage</button>
+          <button class="segmented-btn" data-metric="mean">Mean Wage</button>
+          <button class="segmented-btn" data-metric="p25">Bottom 25% (P25)</button>
+          <button class="segmented-btn" data-metric="p75">Top 25% (P75)</button>
+        </div>
+      </div>
+
+      <!-- 3. Bubble Sizing Mode -->
+      <div class="map-control-group">
+        <label class="map-control-label">Bubble Size</label>
+        <div class="segmented-control" id="mapSizingTabs">
+          <button class="segmented-btn active" data-size="emp">Jobs Scale</button>
+          <button class="segmented-btn" data-size="uniform">Equal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Job Shortcut Chips -->
+    <div class="map-quick-jobs">
+      <span class="quick-pills-label">Quick Occupations:</span>
+      <button class="quick-pill active" data-soc="00-0000">All Occupations</button>
+      <button class="quick-pill" data-soc="15-1252">Software Developers</button>
+      <button class="quick-pill" data-soc="29-1141">Registered Nurses</button>
+      <button class="quick-pill" data-soc="11-1021">General Managers</button>
+      <button class="quick-pill" data-soc="47-2111">Electricians</button>
+      <button class="quick-pill" data-soc="23-1011">Lawyers</button>
+      <button class="quick-pill" data-soc="13-2011">Accountants</button>
+      <button class="quick-pill" data-soc="17-2141">Mechanical Engineers</button>
+      <button class="quick-pill" data-soc="15-2051">Data Scientists</button>
+      <button class="quick-pill" data-soc="35-2014">Restaurant Cooks</button>
+    </div>
+
+    <!-- Map Canvas Card -->
+    <div class="map-card">
+      <div class="map-card-toolbar">
+        <div class="map-summary-text" id="mapSummaryStats">
+          Loading 393 Metropolitan Statistical Areas...
+        </div>
+        <div class="map-zoom-buttons">
+          <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in">+</button>
+          <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out">−</button>
+          <button class="map-zoom-btn" id="mapZoomReset" aria-label="Reset zoom">⟲</button>
+        </div>
+      </div>
+
+      <!-- Responsive SVG Viewport (Albers USA 975x610) -->
+      <div class="map-svg-container" id="mapSvgContainer">
+        <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
+          <g id="mapZoomGroup">
+            <g id="statesLayer"></g>
+            <g id="insetsLayer">
+              <!-- Puerto Rico Inset Frame -->
+              <rect x="872" y="530" width="76" height="42" rx="4" fill="none" stroke="var(--border-subtle)" stroke-dasharray="3,3" />
+              <text x="910" y="542" font-size="8.5" text-anchor="middle" fill="var(--text-muted)" font-family="var(--font-mono)">PUERTO RICO</text>
+            </g>
+            <g id="metrosLayer"></g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Continuous Color Scale Legend -->
+      <div class="map-legend-container">
+        <div class="map-legend-meta">
+          <span id="legendMinLabel" class="tabular">$0</span>
+          <span id="legendTitleLabel" class="tabular">Wage Spectrum Across 393 Metro Areas</span>
+          <span id="legendMaxLabel" class="tabular">$250,000+</span>
+        </div>
+        <div class="map-legend-gradient-track">
+          <div class="map-legend-gradient-bar"></div>
+          <div class="map-legend-nat-marker" id="legendNatMarker">
+            <div class="legend-pin"></div>
+            <span class="legend-pin-label tabular" id="legendNatLabel">U.S. National: $0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 1: Wage Spread (Percentiles P10-P90) -->
+  <section id="tab-spread" class="tab-panel">
     <div class="control-bar">
       <input type="text" id="spreadQuery" class="control-input" placeholder="Search occupations by title (e.g. Software, Nurse, Electrician)...">
       <select id="spreadEduFilter" class="control-select">
@@ -1010,7 +1329,7 @@ body {
     <div class="spread-container" id="spreadList"></div>
   </section>
 
-  <!-- Tab 2: Browse Occupations Table -->
+  <!-- TAB 2: Browse Occupations Table -->
   <section id="tab-browse" class="tab-panel">
     <div class="control-bar">
       <input type="text" id="browseQuery" class="control-input" placeholder="Search occupation title or SOC code...">
@@ -1052,7 +1371,7 @@ body {
     </div>
   </section>
 
-  <!-- Tab 3: Education Benchmarks -->
+  <!-- TAB 3: Education Benchmarks -->
   <section id="tab-education" class="tab-panel">
     <div class="edu-analysis-grid">
       <div class="edu-summary-card">
@@ -1093,7 +1412,7 @@ body {
     </div>
   </section>
 
-  <!-- Tab 4: Top Paying Occupations -->
+  <!-- TAB 4: Top Paying Occupations -->
   <section id="tab-toppay" class="tab-panel">
     <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
       <p style="font-size: 13.5px; color: var(--text-secondary);">
@@ -1106,7 +1425,7 @@ body {
     <div class="top-paying-grid" id="topPayingGrid"></div>
   </section>
 
-  <!-- Custom Tooltip -->
+  <!-- Rich Floating Hover Tooltip -->
   <div class="custom-tooltip" id="chartTooltip"></div>
 
   <!-- Editorial Footer -->
@@ -1159,15 +1478,24 @@ const EDU_LEVELS = [
   { name: "Doctoral / Professional", short: "Doctoral", color: "#d97706" }
 ];
 
-// App State
+// Master App State
 const state = {
   manifest: [],
   currentAreaId: "99",
   areaData: null,
   areaCache: new Map(),
   nationalTotals: null,
-  activeTab: "spread",
-  tableSort: { col: "median", asc: false }
+  activeTab: "map",
+  tableSort: { col: "median", asc: false },
+
+  // Map Feature State
+  mapData: null,
+  activeMapSoc: "00-0000",
+  activeMapMetric: "median", // 'median' | 'mean' | 'p25' | 'p75'
+  mapSizingMode: "emp",      // 'emp' | 'uniform'
+  jobCache: new Map(),
+  activeJobPayload: null,
+  mapZoom: { scale: 1, x: 0, y: 0 }
 };
 
 // Formatters
@@ -1197,13 +1525,40 @@ const fmt = {
   }
 };
 
-// Initialize App
+// Color Scale Interpolator (5 stops: Deep Indigo -> Blue -> Teal -> Emerald -> Radiant Gold)
+const COLOR_STOPS = [
+  { t: 0.0, rgb: [49, 46, 129] },   // #312e81
+  { t: 0.25, rgb: [2, 132, 199] },  // #0284c7
+  { t: 0.50, rgb: [13, 148, 136] }, // #0d9488
+  { t: 0.75, rgb: [16, 185, 129] }, // #10b981
+  { t: 1.0, rgb: [251, 191, 36] }   // #fbbf24
+];
+
+function getChoroplethColor(val, minVal, maxVal) {
+  if (val === null || val === undefined || isNaN(val) || val <= 0) {
+    return "rgba(100, 116, 139, 0.35)"; // Unreported gray
+  }
+  const t = Math.max(0, Math.min(1, (val - minVal) / (maxVal - minVal || 1)));
+  for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
+    const s1 = COLOR_STOPS[i], s2 = COLOR_STOPS[i + 1];
+    if (t >= s1.t && t <= s2.t) {
+      const p = (t - s1.t) / (s2.t - s1.t);
+      const r = Math.round(s1.rgb[0] + (s2.rgb[0] - s1.rgb[0]) * p);
+      const g = Math.round(s1.rgb[1] + (s2.rgb[1] - s1.rgb[1]) * p);
+      const b = Math.round(s1.rgb[2] + (s2.rgb[2] - s1.rgb[2]) * p);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+  }
+  const last = COLOR_STOPS[COLOR_STOPS.length - 1].rgb;
+  return `rgb(${last[0]}, ${last[1]}, ${last[2]})`;
+}
+
+// Initialize Application
 async function init() {
   setupTheme();
   setupDropdowns();
   setupEventListeners();
 
-  // Read URL query parameter
   const urlParams = new URLSearchParams(window.location.search);
   const requestedArea = urlParams.get("area");
 
@@ -1212,31 +1567,410 @@ async function init() {
     state.manifest = await res.json();
     populateAreaDropdown();
 
-    // Determine initial area
     if (requestedArea && state.manifest.some(a => a.id === requestedArea)) {
       state.currentAreaId = requestedArea;
     } else {
       state.currentAreaId = "99";
     }
 
-    // Load National totals baseline for comparison
     const natArea = state.manifest.find(a => a.id === "99");
-    if (natArea) {
-      state.nationalTotals = natArea;
-    }
+    if (natArea) state.nationalTotals = natArea;
 
-    await loadArea(state.currentAreaId);
+    // Load initial area and also boot the metro map
+    await Promise.all([
+      loadArea(state.currentAreaId),
+      initMetroMap()
+    ]);
   } catch (err) {
     console.error("Failed to load BLS manifest:", err);
-    document.getElementById("heroAreaTitle").textContent = "Error loading data";
   }
 }
 
-// Fetch and load individual area data
+// -------------------------------------------------------------
+// METRO WAGE MAP ENGINE
+// -------------------------------------------------------------
+async function initMetroMap() {
+  try {
+    const [mapRes, statesRes] = await Promise.all([
+      fetch("data/metro_map.json"),
+      fetch("data/us_states_paths.json")
+    ]);
+    state.mapData = await mapRes.json();
+    const statesPaths = await statesRes.json();
+
+    renderStateBoundaries(statesPaths);
+    populateMapJobDropdown();
+    setupMapControls();
+    await loadMapJob("00-0000");
+  } catch (err) {
+    console.error("Failed to initialize metro map:", err);
+    document.getElementById("mapSummaryStats").textContent = "Unable to load metro map data.";
+  }
+}
+
+function renderStateBoundaries(states) {
+  const layer = document.getElementById("statesLayer");
+  layer.innerHTML = "";
+  states.forEach(s => {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("class", "state-boundary");
+    path.setAttribute("d", s.d);
+    path.setAttribute("data-name", s.name);
+    layer.appendChild(path);
+  });
+}
+
+function populateMapJobDropdown() {
+  const dropdown = document.getElementById("mapJobDropdown");
+  dropdown.innerHTML = "";
+
+  state.mapData.occupations.forEach(occ => {
+    const opt = document.createElement("div");
+    opt.className = "area-option";
+    opt.dataset.soc = occ.soc;
+    opt.dataset.title = occ.title.toLowerCase();
+
+    opt.innerHTML = `
+      <span class="area-opt-name">${occ.title}</span>
+      <span class="area-opt-meta">${occ.count} metros</span>
+    `;
+
+    opt.addEventListener("click", () => {
+      loadMapJob(occ.soc);
+      closeMapJobDropdown();
+    });
+
+    dropdown.appendChild(opt);
+  });
+}
+
+async function loadMapJob(soc) {
+  state.activeMapSoc = soc;
+
+  // Highlight shortcut chip if present
+  document.querySelectorAll(".map-quick-jobs .quick-pill").forEach(p => {
+    p.classList.toggle("active", p.dataset.soc === soc);
+  });
+
+  const occMeta = state.mapData.occupations.find(o => o.soc === soc) || { title: "Occupational Wages" };
+  document.getElementById("mapJobSearchInput").value = "";
+  document.getElementById("mapJobSearchInput").placeholder = occMeta.title;
+
+  if (soc === "00-0000") {
+    // All occupations total: build payload from master map data
+    state.activeJobPayload = {
+      soc: "00-0000",
+      title: "All Occupations (Cross-Industry Total)",
+      nat: state.mapData.nat,
+      metros: {}
+    };
+    state.mapData.metros.forEach(m => {
+      // [emp, mean, median, p25, p75, lq]
+      state.activeJobPayload.metros[m.id] = [
+        m.emp,
+        m.mean,
+        m.median,
+        m.p25,
+        m.p75,
+        1.0
+      ];
+    });
+    renderMetroMap();
+    return;
+  }
+
+  // Check cache for individual job
+  if (state.jobCache.has(soc)) {
+    state.activeJobPayload = state.jobCache.get(soc);
+    renderMetroMap();
+    return;
+  }
+
+  document.getElementById("mapSummaryStats").textContent = `Loading ${occMeta.title} across 393 metros...`;
+
+  try {
+    const res = await fetch(`data/jobs/${soc}.json`);
+    const payload = await res.json();
+    state.jobCache.set(soc, payload);
+    state.activeJobPayload = payload;
+    renderMetroMap();
+  } catch (err) {
+    console.error(`Failed to load job data for ${soc}:`, err);
+  }
+}
+
+function renderMetroMap() {
+  const payload = state.activeJobPayload;
+  if (!payload || !state.mapData) return;
+
+  const metric = state.activeMapMetric; // 'median' | 'mean' | 'p25' | 'p75'
+  const sizeMode = state.mapSizingMode; // 'emp' | 'uniform'
+  const metros = state.mapData.metros;
+
+  // Metric index map in row: [emp=0, mean=1, median=2, p25=3, p75=4, lq=5]
+  const metricIdx = { mean: 1, median: 2, p25: 3, p75: 4 }[metric] ?? 2;
+  const metricName = { median: "Median", mean: "Mean", p25: "Bottom 25% (P25)", p75: "Top 25% (P75)" }[metric];
+
+  // Extract all valid wages across metros to calculate range and ranks
+  const validMetros = [];
+  metros.forEach(m => {
+    const jobStats = payload.metros[m.id];
+    if (jobStats && jobStats[metricIdx] && jobStats[metricIdx] > 0) {
+      validMetros.push({
+        metro: m,
+        val: jobStats[metricIdx],
+        emp: jobStats[0] || 0,
+        stats: jobStats
+      });
+    }
+  });
+
+  validMetros.sort((a, b) => a.val - b.val);
+
+  const minVal = validMetros.length ? validMetros[0].val : 30000;
+  const maxVal = validMetros.length ? validMetros[validMetros.length - 1].val : 150000;
+  const natVal = payload.nat ? payload.nat[metric] : null;
+
+  // Update Toolbar Summary Text
+  document.getElementById("mapSummaryStats").textContent =
+    `${validMetros.length} of 393 Metros reporting · ${metricName} Range: ${fmt.currency(minVal)} to ${fmt.currency(maxVal)}${natVal ? ` · U.S. National: ${fmt.currency(natVal)}` : ""}`;
+
+  // Update Legend Labels
+  document.getElementById("legendMinLabel").textContent = fmt.currency(minVal);
+  document.getElementById("legendMaxLabel").textContent = fmt.currency(maxVal);
+  document.getElementById("legendTitleLabel").textContent = `${payload.title} · ${metricName} Wage Spectrum`;
+
+  const natMarker = document.getElementById("legendNatMarker");
+  if (natVal && natVal >= minVal && natVal <= maxVal) {
+    const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal || 1)) * 100));
+    natMarker.style.left = `${natPct}%`;
+    natMarker.style.display = "flex";
+    document.getElementById("legendNatLabel").textContent = `U.S. Nat'l ${metricName}: ${fmt.currency(natVal)}`;
+  } else {
+    natMarker.style.display = "none";
+  }
+
+  // Render Bubbles
+  const layer = document.getElementById("metrosLayer");
+  layer.innerHTML = "";
+
+  metros.forEach(m => {
+    const jobStats = payload.metros[m.id];
+    const val = jobStats ? jobStats[metricIdx] : null;
+    const emp = jobStats ? jobStats[0] : 0;
+    const color = getChoroplethColor(val, minVal, maxVal);
+
+    let radius = 5.5;
+    if (sizeMode === "emp") {
+      if (emp && emp > 0) {
+        radius = Math.max(3.8, Math.min(18, Math.sqrt(emp / 9000)));
+      } else {
+        radius = 3.5;
+      }
+    }
+
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("class", "metro-bubble");
+    circle.setAttribute("cx", m.x);
+    circle.setAttribute("cy", m.y);
+    circle.setAttribute("r", radius);
+    circle.setAttribute("fill", color);
+    circle.dataset.id = m.id;
+
+    // Rank lookup
+    const rank = validMetros.findIndex(v => v.metro.id === m.id);
+    const rankText = rank !== -1 ? `#${validMetros.length - rank} of ${validMetros.length}` : "Unreported";
+
+    circle.addEventListener("mouseenter", (e) => {
+      showMetroTooltip(e, m, payload, jobStats, metricName, val, rankText, natVal);
+      circle.classList.add("highlighted");
+      layer.appendChild(circle); // Bring to front
+    });
+    circle.addEventListener("mousemove", moveTooltip);
+    circle.addEventListener("mouseleave", () => {
+      hideTooltip();
+      circle.classList.remove("highlighted");
+    });
+
+    // Click to switch region
+    circle.addEventListener("click", () => {
+      loadArea(m.id);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    layer.appendChild(circle);
+  });
+}
+
+function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, rankText, natVal) {
+  const [emp, mean, median, p25, p75, lq] = stats || [null, null, null, null, null, null];
+
+  let deltaHtml = "";
+  if (metricVal && natVal && natVal > 0) {
+    const diffPct = ((metricVal - natVal) / natVal) * 100;
+    const sign = diffPct >= 0 ? "+" : "";
+    const color = diffPct >= 0 ? "var(--accent-emerald)" : "var(--accent-rose)";
+    deltaHtml = `<span style="color: ${color}; font-weight: 600;">${sign}${diffPct.toFixed(1)}% vs U.S.</span>`;
+  }
+
+  tooltip.innerHTML = `
+    <div style="font-weight: 700; font-size: 13.5px; color: var(--text-primary); margin-bottom: 2px;">
+      ${metro.name}
+    </div>
+    <div style="font-size: 11.5px; color: var(--accent-cyan); font-weight: 600; margin-bottom: 8px;">
+      ${jobPayload.title}
+    </div>
+
+    <div style="background: var(--bg-elevated); padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono);">${metricName} Wage</span>
+        ${deltaHtml}
+      </div>
+      <div class="tabular" style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin-top: 2px;">
+        ${fmt.currency(metricVal)}
+      </div>
+      <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
+        National Rank: <strong style="color: var(--text-secondary);">${rankText}</strong>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; font-family: var(--font-mono); font-size: 11.5px;">
+      <span style="color: var(--text-muted);">Bottom 25%:</span>
+      <span style="text-align: right;">${fmt.currency(p25)}</span>
+      <span style="color: var(--text-muted);">Median (P50):</span>
+      <span style="text-align: right; font-weight: 600;">${fmt.currency(median)}</span>
+      <span style="color: var(--text-muted);">Mean Wage:</span>
+      <span style="text-align: right;">${fmt.currency(mean)}</span>
+      <span style="color: var(--text-muted);">Top 25%:</span>
+      <span style="text-align: right;">${fmt.currency(p75)}</span>
+      ${emp ? `
+        <span style="color: var(--text-muted);">Metro Employment:</span>
+        <span style="text-align: right;">${fmt.number(emp)}</span>
+      ` : ""}
+      ${lq ? `
+        <span style="color: var(--text-muted);">Location Quotient:</span>
+        <span style="text-align: right; color: ${lq >= 1.25 ? 'var(--accent-emerald)' : 'var(--text-primary)'}; font-weight: 600;">${fmt.lq(lq)}</span>
+      ` : ""}
+    </div>
+
+    <div style="margin-top: 10px; font-size: 11px; color: var(--text-accent); text-align: center; border-top: 1px solid var(--border-subtle); padding-top: 6px;">
+      Click metro to open full area profile →
+    </div>
+  `;
+
+  tooltip.style.display = "block";
+  moveTooltip(e);
+}
+
+function setupMapControls() {
+  // Metric selector buttons
+  document.querySelectorAll("#mapMetricTabs .segmented-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#mapMetricTabs .segmented-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.activeMapMetric = btn.dataset.metric;
+      renderMetroMap();
+    });
+  });
+
+  // Sizing mode buttons
+  document.querySelectorAll("#mapSizingTabs .segmented-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#mapSizingTabs .segmented-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.mapSizingMode = btn.dataset.size;
+      renderMetroMap();
+    });
+  });
+
+  // Quick job shortcut pills
+  document.querySelectorAll(".map-quick-jobs .quick-pill").forEach(pill => {
+    pill.addEventListener("click", () => {
+      loadMapJob(pill.dataset.soc);
+    });
+  });
+
+  // Job Search Combobox
+  const input = document.getElementById("mapJobSearchInput");
+  const dropdown = document.getElementById("mapJobDropdown");
+  const clearBtn = document.getElementById("mapJobClear");
+
+  input.addEventListener("focus", () => {
+    filterMapJobDropdown(input.value);
+    dropdown.classList.add("open");
+  });
+
+  input.addEventListener("input", () => {
+    const q = input.value.trim();
+    clearBtn.style.display = q ? "block" : "none";
+    filterMapJobDropdown(q);
+    dropdown.classList.add("open");
+  });
+
+  clearBtn.addEventListener("click", () => {
+    input.value = "";
+    clearBtn.style.display = "none";
+    filterMapJobDropdown("");
+    input.focus();
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".map-job-picker")) {
+      closeMapJobDropdown();
+    }
+  });
+
+  // Map Zoom / Pan Handlers
+  const zoomGroup = document.getElementById("mapZoomGroup");
+  const updateTransform = () => {
+    zoomGroup.setAttribute(
+      "transform",
+      `translate(${state.mapZoom.x}, ${state.mapZoom.y}) scale(${state.mapZoom.scale})`
+    );
+  };
+
+  document.getElementById("mapZoomIn").addEventListener("click", () => {
+    state.mapZoom.scale = Math.min(4, state.mapZoom.scale * 1.35);
+    updateTransform();
+  });
+
+  document.getElementById("mapZoomOut").addEventListener("click", () => {
+    state.mapZoom.scale = Math.max(1, state.mapZoom.scale / 1.35);
+    if (state.mapZoom.scale === 1) {
+      state.mapZoom.x = 0;
+      state.mapZoom.y = 0;
+    }
+    updateTransform();
+  });
+
+  document.getElementById("mapZoomReset").addEventListener("click", () => {
+    state.mapZoom = { scale: 1, x: 0, y: 0 };
+    updateTransform();
+  });
+}
+
+function filterMapJobDropdown(query) {
+  const q = query.toLowerCase().trim();
+  const options = document.querySelectorAll("#mapJobDropdown .area-option");
+
+  options.forEach(opt => {
+    const title = opt.dataset.title || "";
+    const soc = opt.dataset.soc || "";
+    const matches = !q || title.includes(q) || soc.includes(q);
+    opt.style.display = matches ? "flex" : "none";
+  });
+}
+
+function closeMapJobDropdown() {
+  document.getElementById("mapJobDropdown").classList.remove("open");
+}
+
+// -------------------------------------------------------------
+// AREA DATA ENGINE
+// -------------------------------------------------------------
 async function loadArea(areaId) {
   state.currentAreaId = areaId;
 
-  // Update URL without page reload
   const url = new URL(window.location);
   if (areaId === "99") {
     url.searchParams.delete("area");
@@ -1245,19 +1979,16 @@ async function loadArea(areaId) {
   }
   window.history.replaceState({}, "", url);
 
-  // Highlight active quick pill
-  document.querySelectorAll(".quick-pill").forEach(p => {
+  document.querySelectorAll(".quick-pills .quick-pill").forEach(p => {
     p.classList.toggle("active", p.dataset.id === areaId);
   });
 
-  // Check cache first
   if (state.areaCache.has(areaId)) {
     state.areaData = state.areaCache.get(areaId);
     renderAll();
     return;
   }
 
-  // Show loading indicator in counter
   document.getElementById("spreadCounter").textContent = "Loading area data...";
 
   try {
@@ -1271,7 +2002,6 @@ async function loadArea(areaId) {
   }
 }
 
-// Master Render
 function renderAll() {
   renderHeroAndKPIs();
   renderSpread();
@@ -1280,18 +2010,13 @@ function renderAll() {
   renderTopPaying();
 }
 
-// Render Hero Header and KPI Cards
 function renderHeroAndKPIs() {
   const data = state.areaData;
   if (!data) return;
 
   const total = data.total || {};
-  const meta = state.manifest.find(a => a.id === data.id) || {};
-
-  // Update Page Title
   document.title = `${data.name} Wage Explorer · BLS OEWS 2025`;
 
-  // Hero Title & Type Badge
   document.getElementById("heroAreaTitle").textContent = data.name;
   const typeMap = {
     national: "National Benchmark",
@@ -1310,7 +2035,6 @@ function renderHeroAndKPIs() {
       `Detailed occupational wage spreads, employment concentrations (Location Quotients), and earnings benchmarks for ${data.occupations.length} occupations in ${data.name}.`;
   }
 
-  // Combobox input placeholder reflection
   document.getElementById("areaSearchInput").value = "";
   document.getElementById("areaSearchInput").placeholder = data.name;
 
@@ -1353,15 +2077,12 @@ function renderHeroAndKPIs() {
   }
 }
 
-// Find dominant sector by calculating weighted concentration or highest LQ
 function findTopConcentrationSector(data) {
   if (!data.majors || data.majors.length === 0) return null;
-  // Calculate average LQ or highest employment major
   const sorted = [...data.majors].filter(m => m.emp > 0).sort((a, b) => b.emp - a.emp);
   return sorted[0] || null;
 }
 
-// Populate Area Combobox Dropdown
 function populateAreaDropdown() {
   const dropdown = document.getElementById("areaDropdown");
   dropdown.innerHTML = "";
@@ -1412,7 +2133,6 @@ function populateAreaDropdown() {
   });
 }
 
-// Setup Dropdown Filtering and Keyboard Nav
 function setupDropdowns() {
   const input = document.getElementById("areaSearchInput");
   const dropdown = document.getElementById("areaDropdown");
@@ -1431,10 +2151,10 @@ function setupDropdowns() {
   });
 
   input.addEventListener("keydown", (e) => {
-    const visibleOptions = Array.from(document.querySelectorAll(".area-option")).filter(o => o.style.display !== "none");
+    const visibleOptions = Array.from(document.querySelectorAll("#areaDropdown .area-option")).filter(o => o.style.display !== "none");
     if (!visibleOptions.length) return;
 
-    let highlighted = document.querySelector(".area-option.highlighted");
+    let highlighted = document.querySelector("#areaDropdown .area-option.highlighted");
     let idx = visibleOptions.indexOf(highlighted);
 
     if (e.key === "ArrowDown") {
@@ -1493,10 +2213,8 @@ function setupDropdowns() {
 
 function filterAreaDropdown(query) {
   const q = query.toLowerCase().trim();
-  const options = document.querySelectorAll(".area-option");
-  const headers = document.querySelectorAll(".area-optgroup-title");
-
-  let matchCounts = {};
+  const options = document.querySelectorAll("#areaDropdown .area-option");
+  const headers = document.querySelectorAll("#areaDropdown .area-optgroup-title");
 
   options.forEach(opt => {
     const name = opt.dataset.name || "";
@@ -1505,7 +2223,6 @@ function filterAreaDropdown(query) {
     opt.style.display = matches ? "flex" : "none";
   });
 
-  // Hide headers if all children are hidden
   headers.forEach(h => {
     let next = h.nextElementSibling;
     let hasVisible = false;
@@ -1524,7 +2241,6 @@ function closeAreaDropdown() {
   document.getElementById("areaDropdown").classList.remove("open");
 }
 
-// Setup Event Listeners
 function setupEventListeners() {
   // Tabs
   document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -1535,28 +2251,32 @@ function setupEventListeners() {
       const tabId = btn.dataset.tab;
       document.getElementById("tab-" + tabId).classList.add("active");
       state.activeTab = tabId;
+      if (tabId === "map" && state.activeJobPayload) {
+        renderMetroMap();
+      }
     });
   });
 
-  // Quick pills
-  document.querySelectorAll(".quick-pill").forEach(pill => {
+  // Quick pills in Hero
+  document.querySelectorAll(".quick-pills .quick-pill").forEach(pill => {
     pill.addEventListener("click", () => {
       loadArea(pill.dataset.id);
     });
   });
 
-  // Filter triggers
+  // Spread Filters
   document.getElementById("spreadQuery").addEventListener("input", renderSpread);
   document.getElementById("spreadEduFilter").addEventListener("change", renderSpread);
   document.getElementById("spreadGroupFilter").addEventListener("change", renderSpread);
   document.getElementById("spreadSort").addEventListener("change", renderSpread);
   document.getElementById("spreadLimit").addEventListener("change", renderSpread);
 
+  // Browse Filters
   document.getElementById("browseQuery").addEventListener("input", renderBrowseTable);
   document.getElementById("browseEduFilter").addEventListener("change", renderBrowseTable);
   document.getElementById("browseGroupFilter").addEventListener("change", renderBrowseTable);
 
-  // Table Sort Header Clicks
+  // Browse Table Sort Headers
   document.querySelectorAll("#occupationsTable th[data-col]").forEach(th => {
     th.addEventListener("click", () => {
       const col = th.dataset.col;
@@ -1572,7 +2292,6 @@ function setupEventListeners() {
   });
 }
 
-// Theme handling
 function setupTheme() {
   const saved = localStorage.getItem("bls-theme");
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -1599,7 +2318,7 @@ function applyTheme(isDark) {
 }
 
 // -------------------------------------------------------------
-// TAB 1: Wage Spread (Percentile Range Bars P10 -> P90)
+// TAB 1: Wage Spread (Percentiles P10 -> P90)
 // -------------------------------------------------------------
 function renderSpread() {
   const data = state.areaData;
@@ -1612,14 +2331,13 @@ function renderSpread() {
   const limit = parseInt(document.getElementById("spreadLimit").value);
 
   let filtered = data.occupations.filter(row => {
-    const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90] = row;
+    const [soc, title, grpIdx, eduLvl, emp, mean, median] = row;
     if (q && !title.toLowerCase().includes(q) && !soc.includes(q)) return false;
     if (eduF !== -1 && eduLvl !== eduF) return false;
     if (grpF !== -1 && grpIdx !== grpF) return false;
     return median !== null && median > 0;
   });
 
-  // Sort
   filtered.sort((a, b) => {
     const [socA, titleA, grpA, eduA, empA, meanA, medA, p10A, p25A, p75A, p90A] = a;
     const [socB, titleB, grpB, eduB, empB, meanB, medB, p10B, p25B, p75B, p90B] = b;
@@ -1650,18 +2368,14 @@ function renderSpread() {
     return;
   }
 
-  // Find overall max wage for scaling bar (scale up to $250,000 or top P90)
   const maxWageScale = 250000;
-
   const displayList = filtered.slice(0, limit);
 
   displayList.forEach(row => {
-    const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90, lq] = row;
-
+    const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90] = row;
     const eduInfo = EDU_LEVELS[eduLvl] || EDU_LEVELS[1];
     const grpName = GROUPS[grpIdx] || "General";
 
-    // Percentile bar boundaries
     const leftP10 = Math.max(0, Math.min(100, ((p10 || median * 0.6) / maxWageScale) * 100));
     const rightP90 = Math.max(0, Math.min(100, ((p90 || median * 1.5) / maxWageScale) * 100));
     const widthBar = Math.max(2, rightP90 - leftP10);
@@ -1694,7 +2408,6 @@ function renderSpread() {
       </div>
     `;
 
-    // Tooltip hover
     rowEl.addEventListener("mouseenter", (e) => showSpreadTooltip(e, row, eduInfo, grpName));
     rowEl.addEventListener("mousemove", moveTooltip);
     rowEl.addEventListener("mouseleave", hideTooltip);
@@ -1722,7 +2435,6 @@ function renderBrowseTable() {
     return true;
   });
 
-  // Sort
   const { col, asc } = state.tableSort;
   filtered.sort((a, b) => {
     let vA, vB;
@@ -1747,13 +2459,11 @@ function renderBrowseTable() {
 
   const maxWageScale = 250000;
 
-  // Render top 300 to keep DOM lightning fast
   filtered.slice(0, 300).forEach(row => {
     const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90, lq] = row;
     const eduInfo = EDU_LEVELS[eduLvl] || EDU_LEVELS[1];
     const grpName = GROUPS[grpIdx] || "General";
 
-    // Sparkline spread bar
     const leftP10 = Math.max(0, Math.min(100, ((p10 || median * 0.6) / maxWageScale) * 100));
     const rightP90 = Math.max(0, Math.min(100, ((p90 || median * 1.5) / maxWageScale) * 100));
     const widthBar = Math.max(2, rightP90 - leftP10);
@@ -1806,7 +2516,6 @@ function renderEducation() {
   const data = state.areaData;
   if (!data || !data.occupations) return;
 
-  // Aggregate occupations by education level
   const eduStats = EDU_LEVELS.map((lvl, idx) => ({
     level: idx,
     name: lvl.name,
@@ -1838,7 +2547,6 @@ function renderEducation() {
     }
   });
 
-  // Calculate tier aggregates
   eduStats.forEach(s => {
     s.medianWage = s.medians.length ? medianArray(s.medians) : 0;
     s.meanWage = s.means.length ? Math.round(s.means.reduce((a, b) => a + b, 0) / s.means.length) : 0;
@@ -1847,10 +2555,8 @@ function renderEducation() {
     s.empShare = totalRegionalJobs > 0 ? (s.emp / totalRegionalJobs) : 0;
   });
 
-  // Render Wage Benchmark List
   const benchList = document.getElementById("eduBenchmarkList");
   benchList.innerHTML = "";
-
   const maxTierWage = Math.max(...eduStats.map(s => s.medianWage), 160000);
 
   eduStats.forEach(s => {
@@ -1872,7 +2578,6 @@ function renderEducation() {
     benchList.appendChild(item);
   });
 
-  // Render Employment Share List
   const empList = document.getElementById("eduEmploymentList");
   empList.innerHTML = "";
 
@@ -1891,7 +2596,6 @@ function renderEducation() {
     empList.appendChild(item);
   });
 
-  // Render Education Table Body
   const eduTbody = document.getElementById("eduTableBody");
   eduTbody.innerHTML = "";
 
@@ -1937,7 +2641,7 @@ function renderTopPaying() {
   grid.innerHTML = "";
 
   top25.forEach((row, idx) => {
-    const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90, lq] = row;
+    const [soc, title, grpIdx, eduLvl, emp, mean, median] = row;
     const eduInfo = EDU_LEVELS[eduLvl] || EDU_LEVELS[1];
     const grpName = GROUPS[grpIdx] || "General";
 
@@ -1965,9 +2669,7 @@ function renderTopPaying() {
   });
 }
 
-// -------------------------------------------------------------
-// Interactive Tooltip for Charts
-// -------------------------------------------------------------
+// Tooltip positioning & handlers
 const tooltip = document.getElementById("chartTooltip");
 
 function showSpreadTooltip(e, row, eduInfo, grpName) {
@@ -2006,7 +2708,7 @@ function showSpreadTooltip(e, row, eduInfo, grpName) {
 function moveTooltip(e) {
   const x = e.clientX + 16;
   const y = e.clientY + 16;
-  const maxX = window.innerWidth - 260;
+  const maxX = window.innerWidth - 320;
   tooltip.style.left = Math.min(x, maxX) + "px";
   tooltip.style.top = y + "px";
 }
@@ -2015,7 +2717,6 @@ function hideTooltip() {
   tooltip.style.display = "none";
 }
 
-// Run boot
 window.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
