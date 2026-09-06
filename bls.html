@@ -294,9 +294,13 @@ body {
   line-height: 1.15;
   font-weight: 600;
   letter-spacing: -0.02em;
+  min-height: 74px;
 }
 @media (min-width: 768px) {
-  .hero-heading { font-size: 40px; }
+  .hero-heading {
+    font-size: 40px;
+    min-height: 92px;
+  }
 }
 .hero-subtitle {
   font-size: 14px;
@@ -304,6 +308,7 @@ body {
   max-width: 740px;
   line-height: 1.6;
   margin-top: 8px;
+  min-height: 44px;
 }
 
 /* Area Picker Combobox Component */
@@ -469,6 +474,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 122px;
 }
 .metric-header {
   display: flex;
@@ -667,6 +673,7 @@ body {
   border-radius: var(--radius-lg);
   overflow: hidden;
   position: relative;
+  overflow-anchor: none;
 }
 .map-card-toolbar {
   display: flex;
@@ -910,8 +917,8 @@ body {
 /* Floating Selected Metro HUD Banner */
 .map-selected-hud {
   position: absolute;
-  top: 52px;
-  left: 18px;
+  top: 14px;
+  left: 14px;
   background: var(--bg-surface);
   border: 1px solid var(--accent-cyan);
   border-radius: var(--radius-md);
@@ -1557,7 +1564,7 @@ body {
         <span class="metric-label">Top Sector Concentration</span>
         <span class="metric-badge pos" id="kpiTopLqBadge">LQ</span>
       </div>
-      <div class="metric-value" style="font-size: 19px; line-height: 1.25;" id="kpiTopLqSector">—</div>
+      <div class="metric-value" style="font-size: 19px; line-height: 1.25; min-height: 48px; display: flex; align-items: center;" id="kpiTopLqSector">—</div>
       <div class="metric-footnote" id="kpiTopLqFootnote">Relative to national baseline</div>
     </div>
   </section>
@@ -1630,15 +1637,6 @@ body {
 
     <!-- Map Canvas Card -->
     <div class="map-card">
-      <!-- Floating Selected Metro HUD Banner -->
-      <div class="map-selected-hud" id="mapSelectedHud">
-        <div>
-          <div class="hud-metro-title" id="hudMetroTitle">Metro Area</div>
-          <div class="hud-metro-counties" id="hudMetroCounties">Constituent counties</div>
-        </div>
-        <button class="hud-reset-btn" id="hudResetBtn" title="Clear metro shape and reset zoom">Reset Zoom ⟲</button>
-      </div>
-
       <div class="map-card-toolbar">
         <div class="map-summary-text" id="mapSummaryStats">
           Loading 393 Metropolitan Statistical Areas...
@@ -1661,6 +1659,15 @@ body {
 
       <!-- Responsive SVG Viewport (Albers USA 975x610) -->
       <div class="map-svg-container" id="mapSvgContainer">
+        <!-- Floating Selected Metro HUD Banner -->
+        <div class="map-selected-hud" id="mapSelectedHud">
+          <div>
+            <div class="hud-metro-title" id="hudMetroTitle">Metro Area</div>
+            <div class="hud-metro-counties" id="hudMetroCounties">Constituent counties</div>
+          </div>
+          <button class="hud-reset-btn" id="hudResetBtn" title="Clear metro shape and reset zoom">Reset Zoom ⟲</button>
+        </div>
+
         <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
           <g id="mapZoomGroup" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
             <!-- Base US States Layer -->
@@ -2573,12 +2580,11 @@ function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, m
       path.classList.remove("hovered");
     });
 
-    // Clicking the area itself selects that area!
+    // Clicking the area itself selects that area without jarring camera zoom
     path.addEventListener("click", (e) => {
       if (state.dragSuppressedClick) return;
       e.stopPropagation();
-      loadArea(aid);
-      renderMetroShapeOverlay(aid);
+      loadArea(aid, false);
     });
 
     fragment.appendChild(path);
@@ -2645,8 +2651,7 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
     circle.addEventListener("click", (e) => {
       if (state.dragSuppressedClick) return;
       e.stopPropagation();
-      loadArea(m.id);
-      renderMetroShapeOverlay(m.id);
+      loadArea(m.id, false);
     });
 
     fragment.appendChild(circle);
@@ -2757,8 +2762,7 @@ function renderBarsLayer(payload, validMetros, metricIdx, metricName, minVal, ma
     g.addEventListener("click", (e) => {
       if (state.dragSuppressedClick) return;
       e.stopPropagation();
-      loadArea(m.id);
-      renderMetroShapeOverlay(m.id);
+      loadArea(m.id, false);
     });
 
     fragment.appendChild(g);
@@ -3137,8 +3141,7 @@ function setupMapControls() {
         `;
 
         item.addEventListener("click", () => {
-          loadArea(m.area.id);
-          renderMetroShapeOverlay(m.area.id);
+          loadArea(m.area.id, true);
           mapMetroInput.value = m.area.name;
           mapMetroDropdown.classList.remove("open");
           if (mapMetroClear) mapMetroClear.style.display = "block";
@@ -3261,7 +3264,7 @@ function closeMapJobDropdown() {
 // -------------------------------------------------------------
 // METRO & COUNTY BACKGROUND SHAPE OVERLAY
 // -------------------------------------------------------------
-function renderMetroShapeOverlay(areaId) {
+function renderMetroShapeOverlay(areaId, shouldZoom = false) {
   const layer = document.getElementById("metroOverlayLayer");
   const hud = document.getElementById("mapSelectedHud");
   const mapMetroInput = document.getElementById("mapMetroSearchInput");
@@ -3335,8 +3338,8 @@ function renderMetroShapeOverlay(areaId) {
     // Update Hero Area Map Badge next to main area header
     renderHeroAreaMapBadge(areaId);
 
-    // Smooth Auto-Zoom to Metro Bounding Box
-    if (shape.bounds && shape.bounds.length === 2) {
+    // Smooth Auto-Zoom to Metro Bounding Box (only when explicitly requested)
+    if (shouldZoom && shape.bounds && shape.bounds.length === 2) {
       const [[x0, y0], [x1, y1]] = shape.bounds;
       const dx = Math.max(18, x1 - x0);
       const dy = Math.max(18, y1 - y0);
@@ -3347,10 +3350,12 @@ function renderMetroShapeOverlay(areaId) {
       const tx = Math.round(975 / 2 - scale * cx);
       const ty = Math.round(610 / 2 - scale * cy);
 
-      state.mapZoom = { scale, x: tx, y: ty };
-      const zoomGroup = document.getElementById("mapZoomGroup");
-      if (zoomGroup) {
-        zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
+      if (Math.abs(state.mapZoom.scale - scale) > 0.01 || Math.abs(state.mapZoom.x - tx) > 1 || Math.abs(state.mapZoom.y - ty) > 1) {
+        state.mapZoom = { scale, x: tx, y: ty };
+        const zoomGroup = document.getElementById("mapZoomGroup");
+        if (zoomGroup) {
+          zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
+        }
       }
     }
   }
@@ -3397,7 +3402,7 @@ function renderMetroShapeOverlay(areaId) {
     const b = getPathBounds(stateObj.d);
     const minX = b.minX, maxX = b.maxX, minY = b.minY, maxY = b.maxY;
 
-    if (isFinite(minX) && isFinite(maxX)) {
+    if (shouldZoom && isFinite(minX) && isFinite(maxX)) {
       const dx = Math.max(30, maxX - minX);
       const dy = Math.max(30, maxY - minY);
       const cx = (minX + maxX) / 2;
@@ -3407,10 +3412,12 @@ function renderMetroShapeOverlay(areaId) {
       const tx = Math.round(975 / 2 - scale * cx);
       const ty = Math.round(610 / 2 - scale * cy);
 
-      state.mapZoom = { scale, x: tx, y: ty };
-      const zoomGroup = document.getElementById("mapZoomGroup");
-      if (zoomGroup) {
-        zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
+      if (Math.abs(state.mapZoom.scale - scale) > 0.01 || Math.abs(state.mapZoom.x - tx) > 1 || Math.abs(state.mapZoom.y - ty) > 1) {
+        state.mapZoom = { scale, x: tx, y: ty };
+        const zoomGroup = document.getElementById("mapZoomGroup");
+        if (zoomGroup) {
+          zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
+        }
       }
     }
 
@@ -3426,10 +3433,22 @@ function renderMetroShapeOverlay(areaId) {
     if (hud) hud.classList.remove("active");
     if (mapMetroInput) mapMetroInput.value = "";
     if (mapMetroClear) mapMetroClear.style.display = "none";
-    state.mapZoom = { scale: 1, x: 0, y: 0 };
-    const zoomGroup = document.getElementById("mapZoomGroup");
-    if (zoomGroup) {
-      zoomGroup.setAttribute("transform", "translate(0, 0) scale(1)");
+    document.querySelectorAll(".area-boundary-shape").forEach(p => {
+      p.classList.remove("area-focused", "area-dimmed", "selected");
+    });
+    document.querySelectorAll(".metro-bubble").forEach(c => {
+      c.classList.remove("bubble-focused", "bubble-dimmed", "highlighted");
+    });
+    document.querySelectorAll(".metro-3d-bar").forEach(g => {
+      g.classList.remove("bar-focused", "bar-dimmed", "hovered");
+    });
+    renderHeroAreaMapBadge("99");
+    if (shouldZoom) {
+      state.mapZoom = { scale: 1, x: 0, y: 0 };
+      const zoomGroup = document.getElementById("mapZoomGroup");
+      if (zoomGroup) {
+        zoomGroup.setAttribute("transform", "translate(0, 0) scale(1)");
+      }
     }
   }
 }
@@ -3437,7 +3456,7 @@ function renderMetroShapeOverlay(areaId) {
 // -------------------------------------------------------------
 // AREA DATA ENGINE
 // -------------------------------------------------------------
-async function loadArea(areaId) {
+async function loadArea(areaId, shouldZoom = false) {
   state.currentAreaId = areaId;
 
   const url = new URL(window.location);
@@ -3454,7 +3473,7 @@ async function loadArea(areaId) {
 
   if (state.areaCache.has(areaId)) {
     state.areaData = state.areaCache.get(areaId);
-    renderAll();
+    renderAll(shouldZoom);
     return;
   }
 
@@ -3465,19 +3484,24 @@ async function loadArea(areaId) {
     const data = await res.json();
     state.areaCache.set(areaId, data);
     state.areaData = data;
-    renderAll();
+    renderAll(shouldZoom);
   } catch (err) {
     console.error(`Failed to load area ${areaId}:`, err);
   }
 }
 
-function renderAll() {
+function renderAll(shouldZoom = false) {
   renderHeroAndKPIs();
-  renderSpread();
-  renderBrowseTable();
-  renderEducation();
-  renderTopPaying();
-  renderMetroShapeOverlay(state.currentAreaId);
+  if (state.activeTab === "spread") {
+    renderSpread();
+  } else if (state.activeTab === "browse") {
+    renderBrowseTable();
+  } else if (state.activeTab === "education") {
+    renderEducation();
+  } else if (state.activeTab === "toppay") {
+    renderTopPaying();
+  }
+  renderMetroShapeOverlay(state.currentAreaId, shouldZoom);
 }
 
 function renderHeroAndKPIs() {
@@ -3626,7 +3650,7 @@ function populateAreaDropdown() {
       `;
 
       opt.addEventListener("click", () => {
-        loadArea(item.id);
+        loadArea(item.id, true);
         closeAreaDropdown();
       });
 
@@ -3678,10 +3702,10 @@ function setupDropdowns() {
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (highlighted) {
-        loadArea(highlighted.dataset.id);
+        loadArea(highlighted.dataset.id, true);
         closeAreaDropdown();
       } else if (visibleOptions.length > 0) {
-        loadArea(visibleOptions[0].dataset.id);
+        loadArea(visibleOptions[0].dataset.id, true);
         closeAreaDropdown();
       }
     } else if (e.key === "Escape") {
@@ -3787,8 +3811,16 @@ function setupEventListeners() {
       if (tabId === "map" && state.activeJobPayload) {
         renderMetroMap();
         if (state.currentAreaId && state.currentAreaId !== "99") {
-          renderMetroShapeOverlay(state.currentAreaId);
+          renderMetroShapeOverlay(state.currentAreaId, false);
         }
+      } else if (tabId === "spread") {
+        renderSpread();
+      } else if (tabId === "browse") {
+        renderBrowseTable();
+      } else if (tabId === "education") {
+        renderEducation();
+      } else if (tabId === "toppay") {
+        renderTopPaying();
       }
     });
   });
@@ -3796,7 +3828,7 @@ function setupEventListeners() {
   // Quick pills in Hero
   document.querySelectorAll(".quick-pills .quick-pill").forEach(pill => {
     pill.addEventListener("click", () => {
-      loadArea(pill.dataset.id);
+      loadArea(pill.dataset.id, true);
     });
   });
 
