@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import subprocess
 from collections import defaultdict
 
 def main():
@@ -11,17 +10,19 @@ def main():
     jobs_dir = os.path.join(data_dir, 'jobs')
     os.makedirs(jobs_dir, exist_ok=True)
 
-    print("Building Metro-Specified USA Map Data...")
+    print("Building Complete Statistical Areas Map Data (MSAs + Non-Metro)...")
 
     # 1. Load areas manifest
     manifest_path = os.path.join(data_dir, 'areas.json')
     with open(manifest_path, 'r', encoding='utf-8') as f:
         manifest = json.load(f)
+    manifest_by_id = {a['id']: a for a in manifest}
 
-    # 2. Load Census CBSA coordinates
-    cbsa_path = os.path.join(data_dir, 'cbsa_coords.json')
-    with open(cbsa_path, 'r', encoding='utf-8') as f:
-        cbsa_coords = json.load(f)
+    # 2. Load metro_shapes.json
+    shapes_path = os.path.join(data_dir, 'metro_shapes.json')
+    with open(shapes_path, 'r', encoding='utf-8') as f:
+        shapes = json.load(f)
+    print(f"Loaded {len(shapes)} statistical area shapes.")
 
     # 3. Load National area for baseline stats
     nat_path = os.path.join(areas_dir, '99.json')
@@ -41,71 +42,13 @@ def main():
             'p90': p90
         }
 
-    # 4. Filter for 393 MSAs
-    msas = [a for a in manifest if a.get('type') == 'msa']
-    print(f"Total MSAs to process: {len(msas)}")
-
-    # Use node to run d3.geoAlbersUsa for high precision
-    # Output projected [x, y] for all MSAs
-    node_script = """
-    import * as d3 from 'd3-geo';
-    import fs from 'fs';
-
-    const proj = d3.geoAlbersUsa().scale(1300).translate([487.5, 305]);
-    const manifest = JSON.parse(fs.readFileSync('data/areas.json', 'utf8'));
-    const coords = JSON.parse(fs.readFileSync('data/cbsa_coords.json', 'utf8'));
-
-    const msas = manifest.filter(a => a.type === 'msa');
-    const mapping = {};
-
-    for (const m of msas) {
-      const c = coords[m.id];
-      if (c) {
-        const pt = proj([c.lon, c.lat]);
-        if (pt) {
-          mapping[m.id] = {
-            x: Math.round(pt[0] * 10) / 10,
-            y: Math.round(pt[1] * 10) / 10,
-            lat: c.lat,
-            lon: c.lon
-          };
-        } else if (m.state === 'PR') {
-          // Puerto Rico Inset: box [870..945, 535..575]
-          const x = 880 + (c.lon - (-67.2)) * 32;
-          const y = 565 - (c.lat - 17.9) * 32;
-          mapping[m.id] = {
-            x: Math.round(x * 10) / 10,
-            y: Math.round(y * 10) / 10,
-            lat: c.lat,
-            lon: c.lon,
-            is_inset: true
-          };
-        }
-      }
-    }
-    fs.writeFileSync('data/metro_proj_temp.json', JSON.stringify(mapping));
-    """
-
-    subprocess.run(['node', '--input-type=module', '-e', node_script], cwd=repo_root, check=True)
-
-    with open(os.path.join(data_dir, 'metro_proj_temp.json'), 'r') as f:
-        proj_coords = json.load(f)
-    os.remove(os.path.join(data_dir, 'metro_proj_temp.json'))
-
-    print(f"Projected coordinates generated for {len(proj_coords)} MSAs.")
-
-    # 5. Read each MSA's detailed area JSON
+    # 4. Read each area's detailed JSON
     metro_list = []
-    # job_soc -> { 'title': title, 'grp': grp, 'metros': { msa_id: [emp, mean, median, p25, p75, lq] } }
+    # job_soc -> { 'title': title, 'grp': grp, 'metros': { area_id: [emp, mean, median, p25, p75, lq] } }
     job_aggregates = defaultdict(lambda: {'title': '', 'grp': 0, 'metros': {}})
 
-    for m in msas:
-        aid = m['id']
-        coords = proj_coords.get(aid)
-        if not coords:
-            print(f"Warning: missing projected coords for {aid} {m['name']}")
-            continue
-
+    for aid, shape in shapes.items():
+        area_meta = manifest_by_id.get(aid, {})
         area_file = os.path.join(areas_dir, f"{aid}.json")
         if not os.path.exists(area_file):
             continue
@@ -116,13 +59,13 @@ def main():
         total_stats = a_data.get('total', {})
         metro_list.append({
             'id': aid,
-            'name': m['name'],
-            'state': m.get('state', ''),
-            'x': coords['x'],
-            'y': coords['y'],
-            'lat': coords['lat'],
-            'lon': coords['lon'],
-            'is_inset': coords.get('is_inset', False),
+            'name': shape.get('name', area_meta.get('name', '')),
+            'type': shape.get('type', area_meta.get('type', 'msa')),
+            'state': shape.get('state', area_meta.get('state', '')),
+            'stateFips': shape.get('stateFips', area_meta.get('stateFips', aid[:2])),
+            'x': shape['cx'],
+            'y': shape['cy'],
+            'bounds': shape.get('bounds'),
             'emp': total_stats.get('emp'),
             'mean': total_stats.get('mean'),
             'median': total_stats.get('median'),
@@ -139,15 +82,13 @@ def main():
                 entry['title'] = title
                 entry['grp'] = grp_idx
 
-            # Only include if at least median or mean or emp is present
             if median is not None or mean is not None or emp is not None:
                 entry['metros'][aid] = [emp, mean, median, p25, p75, lq]
 
-    print(f"Compiled stats for {len(metro_list)} metros and {len(job_aggregates)} distinct occupations.")
+    print(f"Compiled stats for {len(metro_list)} statistical areas and {len(job_aggregates)} distinct occupations.")
 
-    # 6. Save individual job files
+    # 5. Save individual job files
     occupation_catalog = []
-    # Add 'All Occupations' entry
     occupation_catalog.append({
         'soc': '00-0000',
         'title': 'All Occupations (Cross-Industry Total)',
@@ -157,13 +98,13 @@ def main():
 
     saved_jobs = 0
     for soc, data in job_aggregates.items():
-        metro_count = len(data['metros'])
-        if metro_count >= 3: # Keep occupations present in at least 3 MSAs
+        area_count = len(data['metros'])
+        if area_count >= 3:
             occupation_catalog.append({
                 'soc': soc,
                 'title': data['title'],
                 'grp': data['grp'],
-                'count': metro_count
+                'count': area_count
             })
 
             job_payload = {
@@ -190,7 +131,7 @@ def main():
     # Sort catalog: 'All Occupations' first, then by title A-Z
     occupation_catalog.sort(key=lambda x: (0 if x['soc'] == '00-0000' else 1, x['title']))
 
-    # 7. Save master metro_map.json
+    # 6. Save master metro_map.json
     master_map = {
         'nat': {
             'emp': nat_data.get('total', {}).get('emp'),
@@ -207,7 +148,7 @@ def main():
     with open(map_file, 'w', encoding='utf-8') as out_f:
         json.dump(master_map, out_f, separators=(',', ':'))
 
-    print(f"Saved {map_file} ({len(metro_list)} metros, {len(occupation_catalog)} selectable occupations).")
+    print(f"Saved {map_file} ({len(metro_list)} areas, {len(occupation_catalog)} selectable occupations).")
     print("Done!")
 
 if __name__ == '__main__':
