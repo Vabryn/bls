@@ -1565,7 +1565,7 @@ body {
   <section class="metrics-grid" id="kpiBar">
     <div class="metric-card">
       <div class="metric-header">
-        <span class="metric-label">Total Employment</span>
+        <span class="metric-label" id="kpiEmpLabel">Total Employment</span>
         <span class="metric-badge" id="kpiEmpShare">Workforce</span>
       </div>
       <div class="metric-value" id="kpiTotalEmp">—</div>
@@ -1574,25 +1574,25 @@ body {
 
     <div class="metric-card">
       <div class="metric-header">
-        <span class="metric-label">Annual Median Wage</span>
+        <span class="metric-label" id="kpiMedianLabel">Annual Median Wage</span>
         <span class="metric-badge" id="kpiMedianDelta">—</span>
       </div>
       <div class="metric-value" id="kpiMedianWage">—</div>
-      <div class="metric-footnote">50th percentile worker earnings</div>
+      <div class="metric-footnote" id="kpiMedianFootnote">50th percentile worker earnings</div>
     </div>
 
     <div class="metric-card">
       <div class="metric-header">
-        <span class="metric-label">Annual Mean Wage</span>
-        <span class="metric-badge">All Occupations</span>
+        <span class="metric-label" id="kpiMeanLabel">Annual Mean Wage</span>
+        <span class="metric-badge" id="kpiMeanBadge">All Occupations</span>
       </div>
       <div class="metric-value" id="kpiMeanWage">—</div>
-      <div class="metric-footnote">Average annual compensation</div>
+      <div class="metric-footnote" id="kpiMeanFootnote">Average annual compensation</div>
     </div>
 
     <div class="metric-card">
       <div class="metric-header">
-        <span class="metric-label">Top Sector Concentration</span>
+        <span class="metric-label" id="kpiTopLqLabel">Top Sector Concentration</span>
         <span class="metric-badge pos" id="kpiTopLqBadge">LQ</span>
       </div>
       <div class="metric-value" style="font-size: 19px; line-height: 1.25; min-height: 48px; display: flex; align-items: center;" id="kpiTopLqSector">—</div>
@@ -1976,11 +1976,19 @@ const COLOR_STOPS = [
   { t: 1.0, rgb: [251, 191, 36] }   // #fbbf24
 ];
 
-function getChoroplethColor(val, minVal, maxVal) {
+function getChoroplethColor(val, minVal, maxVal, isLog = false) {
   if (val === null || val === undefined || isNaN(val) || val <= 0) {
     return "rgba(100, 116, 139, 0.4)"; // Unreported gray
   }
-  const t = Math.max(0, Math.min(1, (val - minVal) / (maxVal - minVal || 1)));
+  let t;
+  if (isLog) {
+    const logVal = Math.log(val);
+    const logMin = Math.log(minVal > 0 ? minVal : 1);
+    const logMax = Math.log(maxVal > 0 ? maxVal : 1);
+    t = (logMax > logMin) ? Math.max(0, Math.min(1, (logVal - logMin) / (logMax - logMin))) : 0.5;
+  } else {
+    t = Math.max(0, Math.min(1, (val - minVal) / (maxVal - minVal || 1)));
+  }
   for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
     const s1 = COLOR_STOPS[i], s2 = COLOR_STOPS[i + 1];
     if (t >= s1.t && t <= s2.t) {
@@ -1995,11 +2003,19 @@ function getChoroplethColor(val, minVal, maxVal) {
   return `rgb(${last[0]}, ${last[1]}, ${last[2]})`;
 }
 
-function getChoroplethFill(val, minVal, maxVal, isDark = true) {
+function getChoroplethFill(val, minVal, maxVal, isDark = true, isLog = false) {
   if (val === null || val === undefined || isNaN(val) || val <= 0) {
     return isDark ? "rgba(30, 41, 59, 0.4)" : "rgba(226, 232, 240, 0.4)";
   }
-  const t = Math.max(0, Math.min(1, (val - minVal) / (maxVal - minVal || 1)));
+  let t;
+  if (isLog) {
+    const logVal = Math.log(val);
+    const logMin = Math.log(minVal > 0 ? minVal : 1);
+    const logMax = Math.log(maxVal > 0 ? maxVal : 1);
+    t = (logMax > logMin) ? Math.max(0, Math.min(1, (logVal - logMin) / (logMax - logMin))) : 0.5;
+  } else {
+    t = Math.max(0, Math.min(1, (val - minVal) / (maxVal - minVal || 1)));
+  }
   for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
     const s1 = COLOR_STOPS[i], s2 = COLOR_STOPS[i + 1];
     if (t >= s1.t && t <= s2.t) {
@@ -2007,12 +2023,12 @@ function getChoroplethFill(val, minVal, maxVal, isDark = true) {
       const r = Math.round(s1.rgb[0] + (s2.rgb[0] - s1.rgb[0]) * p);
       const g = Math.round(s1.rgb[1] + (s2.rgb[1] - s1.rgb[1]) * p);
       const b = Math.round(s1.rgb[2] + (s2.rgb[2] - s1.rgb[2]) * p);
-      const alpha = isDark ? 0.32 : 0.28;
+      const alpha = isDark ? 0.38 : 0.32;
       return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
   }
   const last = COLOR_STOPS[COLOR_STOPS.length - 1].rgb;
-  const alpha = isDark ? 0.32 : 0.28;
+  const alpha = isDark ? 0.38 : 0.32;
   return `rgba(${last[0]}, ${last[1]}, ${last[2]}, ${alpha})`;
 }
 
@@ -2423,11 +2439,22 @@ async function loadMapJob(soc) {
     p.classList.toggle("active", p.dataset.soc === soc);
   });
 
-  const occMeta = state.mapData.occupations.find(o => o.soc === soc) || { title: "Occupational Wages" };
+  const occMeta = (state.mapData && state.mapData.occupations)
+    ? (state.mapData.occupations.find(o => o.soc === soc) || { title: "All Occupations" })
+    : { title: "All Occupations" };
+
   const jobInput = document.getElementById("mapJobSearchInput");
+  const clearBtn = document.getElementById("mapJobClear");
   if (jobInput) {
-    jobInput.value = "";
-    jobInput.placeholder = occMeta.title;
+    if (soc === "00-0000") {
+      jobInput.value = "";
+      jobInput.placeholder = "Search occupation (e.g. Actors, Software Developers)...";
+      if (clearBtn) clearBtn.style.display = "none";
+    } else {
+      jobInput.value = occMeta.title;
+      jobInput.placeholder = occMeta.title;
+      if (clearBtn) clearBtn.style.display = "block";
+    }
   }
   const sidebarJobTitle = document.getElementById("sidebarActiveJobTitle");
   if (sidebarJobTitle) {
@@ -2453,6 +2480,7 @@ async function loadMapJob(soc) {
       ];
     });
     renderMetroMap();
+    renderHeroAndKPIs();
     return;
   }
 
@@ -2460,6 +2488,7 @@ async function loadMapJob(soc) {
   if (state.jobCache.has(soc)) {
     state.activeJobPayload = state.jobCache.get(soc);
     renderMetroMap();
+    renderHeroAndKPIs();
     return;
   }
 
@@ -2471,6 +2500,7 @@ async function loadMapJob(soc) {
     state.jobCache.set(soc, payload);
     state.activeJobPayload = payload;
     renderMetroMap();
+    renderHeroAndKPIs();
   } catch (err) {
     console.error(`Failed to load job data for ${soc}:`, err);
   }
@@ -2489,7 +2519,7 @@ function renderMetroMap() {
   const metricName = { median: "Median", mean: "Mean", p25: "Bottom 25% (P25)", p75: "Top 25% (P75)" }[metric];
 
   // Extract all valid wages across statistical areas to calculate range and ranks
-  const validMetros = [];
+  let validMetros = [];
   metros.forEach(m => {
     const jobStats = payload.metros[m.id];
     if (jobStats && jobStats[metricIdx] && jobStats[metricIdx] > 0) {
@@ -2502,23 +2532,54 @@ function renderMetroMap() {
     }
   });
 
+  let isEmploymentMapping = false;
+  if (validMetros.length === 0) {
+    // If no annual wage data exists for this occupation (e.g. Actors, Athletes, Dancers),
+    // automatically map by employment density
+    metros.forEach(m => {
+      const jobStats = payload.metros[m.id];
+      if (jobStats && jobStats[0] && jobStats[0] > 0) {
+        validMetros.push({
+          metro: m,
+          val: jobStats[0],
+          emp: jobStats[0],
+          stats: jobStats
+        });
+      }
+    });
+    if (validMetros.length > 0) {
+      isEmploymentMapping = true;
+    }
+  }
+
   validMetros.sort((a, b) => b.val - a.val);
 
-  const maxVal = validMetros.length ? validMetros[0].val : 150000;
-  const minVal = validMetros.length ? validMetros[validMetros.length - 1].val : 30000;
-  const natVal = payload.nat ? payload.nat[metric] : null;
+  const maxVal = validMetros.length ? validMetros[0].val : (isEmploymentMapping ? 10000 : 150000);
+  const minVal = validMetros.length ? validMetros[validMetros.length - 1].val : (isEmploymentMapping ? 10 : 30000);
+  const natVal = payload.nat ? (isEmploymentMapping ? payload.nat.emp : payload.nat[metric]) : null;
 
   // Update Toolbar Summary Text
-  document.getElementById("mapSummaryStats").textContent =
-    `${validMetros.length} of ${metros.length} Areas reporting · ${metricName} Range: ${fmt.currency(minVal)} to ${fmt.currency(maxVal)}${natVal ? ` · U.S. National: ${fmt.currency(natVal)}` : ""}`;
+  if (isEmploymentMapping) {
+    document.getElementById("mapSummaryStats").textContent =
+      `${validMetros.length} of ${metros.length} Areas reporting · Employment: ${fmt.number(minVal)} to ${fmt.number(maxVal)}${natVal ? ` · U.S. Total: ${fmt.number(natVal)}` : ""} · (Hourly wage schedule in BLS)`;
+  } else {
+    document.getElementById("mapSummaryStats").textContent =
+      `${validMetros.length} of ${metros.length} Areas reporting · ${metricName} Range: ${fmt.currency(minVal)} to ${fmt.currency(maxVal)}${natVal ? ` · U.S. National: ${fmt.currency(natVal)}` : ""}`;
+  }
 
   // Update Legend Labels
-  document.getElementById("legendMinLabel").textContent = fmt.currency(minVal);
-  document.getElementById("legendMaxLabel").textContent = fmt.currency(maxVal);
-  document.getElementById("legendTitleLabel").textContent = `${payload.title} · ${metricName} Wage Spectrum`;
+  if (isEmploymentMapping) {
+    document.getElementById("legendMinLabel").textContent = fmt.number(minVal);
+    document.getElementById("legendMaxLabel").textContent = fmt.number(maxVal);
+    document.getElementById("legendTitleLabel").textContent = `${payload.title} · Employment Density (Hourly Schedule)`;
+  } else {
+    document.getElementById("legendMinLabel").textContent = fmt.currency(minVal);
+    document.getElementById("legendMaxLabel").textContent = fmt.currency(maxVal);
+    document.getElementById("legendTitleLabel").textContent = `${payload.title} · ${metricName} Wage Spectrum`;
+  }
 
   const natMarker = document.getElementById("legendNatMarker");
-  if (natVal && natVal >= minVal && natVal <= maxVal) {
+  if (!isEmploymentMapping && natVal && natVal >= minVal && natVal <= maxVal) {
     const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal || 1)) * 100));
     natMarker.style.left = `${natPct}%`;
     natMarker.style.display = "flex";
@@ -2540,18 +2601,18 @@ function renderMetroMap() {
   if (barsLayer) barsLayer.style.display = mode === "bar" ? "block" : "none";
 
   if (mode === "area") {
-    renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal);
+    renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping);
   } else if (mode === "bubble") {
-    renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal);
+    renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping);
   } else if (mode === "bar") {
-    renderBarsLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal);
+    renderBarsLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping);
   }
 }
 
 // -------------------------------------------------------------
 // MODE 1: STATISTICAL AREAS LAYER (Polygons & Continuous Fill)
 // -------------------------------------------------------------
-function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal) {
+function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping = false) {
   const areasLayer = document.getElementById("areasLayer");
   if (!areasLayer || !state.metroShapes) return;
   areasLayer.innerHTML = "";
@@ -2563,8 +2624,8 @@ function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, m
     if (!shape || !shape.d) return;
 
     const jobStats = payload.metros[aid];
-    const val = jobStats ? jobStats[metricIdx] : null;
-    const fill = getChoroplethFill(val, minVal, maxVal, isDark);
+    const val = jobStats ? (isEmploymentMapping ? jobStats[0] : jobStats[metricIdx]) : null;
+    const fill = getChoroplethFill(val, minVal, maxVal, isDark, isEmploymentMapping);
 
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("class", "area-boundary-shape");
@@ -2588,7 +2649,7 @@ function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, m
     const rankText = rankIdx !== -1 ? `#${rankIdx + 1} of ${validMetros.length}` : "Unreported";
 
     path.addEventListener("mouseenter", (e) => {
-      showMetroTooltip(e, shape, payload, jobStats, metricName, val, rankText, natVal);
+      showMetroTooltip(e, shape, payload, jobStats, metricName, val, rankText, natVal, isEmploymentMapping);
       path.classList.add("hovered");
     });
 
@@ -2615,7 +2676,7 @@ function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, m
 // -------------------------------------------------------------
 // MODE 2: BUBBLE MAP LAYER (Centroid Circles)
 // -------------------------------------------------------------
-function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal) {
+function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping = false) {
   const bubblesLayer = document.getElementById("bubblesLayer");
   if (!bubblesLayer || !state.mapData) return;
   bubblesLayer.innerHTML = "";
@@ -2629,11 +2690,21 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
     if (!cx || !cy) return;
 
     const jobStats = payload.metros[m.id];
-    const val = jobStats ? jobStats[metricIdx] : null;
-    const fill = getChoroplethColor(val, minVal, maxVal);
+    const val = jobStats ? (isEmploymentMapping ? jobStats[0] : jobStats[metricIdx]) : null;
+    if (!val || val <= 0) return;
 
-    const ratio = (val && maxVal > minVal) ? Math.max(0, Math.min(1, (val - minVal) / (maxVal - minVal))) : 0.4;
-    const r = Math.round(3.5 + ratio * 10);
+    const fill = getChoroplethColor(val, minVal, maxVal, isEmploymentMapping);
+
+    let ratio;
+    if (isEmploymentMapping) {
+      const logVal = Math.log(val);
+      const logMin = Math.log(minVal > 0 ? minVal : 1);
+      const logMax = Math.log(maxVal > 0 ? maxVal : 1);
+      ratio = (logMax > logMin) ? Math.max(0, Math.min(1, (logVal - logMin) / (logMax - logMin))) : 0.5;
+    } else {
+      ratio = (maxVal > minVal) ? Math.max(0, Math.min(1, (val - minVal) / (maxVal - minVal))) : 0.4;
+    }
+    const r = Math.round(3.5 + ratio * 14);
 
     const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     circle.setAttribute("class", "metro-bubble");
@@ -2658,7 +2729,7 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
     const rankText = rankIdx !== -1 ? `#${rankIdx + 1} of ${validMetros.length}` : "Unreported";
 
     circle.addEventListener("mouseenter", (e) => {
-      showMetroTooltip(e, m, payload, jobStats, metricName, val, rankText, natVal);
+      showMetroTooltip(e, m, payload, jobStats, metricName, val, rankText, natVal, isEmploymentMapping);
       circle.classList.add("hovered");
     });
     circle.addEventListener("mousemove", moveTooltip);
@@ -2682,7 +2753,7 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
 // -------------------------------------------------------------
 // MODE 3: 3D EXTRUDED BAR MAP LAYER (Isometric Columns)
 // -------------------------------------------------------------
-function renderBarsLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal) {
+function renderBarsLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping = false) {
   const barsLayer = document.getElementById("barsLayer");
   if (!barsLayer || !state.mapData) return;
   barsLayer.innerHTML = "";
@@ -2701,11 +2772,20 @@ function renderBarsLayer(payload, validMetros, metricIdx, metricName, minVal, ma
 
   sortedMetros.forEach(m => {
     const jobStats = payload.metros[m.id];
-    const val = jobStats ? jobStats[metricIdx] : null;
+    const val = jobStats ? (isEmploymentMapping ? jobStats[0] : jobStats[metricIdx]) : null;
     if (!val || val <= 0) return;
 
-    const baseColor = getChoroplethColor(val, minVal, maxVal);
-    const ratio = maxVal > minVal ? Math.max(0, Math.min(1, (val - minVal) / (maxVal - minVal))) : 0.5;
+    const baseColor = getChoroplethColor(val, minVal, maxVal, isEmploymentMapping);
+
+    let ratio;
+    if (isEmploymentMapping) {
+      const logVal = Math.log(val);
+      const logMin = Math.log(minVal > 0 ? minVal : 1);
+      const logMax = Math.log(maxVal > 0 ? maxVal : 1);
+      ratio = (logMax > logMin) ? Math.max(0, Math.min(1, (logVal - logMin) / (logMax - logMin))) : 0.5;
+    } else {
+      ratio = maxVal > minVal ? Math.max(0, Math.min(1, (val - minVal) / (maxVal - minVal))) : 0.5;
+    }
     const barHeight = Math.round(8 + ratio * 58); // 8px to 66px 3D extrusion
 
     const cx = m.cx;
@@ -2769,7 +2849,7 @@ function renderBarsLayer(payload, validMetros, metricIdx, metricName, minVal, ma
     const rankText = rankIdx !== -1 ? `#${rankIdx + 1} of ${validMetros.length}` : "Unreported";
 
     g.addEventListener("mouseenter", (e) => {
-      showMetroTooltip(e, m, payload, jobStats, metricName, val, rankText, natVal);
+      showMetroTooltip(e, m, payload, jobStats, metricName, val, rankText, natVal, isEmploymentMapping);
       g.classList.add("hovered");
     });
     g.addEventListener("mousemove", moveTooltip);
@@ -2790,16 +2870,22 @@ function renderBarsLayer(payload, validMetros, metricIdx, metricName, minVal, ma
   barsLayer.appendChild(fragment);
 }
 
-function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, rankText, natVal) {
+function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, rankText, natVal, isEmploymentMapping = false) {
   const [emp, mean, median, p25, p75, lq] = stats || [null, null, null, null, null, null];
 
   let deltaHtml = "";
-  if (metricVal && natVal && natVal > 0) {
+  if (!isEmploymentMapping && metricVal && natVal && natVal > 0) {
     const diffPct = ((metricVal - natVal) / natVal) * 100;
     const sign = diffPct >= 0 ? "+" : "";
     const color = diffPct >= 0 ? "var(--accent-emerald)" : "var(--accent-rose)";
     deltaHtml = `<span style="color: ${color}; font-weight: 600;">${sign}${diffPct.toFixed(1)}% vs U.S.</span>`;
+  } else if (isEmploymentMapping && emp && natVal && natVal > 0) {
+    const sharePct = ((emp / natVal) * 100).toFixed(1);
+    deltaHtml = `<span style="color: var(--accent-cyan); font-weight: 600;">${sharePct}% of U.S. Total</span>`;
   }
+
+  const primaryLabel = isEmploymentMapping ? "Employment Density" : `${metricName} Wage`;
+  const primaryValue = isEmploymentMapping ? `${fmt.number(metricVal)} Employed` : fmt.currency(metricVal);
 
   tooltip.innerHTML = `
     <div style="font-weight: 700; font-size: 13.5px; color: var(--text-primary); margin-bottom: 2px;">
@@ -2811,11 +2897,11 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
 
     <div style="background: var(--bg-elevated); padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 8px;">
       <div style="display: flex; justify-content: space-between; align-items: baseline;">
-        <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono);">${metricName} Wage</span>
+        <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono);">${primaryLabel}</span>
         ${deltaHtml}
       </div>
       <div class="tabular" style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin-top: 2px;">
-        ${fmt.currency(metricVal)}
+        ${primaryValue}
       </div>
       <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
         National Rank: <strong style="color: var(--text-secondary);">${rankText}</strong>
@@ -2823,17 +2909,25 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
     </div>
 
     <div style="display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; font-family: var(--font-mono); font-size: 11.5px;">
-      <span style="color: var(--text-muted);">Bottom 25%:</span>
-      <span style="text-align: right;">${fmt.currency(p25)}</span>
-      <span style="color: var(--text-muted);">Median (P50):</span>
-      <span style="text-align: right; font-weight: 600;">${fmt.currency(median)}</span>
-      <span style="color: var(--text-muted);">Mean Wage:</span>
-      <span style="text-align: right;">${fmt.currency(mean)}</span>
-      <span style="color: var(--text-muted);">Top 25%:</span>
-      <span style="text-align: right;">${fmt.currency(p75)}</span>
+      ${median !== null ? `
+        <span style="color: var(--text-muted);">Median (P50):</span>
+        <span style="text-align: right; font-weight: 600;">${fmt.currency(median)}</span>
+      ` : ""}
+      ${mean !== null ? `
+        <span style="color: var(--text-muted);">Mean Wage:</span>
+        <span style="text-align: right;">${fmt.currency(mean)}</span>
+      ` : ""}
+      ${p25 !== null ? `
+        <span style="color: var(--text-muted);">Bottom 25%:</span>
+        <span style="text-align: right;">${fmt.currency(p25)}</span>
+      ` : ""}
+      ${p75 !== null ? `
+        <span style="color: var(--text-muted);">Top 25%:</span>
+        <span style="text-align: right;">${fmt.currency(p75)}</span>
+      ` : ""}
       ${emp ? `
         <span style="color: var(--text-muted);">Metro Employment:</span>
-        <span style="text-align: right;">${fmt.number(emp)}</span>
+        <span style="text-align: right; font-weight: 600;">${fmt.number(emp)}</span>
       ` : ""}
       ${lq ? `
         <span style="color: var(--text-muted);">Location Quotient:</span>
@@ -2841,8 +2935,14 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
       ` : ""}
     </div>
 
+    ${(median === null && mean === null) ? `
+      <div style="margin-top: 8px; font-size: 11px; color: var(--text-muted); font-style: italic;">
+        BLS reports hourly wage schedule for this occupation (annual wages not computed).
+      </div>
+    ` : ""}
+
     <div style="margin-top: 10px; font-size: 11px; color: var(--text-accent); text-align: center; border-top: 1px solid var(--border-subtle); padding-top: 6px;">
-      Click metro to open county overlay & profile →
+      Click metro to switch area profile →
     </div>
   `;
 
@@ -2879,6 +2979,7 @@ function setupMapControls() {
   const clearBtn = document.getElementById("mapJobClear");
 
   input.addEventListener("focus", () => {
+    input.select();
     filterMapJobDropdown(input.value);
     dropdown.classList.add("open");
   });
@@ -2894,6 +2995,7 @@ function setupMapControls() {
     input.value = "";
     clearBtn.style.display = "none";
     filterMapJobDropdown("");
+    loadMapJob("00-0000");
     input.focus();
   });
 
@@ -3374,6 +3476,9 @@ function renderAll(shouldZoom = false) {
     renderTopPaying();
   }
   renderMetroShapeOverlay(state.currentAreaId, shouldZoom);
+  if (state.activeJobPayload) {
+    renderMetroMap();
+  }
 }
 
 function renderHeroAndKPIs() {
@@ -3381,8 +3486,67 @@ function renderHeroAndKPIs() {
   if (!data) return;
 
   const total = data.total || {};
-  document.title = `${data.name} Wage Explorer · BLS OEWS 2025`;
+  const isAllJobs = !state.activeMapSoc || state.activeMapSoc === "00-0000";
+  const payload = state.activeJobPayload;
 
+  // Find active occupation data if not all jobs
+  let occEmp = null;
+  let occMean = null;
+  let occMedian = null;
+  let occLq = null;
+  let occTitle = "";
+  let natJobEmp = null;
+  let natJobMedian = null;
+  let natJobMean = null;
+
+  if (!isAllJobs) {
+    // 1. Check current area occupations array
+    if (data.occupations) {
+      const row = data.occupations.find(r => r[0] === state.activeMapSoc);
+      if (row) {
+        occTitle = row[1];
+        occEmp = row[4];
+        occMean = row[5];
+        occMedian = row[6];
+        occLq = row[11];
+      }
+    }
+    // 2. Check activeJobPayload
+    if (payload && payload.soc === state.activeMapSoc) {
+      if (!occTitle) occTitle = payload.title;
+      if (payload.nat) {
+        natJobEmp = payload.nat.emp;
+        natJobMedian = payload.nat.median;
+        natJobMean = payload.nat.mean;
+      }
+      if (data.id === "99") {
+        if (occEmp === null && payload.nat) occEmp = payload.nat.emp;
+        if (occMean === null && payload.nat) occMean = payload.nat.mean;
+        if (occMedian === null && payload.nat) occMedian = payload.nat.median;
+        occLq = 1.0;
+      } else if (payload.metros && payload.metros[data.id]) {
+        const mRow = payload.metros[data.id];
+        if (occEmp === null) occEmp = mRow[0];
+        if (occMean === null) occMean = mRow[1];
+        if (occMedian === null) occMedian = mRow[2];
+        if (occLq === null) occLq = mRow[5];
+      }
+    }
+    if (!occTitle && state.mapData && state.mapData.occupations) {
+      const meta = state.mapData.occupations.find(o => o.soc === state.activeMapSoc);
+      if (meta) occTitle = meta.title;
+    }
+    if (!occTitle) occTitle = "Selected Occupation";
+  }
+
+  // Update Page Title
+  if (!isAllJobs) {
+    document.title = `${occTitle} in ${data.name} · Wage Explorer · BLS OEWS 2025`;
+  } else {
+    document.title = `${data.name} Wage Explorer · BLS OEWS 2025`;
+  }
+
+  // Hero Area Title & Badges
   document.getElementById("heroAreaTitle").textContent = data.name;
   renderHeroAreaMapBadge(data.id);
   const typeMap = {
@@ -3394,62 +3558,226 @@ function renderHeroAndKPIs() {
   };
   document.getElementById("areaTypeBadge").textContent = typeMap[data.type] || "Region";
 
-  if (data.id === "99") {
-    document.getElementById("heroAreaSubtitle").textContent =
-      `National cross-industry occupational wages, percentile distributions (10th to 90th percentile), and education benchmarks for 830 detailed occupations.`;
-  } else {
-    document.getElementById("heroAreaSubtitle").textContent =
-      `Detailed occupational wage spreads, employment concentrations (Location Quotients), and earnings benchmarks for ${data.occupations.length} occupations in ${data.name}.`;
+  // Hero Area Subtitle
+  const heroSubtitle = document.getElementById("heroAreaSubtitle");
+  if (heroSubtitle) {
+    if (!isAllJobs) {
+      let empPart = (occEmp !== null && occEmp > 0) ? `${fmt.number(occEmp)} employed` : "employment withheld";
+      let wagePart = (occMedian !== null && occMedian > 0)
+        ? `annual median wage ${fmt.currency(occMedian)}`
+        : "hourly wage schedule in BLS";
+      let lqPart = (occLq !== null && data.id !== "99") ? `, Location Quotient ${occLq.toFixed(2)}×` : "";
+      heroSubtitle.textContent =
+        `${occTitle} (SOC ${state.activeMapSoc}) in ${data.name}: ${empPart}, ${wagePart}${lqPart}. Geographic wage and employment distribution visualizer below.`;
+    } else {
+      if (data.id === "99") {
+        heroSubtitle.textContent =
+          `National cross-industry occupational wages, percentile distributions (10th to 90th percentile), and education benchmarks for 830 detailed occupations.`;
+      } else {
+        heroSubtitle.textContent =
+          `Detailed occupational wage spreads, employment concentrations (Location Quotients), and earnings benchmarks for ${data.occupations ? data.occupations.length : 0} occupations in ${data.name}.`;
+      }
+    }
   }
 
   document.getElementById("areaSearchInput").value = "";
   document.getElementById("areaSearchInput").placeholder = data.name;
 
+  // -------------------------------------------------------------
   // KPI 1: Employment
-  document.getElementById("kpiTotalEmp").textContent = fmt.number(total.emp);
-  if (state.nationalTotals && state.nationalTotals.emp && total.emp) {
-    const share = total.emp / state.nationalTotals.emp;
-    document.getElementById("kpiEmpShare").textContent = data.id === "99" ? "100% US Workforce" : (share * 100).toFixed(2) + "% of US";
-  } else {
-    document.getElementById("kpiEmpShare").textContent = "Cross-industry";
-  }
-  document.getElementById("kpiEmpFootnote").textContent = `${data.occupations.length} detailed occupations tracked`;
+  // -------------------------------------------------------------
+  const kpiEmpLabel = document.getElementById("kpiEmpLabel");
+  const kpiEmpVal = document.getElementById("kpiTotalEmp");
+  const kpiEmpBadge = document.getElementById("kpiEmpShare");
+  const kpiEmpFootnote = document.getElementById("kpiEmpFootnote");
 
-  // KPI 2: Median Wage
-  document.getElementById("kpiMedianWage").textContent = fmt.currency(total.median);
-  const deltaBadge = document.getElementById("kpiMedianDelta");
-  if (state.nationalTotals && state.nationalTotals.median && total.median && data.id !== "99") {
-    const diffPct = ((total.median - state.nationalTotals.median) / state.nationalTotals.median) * 100;
-    const sign = diffPct >= 0 ? "+" : "";
-    deltaBadge.textContent = `${sign}${diffPct.toFixed(1)}% vs US`;
-    deltaBadge.className = diffPct >= 0 ? "metric-badge pos" : "metric-badge neg";
-  } else {
-    deltaBadge.textContent = "National Reference";
-    deltaBadge.className = "metric-badge";
-  }
+  if (!isAllJobs) {
+    if (kpiEmpLabel) kpiEmpLabel.textContent = `${occTitle} Employment`;
+    kpiEmpVal.textContent = (occEmp !== null && occEmp > 0) ? fmt.number(occEmp) : "Withheld / N/A";
 
-  // KPI 3: Mean Wage
-  document.getElementById("kpiMeanWage").textContent = fmt.currency(total.mean);
-
-  // KPI 4: Top Location Quotient Sector
-  const topLqSector = findTopConcentrationSector(data);
-  if (topLqSector) {
-    document.getElementById("kpiTopLqSector").textContent = topLqSector.title;
-    if (topLqSector.isBaseline || data.id === "99") {
-      document.getElementById("kpiTopLqBadge").textContent = "1.00× Baseline";
-      document.getElementById("kpiTopLqBadge").className = "metric-badge";
-      document.getElementById("kpiTopLqFootnote").textContent = "Balanced national baseline";
+    if (occEmp && natJobEmp && natJobEmp > 0) {
+      const shareOfUS = ((occEmp / natJobEmp) * 100).toFixed(1);
+      kpiEmpBadge.textContent = data.id === "99" ? "100% of US" : `${shareOfUS}% of US Total`;
+    } else if (occEmp && total.emp && total.emp > 0) {
+      const shareOfArea = ((occEmp / total.emp) * 100).toFixed(2);
+      kpiEmpBadge.textContent = `${shareOfArea}% of Area`;
     } else {
-      document.getElementById("kpiTopLqBadge").textContent = `${topLqSector.lq.toFixed(2)}× LQ`;
-      document.getElementById("kpiTopLqBadge").className = topLqSector.lq >= 1.25 ? "metric-badge pos" : "metric-badge";
-      const shareStr = topLqSector.areaShare ? ` (${fmt.pct(topLqSector.areaShare)} of workforce)` : "";
-      document.getElementById("kpiTopLqFootnote").textContent = `${fmt.number(topLqSector.emp)} employed${shareStr}`;
+      kpiEmpBadge.textContent = "Occupation";
+    }
+
+    if (natJobEmp) {
+      kpiEmpFootnote.textContent = `U.S. National: ${fmt.number(natJobEmp)} employed total`;
+    } else {
+      kpiEmpFootnote.textContent = `BLS OEWS occupation estimate`;
     }
   } else {
-    document.getElementById("kpiTopLqSector").textContent = "Cross-Industry";
-    document.getElementById("kpiTopLqBadge").textContent = "1.00×";
-    document.getElementById("kpiTopLqBadge").className = "metric-badge";
-    document.getElementById("kpiTopLqFootnote").textContent = "Balanced national baseline";
+    if (kpiEmpLabel) kpiEmpLabel.textContent = "Total Employment";
+    kpiEmpVal.textContent = fmt.number(total.emp);
+    if (state.nationalTotals && state.nationalTotals.emp && total.emp) {
+      const share = total.emp / state.nationalTotals.emp;
+      kpiEmpBadge.textContent = data.id === "99" ? "100% US Workforce" : (share * 100).toFixed(2) + "% of US";
+    } else {
+      kpiEmpBadge.textContent = "Cross-industry";
+    }
+    kpiEmpFootnote.textContent = `${data.occupations ? data.occupations.length : 0} detailed occupations tracked`;
+  }
+
+  // -------------------------------------------------------------
+  // KPI 2: Median Wage
+  // -------------------------------------------------------------
+  const kpiMedLabel = document.getElementById("kpiMedianLabel");
+  const kpiMedVal = document.getElementById("kpiMedianWage");
+  const kpiMedBadge = document.getElementById("kpiMedianDelta");
+  const kpiMedFootnote = document.getElementById("kpiMedianFootnote");
+
+  if (!isAllJobs) {
+    if (kpiMedLabel) kpiMedLabel.textContent = `${occTitle} Median Wage`;
+    if (occMedian !== null && occMedian > 0) {
+      kpiMedVal.textContent = fmt.currency(occMedian);
+      if (natJobMedian && data.id !== "99") {
+        const diffPct = ((occMedian - natJobMedian) / natJobMedian) * 100;
+        const sign = diffPct >= 0 ? "+" : "";
+        kpiMedBadge.textContent = `${sign}${diffPct.toFixed(1)}% vs US`;
+        kpiMedBadge.className = diffPct >= 0 ? "metric-badge pos" : "metric-badge neg";
+      } else {
+        kpiMedBadge.textContent = data.id === "99" ? "US Median" : "Local Benchmark";
+        kpiMedBadge.className = "metric-badge";
+      }
+      if (kpiMedFootnote) {
+        kpiMedFootnote.textContent = natJobMedian ? `U.S. Nat'l Median: ${fmt.currency(natJobMedian)}` : "50th percentile worker earnings";
+      }
+    } else {
+      kpiMedVal.textContent = "Hourly Schedule";
+      kpiMedBadge.textContent = "Hourly Schedule";
+      kpiMedBadge.className = "metric-badge";
+      if (kpiMedFootnote) {
+        kpiMedFootnote.textContent = "BLS tracks hourly wage schedule for this occupation";
+      }
+    }
+  } else {
+    if (kpiMedLabel) kpiMedLabel.textContent = "Annual Median Wage";
+    kpiMedVal.textContent = fmt.currency(total.median);
+    if (state.nationalTotals && state.nationalTotals.median && total.median && data.id !== "99") {
+      const diffPct = ((total.median - state.nationalTotals.median) / state.nationalTotals.median) * 100;
+      const sign = diffPct >= 0 ? "+" : "";
+      kpiMedBadge.textContent = `${sign}${diffPct.toFixed(1)}% vs US`;
+      kpiMedBadge.className = diffPct >= 0 ? "metric-badge pos" : "metric-badge neg";
+    } else {
+      kpiMedBadge.textContent = "National Reference";
+      kpiMedBadge.className = "metric-badge";
+    }
+    if (kpiMedFootnote) {
+      kpiMedFootnote.textContent = "50th percentile worker earnings";
+    }
+  }
+
+  // -------------------------------------------------------------
+  // KPI 3: Mean Wage
+  // -------------------------------------------------------------
+  const kpiMeanLabel = document.getElementById("kpiMeanLabel");
+  const kpiMeanVal = document.getElementById("kpiMeanWage");
+  const kpiMeanBadge = document.getElementById("kpiMeanBadge");
+  const kpiMeanFootnote = document.getElementById("kpiMeanFootnote");
+
+  if (!isAllJobs) {
+    if (kpiMeanLabel) kpiMeanLabel.textContent = `${occTitle} Mean Wage`;
+    if (occMean !== null && occMean > 0) {
+      kpiMeanVal.textContent = fmt.currency(occMean);
+      if (kpiMeanBadge) {
+        if (natJobMean && data.id !== "99") {
+          const diffPct = ((occMean - natJobMean) / natJobMean) * 100;
+          const sign = diffPct >= 0 ? "+" : "";
+          kpiMeanBadge.textContent = `${sign}${diffPct.toFixed(1)}% vs US Mean`;
+          kpiMeanBadge.className = diffPct >= 0 ? "metric-badge pos" : "metric-badge neg";
+        } else {
+          kpiMeanBadge.textContent = "Occupation Mean";
+          kpiMeanBadge.className = "metric-badge";
+        }
+      }
+      if (kpiMeanFootnote) {
+        kpiMeanFootnote.textContent = natJobMean ? `U.S. Nat'l Mean: ${fmt.currency(natJobMean)}` : "Average annual compensation";
+      }
+    } else {
+      kpiMeanVal.textContent = "Hourly Schedule";
+      if (kpiMeanBadge) {
+        kpiMeanBadge.textContent = "Hourly Schedule";
+        kpiMeanBadge.className = "metric-badge";
+      }
+      if (kpiMeanFootnote) {
+        kpiMeanFootnote.textContent = "Annual rate not computed by BLS";
+      }
+    }
+  } else {
+    if (kpiMeanLabel) kpiMeanLabel.textContent = "Annual Mean Wage";
+    kpiMeanVal.textContent = fmt.currency(total.mean);
+    if (kpiMeanBadge) {
+      kpiMeanBadge.textContent = "All Occupations";
+      kpiMeanBadge.className = "metric-badge";
+    }
+    if (kpiMeanFootnote) {
+      kpiMeanFootnote.textContent = "Average annual compensation";
+    }
+  }
+
+  // -------------------------------------------------------------
+  // KPI 4: Concentration / Location Quotient
+  // -------------------------------------------------------------
+  const kpiLqLabel = document.getElementById("kpiTopLqLabel");
+  const kpiLqVal = document.getElementById("kpiTopLqSector");
+  const kpiLqBadge = document.getElementById("kpiTopLqBadge");
+  const kpiLqFootnote = document.getElementById("kpiTopLqFootnote");
+
+  if (!isAllJobs) {
+    if (kpiLqLabel) kpiLqLabel.textContent = `${occTitle} Concentration`;
+    if (data.id === "99") {
+      kpiLqVal.textContent = "1.00× National Baseline";
+      kpiLqBadge.textContent = "1.00× Baseline";
+      kpiLqBadge.className = "metric-badge";
+      kpiLqFootnote.textContent = "National benchmark density (1.00×)";
+    } else if (occLq !== null && occLq > 0) {
+      kpiLqVal.textContent = `${occLq.toFixed(2)}× Location Quotient`;
+      if (occLq >= 1.25) {
+        kpiLqBadge.textContent = "High Concentration";
+        kpiLqBadge.className = "metric-badge pos";
+      } else if (occLq < 0.8) {
+        kpiLqBadge.textContent = "Below Average";
+        kpiLqBadge.className = "metric-badge neg";
+      } else {
+        kpiLqBadge.textContent = "Average Density";
+        kpiLqBadge.className = "metric-badge";
+      }
+      if (occLq > 1.0) {
+        kpiLqFootnote.textContent = `${((occLq - 1) * 100).toFixed(0)}% more concentrated than U.S. average`;
+      } else {
+        kpiLqFootnote.textContent = `${((1 - occLq) * 100).toFixed(0)}% less concentrated than U.S. average`;
+      }
+    } else {
+      kpiLqVal.textContent = "Withheld / N/A";
+      kpiLqBadge.textContent = "Unreported";
+      kpiLqBadge.className = "metric-badge";
+      kpiLqFootnote.textContent = `Location quotient below BLS reporting threshold in ${data.name}`;
+    }
+  } else {
+    if (kpiLqLabel) kpiLqLabel.textContent = "Top Sector Concentration";
+    const topLqSector = findTopConcentrationSector(data);
+    if (topLqSector) {
+      kpiLqVal.textContent = topLqSector.title;
+      if (topLqSector.isBaseline || data.id === "99") {
+        kpiLqBadge.textContent = "1.00× Baseline";
+        kpiLqBadge.className = "metric-badge";
+        kpiLqFootnote.textContent = "Balanced national baseline";
+      } else {
+        kpiLqBadge.textContent = `${topLqSector.lq.toFixed(2)}× LQ`;
+        kpiLqBadge.className = topLqSector.lq >= 1.25 ? "metric-badge pos" : "metric-badge";
+        const shareStr = topLqSector.areaShare ? ` (${fmt.pct(topLqSector.areaShare)} of workforce)` : "";
+        kpiLqFootnote.textContent = `${fmt.number(topLqSector.emp)} employed${shareStr}`;
+      }
+    } else {
+      kpiLqVal.textContent = "Cross-Industry";
+      kpiLqBadge.textContent = "1.00×";
+      kpiLqBadge.className = "metric-badge";
+      kpiLqFootnote.textContent = "Balanced national baseline";
+    }
   }
 }
 
