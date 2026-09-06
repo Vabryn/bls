@@ -2482,7 +2482,7 @@ body {
               <div class="map-toolbar-area-info" id="mapToolbarAreaInfo">
                 <span class="hud-metro-counties" id="hudMetroCounties">National View</span>
               </div>
-              <button class="hud-reset-btn" id="hudResetBtn" title="Reset map zoom to National view" style="display: none;">Reset zoom</button>
+              <button class="hud-reset-btn" id="hudResetBtn" title="Reset all filters and return to the national view">Reset ⟲</button>
             </div>
 
             <!-- Horizontal Map Controls Bar: Wage Metric & Map Style -->
@@ -3240,7 +3240,7 @@ function resetMapZoom() {
   const resetBtn = document.getElementById("hudResetBtn");
   if (titleEl) titleEl.textContent = "United States";
   if (subEl) subEl.textContent = "National View";
-  if (resetBtn) resetBtn.style.display = "none";
+  if (resetBtn) resetBtn.style.display = "inline-flex";
 
 
   if (state.currentAreaId && state.currentAreaId !== "99") {
@@ -4406,11 +4406,7 @@ function setupMapControls() {
 
   const mzr = document.getElementById("mapZoomReset");
   if (mzr) mzr.addEventListener("click", resetMapZoom);
-
-  const hudResetBtn = document.getElementById("hudResetBtn");
-  if (hudResetBtn) {
-    hudResetBtn.addEventListener("click", resetMapZoom);
-  }
+  // #hudResetBtn is wired to the shared resetAll() in setupEventListeners.
 
   // -------------------------------------------------------------
   // Dynamic Splitter Puck between Map and Search/Browse
@@ -4758,7 +4754,7 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     const resetBtn = document.getElementById("hudResetBtn");
     if (titleEl) titleEl.textContent = "United States";
     if (subEl) subEl.textContent = "National View";
-    if (resetBtn) resetBtn.style.display = "none";
+    if (resetBtn) resetBtn.style.display = "inline-flex";
 
     document.querySelectorAll(".area-boundary-shape").forEach(p => {
       p.classList.remove("area-focused", "area-dimmed", "selected");
@@ -5843,35 +5839,34 @@ function setupEventListeners() {
     });
   }
 
-  // Reset Button in Browse Toolbar
-  const browseResetBtn = document.getElementById("browseResetBtn");
-  if (browseResetBtn) {
-    browseResetBtn.addEventListener("click", () => {
-      // Clear the merged occupation search box
-      const queryInput = document.getElementById("mapJobSearchInput");
-      if (queryInput) queryInput.value = "";
-      const queryClear = document.getElementById("mapJobClear");
-      if (queryClear) queryClear.style.display = "none";
+  // Both Reset buttons (map toolbar + browse toolbar) do the same full reset.
+  ["browseResetBtn", "hudResetBtn"].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.addEventListener("click", resetAll);
+  });
+}
 
-      // Reset selects
-      const eduSelect = document.getElementById("browseEduFilter");
-      if (eduSelect) eduSelect.value = "-1";
-      const grpSelect = document.getElementById("browseGroupFilter");
-      if (grpSelect) grpSelect.value = "-1";
+// Clear everything: occupation search + browse filters, close any drilldown,
+// occupation back to All, area back to National, and zoom out.
+function resetAll() {
+  const queryInput = document.getElementById("mapJobSearchInput");
+  if (queryInput) queryInput.value = "";
+  const queryClear = document.getElementById("mapJobClear");
+  if (queryClear) queryClear.style.display = "none";
 
-      // Close drilldown if open
-      if (state.drilldownSoc) {
-        closeOccupationAreaBreakdown();
-      }
+  const eduSelect = document.getElementById("browseEduFilter");
+  if (eduSelect) eduSelect.value = "-1";
+  const grpSelect = document.getElementById("browseGroupFilter");
+  if (grpSelect) grpSelect.value = "-1";
 
-      // Reset occupation on the map back to All Occupations
-      if (state.activeMapSoc && state.activeMapSoc !== "00-0000") {
-        loadMapJob("00-0000");
-      } else {
-        renderBrowseTable();
-      }
-    });
-  }
+  if (state.drilldownSoc) closeOccupationAreaBreakdown();
+
+  if (state.activeMapSoc && state.activeMapSoc !== "00-0000") loadMapJob("00-0000");
+  else renderBrowseTable();
+
+  // Area -> National + zoom out (resetMapZoom reloads area 99 when needed).
+  if (typeof resetMapZoom === "function") resetMapZoom();
+  else if (state.currentAreaId && state.currentAreaId !== "99") loadArea("99", false);
 }
 
 function setupTheme() {
