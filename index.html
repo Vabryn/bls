@@ -2698,6 +2698,15 @@ const GROUPS = [
   "Transportation & Moving"
 ];
 
+// Major SOC group codes, index-aligned with GROUPS and with the per-occupation
+// group index stored in data.occupations[i][2].
+const MAJOR_SOCS = [
+  "11-0000", "13-0000", "15-0000", "17-0000", "19-0000", "21-0000", "23-0000",
+  "25-0000", "27-0000", "29-0000", "31-0000", "33-0000", "35-0000", "37-0000",
+  "39-0000", "41-0000", "43-0000", "45-0000", "47-0000", "49-0000", "51-0000",
+  "53-0000"
+];
+
 // Education Levels
 const EDU_LEVELS = [
   { name: "No formal requirement", short: "None", color: "#78716c" },
@@ -5467,6 +5476,78 @@ function closeAreaDropdown() {
 // -------------------------------------------------------------
 // BROWSE TABLE + OCCUPATION AREA DRILLDOWN
 // -------------------------------------------------------------
+// Set the first column's header text ("Sector" for the sectors overview,
+// "Occupation Title" otherwise).
+function setBrowseTitleHeader(text) {
+  const th = document.querySelector('#occupationsTable th[data-col="title"]');
+  if (th) th.textContent = text;
+}
+
+// The browse table opens on the 22 major sectors. Pick one (row click or the
+// Sectors dropdown) to see its occupations; a search cuts across everything.
+function renderSectorsList(data) {
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
+  setBrowseTitleHeader("Sector");
+
+  const majBy = {};
+  (data.majors || []).forEach(m => {
+    const gi = MAJOR_SOCS.indexOf(m.soc);
+    if (gi >= 0) majBy[gi] = m;
+  });
+  const empByGrp = {};
+  (data.occupations || []).forEach(r => {
+    empByGrp[r[2]] = (empByGrp[r[2]] || 0) + (r[4] || 0);
+  });
+  const areaEmp = (data.total && data.total.emp) || 0;
+  const useMean = wageMetric().v === "mean";
+
+  const rows = GROUPS.map((name, gi) => {
+    const m = majBy[gi];
+    const emp = m ? m.emp : (empByGrp[gi] || 0);
+    const wage = m ? (useMean ? m.mean : m.median) : null;
+    let lq = null;
+    if (m && areaEmp && data.id !== "99" &&
+        state.nationalMajorShares && state.nationalMajorShares[m.soc]) {
+      lq = (m.emp / areaEmp) / (state.nationalMajorShares[m.soc] || 1);
+    }
+    return { gi, name, emp, wage, lq };
+  }).filter(r => r.emp > 0);
+
+  const { col, asc } = state.tableSort;
+  rows.sort((a, b) => {
+    if (col === "title") return asc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+    const key = col === "emp" ? "emp" : (col === "lq" ? "lq" : "wage");
+    return asc ? (a[key] || 0) - (b[key] || 0) : (b[key] || 0) - (a[key] || 0);
+  });
+
+  const frag = document.createDocumentFragment();
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+    tr.className = "clickable-row";
+    tr.title = `View ${r.name} occupations`;
+    tr.innerHTML = `
+      <td style="font-weight: 600; color: var(--text-primary);">
+        <span style="color: var(--accent-cyan); margin-right: 4px;">›</span>${r.name}
+      </td>
+      <td style="text-align: right;" class="tabular">${fmt.number(r.emp)}</td>
+      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${r.wage ? fmt.currency(r.wage) : "—"}</td>
+      <td style="text-align: right;"><span class="badge-density ${r.lq && r.lq >= 1.25 ? 'high' : ''}">${r.lq ? fmt.lq(r.lq) : "—"}</span></td>
+    `;
+    tr.addEventListener("click", () => {
+      const sel = document.getElementById("browseGroupFilter");
+      if (sel) sel.value = String(r.gi);
+      state.tableSort = { col: "wage", asc: false };
+      renderBrowseTable();
+      const sc = document.getElementById("browseTableResponsive");
+      if (sc) sc.scrollTop = 0;
+    });
+    frag.appendChild(tr);
+  });
+  tbody.appendChild(frag);
+  updateTableSortHeaders();
+}
+
 function renderBrowseTable() {
   const data = state.areaData;
   if (!data || !data.occupations) return;
@@ -5481,6 +5562,13 @@ function renderBrowseTable() {
   const q = (jobSearchEl ? jobSearchEl.value : "").toLowerCase().trim();
   const eduF = parseInt(document.getElementById("browseEduFilter").value);
   const grpF = parseInt(document.getElementById("browseGroupFilter").value);
+
+  // No sector picked and nothing searched -> the sectors overview.
+  if (!q && grpF === -1) {
+    renderSectorsList(data);
+    return;
+  }
+  setBrowseTitleHeader("Occupation Title");
 
   let filtered = data.occupations.filter(row => {
     const [soc, title, grpIdx, eduLvl] = row;
@@ -5508,6 +5596,22 @@ function renderBrowseTable() {
   tbody.innerHTML = "";
 
   const fragment = document.createDocumentFragment();
+
+  // Inside a sector: a row to step back up to the sectors overview.
+  if (grpF !== -1) {
+    const back = document.createElement("tr");
+    back.className = "clickable-row";
+    back.innerHTML = `<td colspan="4" style="color: var(--accent-cyan); font-weight: 600; background: var(--bg-elevated);">‹ All sectors<span style="color: var(--text-muted); font-weight: 400;">  ·  ${GROUPS[grpF] || ""}</span></td>`;
+    back.addEventListener("click", () => {
+      const sel = document.getElementById("browseGroupFilter");
+      if (sel) sel.value = "-1";
+      state.tableSort = { col: "wage", asc: false };
+      renderBrowseTable();
+      const sc = document.getElementById("browseTableResponsive");
+      if (sc) sc.scrollTop = 0;
+    });
+    fragment.appendChild(back);
+  }
 
   const wIdx2 = wageMetric().occIdx;
   filtered.slice(0, 300).forEach(row => {
