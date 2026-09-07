@@ -816,6 +816,12 @@ body {
   padding: 2px 9px;
   line-height: 1.25;
 }
+/* The generic "gap between adjacent pills" margin also indents the second
+   pill when it wraps to its own line — kill it here so both left edges align
+   (the flex row-gap already spaces the two rows). */
+.custom-tooltip .pill-token + .pill-token {
+  margin-left: 0;
+}
 
 /* Map Card Controls Bar (Wage Metric & Map Style directly above the map) */
 .map-card-controls-bar {
