@@ -530,13 +530,11 @@ body {
 }
 @media (max-width: 990px) {
   .map-canvas-column { height: auto; min-height: 0; overflow: visible; gap: 12px; }
-  /* Stacked phone/tablet layout: drop the map+browse split wrapper so the map
-     card, the Summary, and the Browse card become siblings we can reorder.
-     Order is map -> Summary -> Browse, so the Summary is one short scroll below
-     the map instead of sitting behind the whole occupations list. */
-  .map-center-split { display: contents; }
-  .area-summary { order: 1; }
-  .browse-card { order: 2; }
+  /* Stacked phone/tablet layout. The Summary is moved by JS to sit between the
+     map and the Browse card (map -> Summary -> Browse) so it's one short scroll
+     from the map rather than behind the whole occupations list; this just keeps
+     the three cards evenly spaced once they're all in the column. */
+  .map-center-split { gap: 12px; }
 }
 .map-center-split {
   display: flex;
@@ -873,7 +871,7 @@ body {
 /* Long labels wrap onto a second line instead of clipping to an ellipsis.
    Plain inline-block block-flow so wrapping is reliable on iOS Safari — the
    -webkit-box + line-clamp combo did not wrap there and left the label cut. */
-.area-summary-head .pill-token {
+.area-summary-head .pill-token:not([hidden]) {
   flex: 0 1 auto;
   display: inline-block;
   max-width: 100%;
@@ -2830,12 +2828,36 @@ function getChoroplethFill(val, minVal, maxVal, isDark = true, isLog = false) {
 }
 
 // Initialize Application
+// Stacked layout (phones/tablets, <=990px): the Summary belongs between the
+// map and the occupations list. On desktop it's its own full-width panel below
+// the map+browse split. A CSS display:contents reorder did not take on iOS
+// Safari, so move the actual node and let it settle on breakpoint changes.
+function positionSummaryPanel() {
+  const summary = document.getElementById("kpiBar");
+  const col = document.getElementById("mapCanvasColumn");
+  const split = document.getElementById("mapCenterSplit");
+  const browse = document.getElementById("browseCardContainer");
+  if (!summary || !col || !split || !browse) return;
+  const stacked = window.matchMedia("(max-width: 990px)").matches;
+  if (stacked) {
+    if (summary.parentElement !== split || summary.nextElementSibling !== browse) {
+      split.insertBefore(summary, browse);
+    }
+  } else if (summary.parentElement !== col) {
+    col.appendChild(summary);   // back to last child, after #summaryDivider
+  }
+}
+
 async function init() {
   setupTheme();
   setupDropdowns();
   setupEventListeners();
   setupYearSelect();
   introTraceSearchBars();
+  positionSummaryPanel();
+  try {
+    window.matchMedia("(max-width: 990px)").addEventListener("change", positionSummaryPanel);
+  } catch (e) { window.addEventListener("resize", positionSummaryPanel); }
 
   const urlParams = new URLSearchParams(window.location.search);
   const requestedArea = urlParams.get("area");
