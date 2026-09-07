@@ -92,6 +92,54 @@ body {
   top: 0;
   z-index: 50;
 }
+
+/* Pinned area + headline wage — desktop keeps the full Summary panel in view,
+   so this only appears on the stacked layout. */
+.masthead-summary { display: none; }
+@media (max-width: 990px) {
+  .masthead-summary {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    margin: 0;
+    padding: 7px 16px 9px;
+    border: 0;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--bg-canvas);
+    font-family: var(--font-sans);
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .masthead-summary[hidden] { display: none; }
+  .mh-sum-context {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mh-sum-metric {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    white-space: nowrap;
+  }
+  .mh-sum-metric::after {
+    content: " ›";
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+  /* Land the Summary below the pinned header, not under it. */
+  .area-summary { scroll-margin-top: 92px; }
+}
 .masthead-inner {
   max-width: 1120px;
   margin: 0 auto;
@@ -1158,37 +1206,14 @@ body {
   border-color: #cbd5e1;
   color: #475569;
 }
-.hud-reset-btn {
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid var(--accent-cyan);
-  border-radius: var(--radius-sm);
-  color: var(--accent-cyan);
-  font-size: 11.5px;
-  font-weight: 600;
-  font-family: var(--font-mono);
-  padding: 4px 10px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: all 0.15s ease;
+/* Reset lives as the third button in the map's zoom stack (+ / − / ⟲) — one
+   control, same place on every screen. */
+.map-zoom-btn--reset {
+  border-top: 1px solid var(--border-medium);
 }
-.hud-reset-btn:hover {
-  background: var(--accent-cyan);
-  color: #000;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
-}
-[data-theme="light"] .hud-reset-btn {
-  background: rgba(2, 132, 199, 0.08);
-  border-color: #0284c7;
-  color: #0284c7;
-}
-[data-theme="light"] .hud-reset-btn:hover {
-  background: #0284c7;
-  color: #ffffff;
-}
+.map-zoom-btn--reset svg { width: 15px; height: 15px; display: block; }
+.map-zoom-btn--reset:hover { color: var(--accent-cyan); }
+
 .browse-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -1350,9 +1375,7 @@ body {
   .card-search { flex: 1 1 auto; min-width: 0; width: auto; }
   .map-toolbar-area-info,
   .hud-metro-counties { display: none; }   /* the area chip already sits in the field */
-  .sel-chip { max-width: 60%; }
-  #hudResetBtn,
-  #browseResetBtn { flex-shrink: 0; align-self: auto; }
+  .sel-chip { max-width: 72%; }
 
   /* Education / Sectors / Median Wage — one row, sharing the width evenly. */
   #browseControlBar {
@@ -2315,6 +2338,13 @@ body {
       </button>
     </div>
   </div>
+  <!-- Stays pinned under the brand row on phones so the current area + its
+       headline wage travel with you while you scroll the map and the
+       occupations list. Tap to jump to the full breakdown. -->
+  <button type="button" class="masthead-summary" id="mhSummary" hidden>
+    <span class="mh-sum-context" id="mhContext">United States · all occupations</span>
+    <span class="mh-sum-metric" id="mhMetric">—</span>
+  </button>
 </header>
 
 <main class="page-container">
@@ -2350,7 +2380,6 @@ body {
               <div class="map-toolbar-area-info" id="mapToolbarAreaInfo">
                 <span class="hud-metro-counties" id="hudMetroCounties">National View</span>
               </div>
-              <button class="hud-reset-btn" id="hudResetBtn" title="Reset all filters and return to the national view">Reset ⟲</button>
             </div>
 
             <!-- Horizontal Map Controls Bar: Wage Metric & Map Style -->
@@ -2384,6 +2413,12 @@ body {
               <div class="map-zoom-overlay" id="mapZoomButtonsGroup">
                 <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
                 <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+                <button class="map-zoom-btn map-zoom-btn--reset" id="mapResetBtn" aria-label="Reset — clear the occupation, filters and area, and zoom out" title="Reset view &amp; filters">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 12a9 9 0 1 0 2.6-6.4"></path>
+                    <path d="M3 4v5h5"></path>
+                  </svg>
+                </button>
               </div>
               <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
                 <g id="mapZoomGroup" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
@@ -2472,7 +2507,6 @@ body {
                 </div>
                 <div id="mapJobDropdown" class="combobox-dropdown"></div>
               </div>
-              <button id="browseResetBtn" class="hud-reset-btn" title="Reset all search filters and return to All Occupations">Reset ⟲</button>
             </div>
 
             <!-- Browse Filter Controls Bar -->
@@ -2829,10 +2863,12 @@ function getChoroplethFill(val, minVal, maxVal, isDark = true, isLog = false) {
 }
 
 // Initialize Application
-// Stacked layout (phones/tablets, <=990px): the Summary belongs between the
-// map and the occupations list. On desktop it's its own full-width panel below
-// the map+browse split. A CSS display:contents reorder did not take on iOS
-// Safari, so move the actual node and let it settle on breakpoint changes.
+// Stacked layout (phones/tablets, <=990px): the pinned masthead strip carries
+// the area + headline wage, so the full Summary panel goes last — after the
+// occupations list — for anyone who wants the complete breakdown. On desktop
+// it's its own full-width panel below the map+browse split. Move the actual
+// node (a CSS display:contents reorder did not take on iOS Safari) and let it
+// settle on breakpoint changes.
 function positionSummaryPanel() {
   const summary = document.getElementById("kpiBar");
   const col = document.getElementById("mapCanvasColumn");
@@ -2841,12 +2877,30 @@ function positionSummaryPanel() {
   if (!summary || !col || !split || !browse) return;
   const stacked = window.matchMedia("(max-width: 990px)").matches;
   if (stacked) {
-    if (summary.parentElement !== split || summary.nextElementSibling !== browse) {
-      split.insertBefore(summary, browse);
-    }
+    if (summary.previousElementSibling !== browse) browse.after(summary);
   } else if (summary.parentElement !== col) {
     col.appendChild(summary);   // back to last child, after #summaryDivider
   }
+}
+
+// Mirror the finished KPI figures into the pinned masthead strip so the current
+// area + occupation + headline wage stay visible while scrolling. Reads the
+// already-rendered KPI DOM rather than recomputing anything.
+function updateStickySummary() {
+  const bar = document.getElementById("mhSummary");
+  if (!bar) return;
+  const pick = (id, fallback) => {
+    const el = document.getElementById(id);
+    const t = el && el.textContent && el.textContent.trim();
+    return t || fallback;
+  };
+  const area = pick("hudMetroTitle", "United States");
+  const scope = pick("browseCardHeading", "all occupations");
+  const median = pick("kpiMedianWage", "—");
+  document.getElementById("mhContext").textContent = `${area} · ${scope}`;
+  document.getElementById("mhMetric").textContent =
+    (median === "—" || median === "N/A") ? median : `${median} median`;
+  bar.hidden = false;
 }
 
 async function init() {
@@ -5122,6 +5176,8 @@ function renderHeroAndKPIs() {
       kpiLqFootnote.textContent = "Balanced national baseline";
     }
   }
+
+  updateStickySummary();
 }
 
 function findTopConcentrationSector(data) {
@@ -5785,10 +5841,16 @@ function setupEventListeners() {
     });
   }
 
-  // Both Reset buttons (map toolbar + browse toolbar) do the same full reset.
-  ["browseResetBtn", "hudResetBtn"].forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) btn.addEventListener("click", resetAll);
+  // One Reset — the ⟲ button in the map's zoom stack. Clears the occupation,
+  // the browse filters and the area, and zooms the map back out.
+  const resetBtn = document.getElementById("mapResetBtn");
+  if (resetBtn) resetBtn.addEventListener("click", resetAll);
+
+  // Pinned summary strip on phones: tap to jump to the full breakdown.
+  const mhSummary = document.getElementById("mhSummary");
+  if (mhSummary) mhSummary.addEventListener("click", () => {
+    const kpi = document.getElementById("kpiBar");
+    if (kpi) kpi.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
