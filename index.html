@@ -801,8 +801,9 @@ body {
 .pill-token[hidden] { display: none; }
 /* Hover-card pills match the Summary pills in size; drop the ambient glow so
    it doesn't smear inside the small tooltip, and let a long label wrap onto a
-   second line rather than clip. The pills sit left-aligned and only drop to a
-   second row when they don't both fit. */
+   second line rather than clip. Radius + padding are pulled in to the tooltip's
+   own corner radius so the pill's left edge and its text line up with the
+   metric box and detail rows beneath it. */
 .custom-tooltip .pill-token {
   box-shadow: none;
   display: inline-block;
@@ -811,7 +812,8 @@ body {
   overflow-wrap: anywhere;
   overflow: hidden;
   text-overflow: clip;
-  border-radius: 13px;
+  border-radius: 7px;
+  padding: 2px 9px;
   line-height: 1.25;
 }
 
@@ -2413,7 +2415,7 @@ body {
               <div class="map-zoom-overlay" id="mapZoomButtonsGroup">
                 <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
                 <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
-                <button class="map-zoom-btn map-zoom-btn--reset" id="mapResetBtn" aria-label="Reset — clear the occupation, filters and area, and zoom out" title="Reset view &amp; filters">
+                <button class="map-zoom-btn map-zoom-btn--reset" id="mapResetBtn" aria-label="Reset map — deselect the area and zoom out" title="Reset map view">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M3 12a9 9 0 1 0 2.6-6.4"></path>
                     <path d="M3 4v5h5"></path>
@@ -4069,7 +4071,7 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
     : "";
 
   tooltip.innerHTML = `
-    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: flex-start; gap: 5px 6px; margin-bottom: 8px;">
+    <div style="display: flex; flex-wrap: wrap; gap: 5px 6px; margin: 0 0 8px; padding: 0;">
       <span class="pill-token">${jobPayload.title}</span>
       <span class="pill-token">${formatAreaName(metro.name)}</span>
     </div>
@@ -4375,7 +4377,7 @@ function setupMapControls() {
 
   const mzr = document.getElementById("mapZoomReset");
   if (mzr) mzr.addEventListener("click", resetMapZoom);
-  // #hudResetBtn is wired to the shared resetAll() in setupEventListeners.
+  // #mapResetBtn (the ⟲ in the zoom stack) is wired in setupEventListeners.
 
   // -------------------------------------------------------------
   // Dynamic Splitter Puck between Map and Search/Browse
@@ -5841,10 +5843,14 @@ function setupEventListeners() {
     });
   }
 
-  // One Reset — the ⟲ button in the map's zoom stack. Clears the occupation,
-  // the browse filters and the area, and zooms the map back out.
+  // The ⟲ button in the map's zoom stack is map-scoped: deselect the area,
+  // drop the state focus, and zoom back out to the national view. It leaves
+  // the chosen occupation and the browse filters alone.
   const resetBtn = document.getElementById("mapResetBtn");
-  if (resetBtn) resetBtn.addEventListener("click", resetAll);
+  if (resetBtn) resetBtn.addEventListener("click", () => {
+    if (typeof resetMapZoom === "function") resetMapZoom();
+    else loadArea("99", false);
+  });
 
   // Pinned summary strip on phones: tap to jump to the full breakdown.
   const mhSummary = document.getElementById("mhSummary");
@@ -5852,29 +5858,6 @@ function setupEventListeners() {
     const kpi = document.getElementById("kpiBar");
     if (kpi) kpi.scrollIntoView({ behavior: "smooth", block: "start" });
   });
-}
-
-// Clear everything: occupation search + browse filters, close any drilldown,
-// occupation back to All, area back to National, and zoom out.
-function resetAll() {
-  const queryInput = document.getElementById("mapJobSearchInput");
-  if (queryInput) queryInput.value = "";
-  const queryClear = document.getElementById("mapJobClear");
-  if (queryClear) queryClear.style.display = "none";
-
-  const eduSelect = document.getElementById("browseEduFilter");
-  if (eduSelect) eduSelect.value = "-1";
-  const grpSelect = document.getElementById("browseGroupFilter");
-  if (grpSelect) grpSelect.value = "-1";
-
-  if (state.drilldownSoc) closeOccupationAreaBreakdown();
-
-  if (state.activeMapSoc && state.activeMapSoc !== "00-0000") loadMapJob("00-0000");
-  else renderBrowseTable();
-
-  // Area -> National + zoom out (resetMapZoom reloads area 99 when needed).
-  if (typeof resetMapZoom === "function") resetMapZoom();
-  else if (state.currentAreaId && state.currentAreaId !== "99") loadArea("99", false);
 }
 
 function setupTheme() {
