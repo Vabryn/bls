@@ -198,7 +198,7 @@ body {
 .page-container {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 16px 24px 20px;
+  padding: 18px 44px 24px;
 }
 @media (max-width: 990px) {
   .page-container { padding: 14px 16px 40px; }
@@ -509,8 +509,8 @@ body {
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   align-items: start;
-  width: min(calc(100vw - 80px), 1640px);
-  max-width: 1640px;
+  width: min(calc(100vw - 150px), 1560px);
+  max-width: 1560px;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
@@ -524,17 +524,16 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  /* Fill the viewport so map + browse + summary all fit with no page scroll. */
+  gap: 12px;
+  /* Fill the viewport so summary + map + browse all fit with no page scroll. */
   height: calc(100vh - 100px);
   min-height: 520px;
   overflow: hidden;
 }
 @media (max-width: 990px) {
-  .map-canvas-column { height: auto; min-height: 0; overflow: visible; gap: 12px; }
-  /* Stacked phone/tablet layout. The Summary is moved by JS to sit between the
-     map and the Browse card (map -> Summary -> Browse) so it's one short scroll
-     from the map rather than behind the whole occupations list; this just keeps
-     the three cards evenly spaced once they're all in the column. */
+  .map-canvas-column { height: auto; min-height: 0; overflow: visible; }
+  /* Stacked phone/tablet layout: Summary, then map, then Browse — keep them
+     evenly spaced once they're all in the column. */
   .map-center-split { gap: 12px; }
 }
 .map-center-split {
@@ -546,98 +545,37 @@ body {
   min-width: 0;
   min-height: 0;
   flex: 1 1 auto;            /* take the space left over the Summary panel */
-  gap: 0;
-  --map-split-width: 50%;    /* divider defaults to the horizontal centre */
+  gap: 14px;
+  --map-split-width: 50%;    /* map occupies the right half; no drag slider */
 }
+/* Map lives on the right; the Browse + Summary column on the left. */
 .map-center-split > .map-card {
+  order: 2;
   flex: 0 0 var(--map-split-width);
   min-width: 380px;
   min-height: 0;
   max-width: calc(100% - 340px);
 }
-.map-center-split > .browse-card {
+.map-center-split > .split-left {
+  order: 1;
   flex: 1 1 0;
   min-width: 340px;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.split-left > .browse-card { flex: 1 1 auto; min-height: 0; }
+.split-left > .area-summary,
+.split-left > .page-metric-bar {
+  flex: 0 0 auto;
+  align-self: stretch;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 @media (max-width: 990px) {
   .map-center-split { flex: 0 0 auto; }
-}
-
-/* Draggable Splitter Divider & Handle Puck */
-.split-divider {
-  width: 16px;
-  margin: 0 -2px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: col-resize;
-  user-select: none;
-  touch-action: none;
-  z-index: 10;
-  flex-shrink: 0;
-}
-.split-divider::before {
-  content: "";
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 1px;
-  background: var(--border-subtle);
-  transition: background 0.15s ease, width 0.15s ease;
-}
-.split-divider:hover::before,
-.split-divider.is-dragging::before {
-  background: var(--accent-cyan);
-  width: 2px;
-}
-.split-handle-puck {
-  width: 18px;
-  height: 46px;
-  background: var(--bg-surface);
-  border: 1.5px solid var(--border-medium);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-sm), 0 0 7px -2px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
-  position: relative;
-  z-index: 2;
-  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: col-resize;
-}
-.split-handle-puck::after {
-  content: "⋮";
-  font-size: 13px;
-  line-height: 1;
-  color: var(--text-muted);
-  letter-spacing: -1px;
-  font-weight: 700;
-  transition: color 0.15s ease;
-}
-.split-divider:hover .split-handle-puck,
-.split-divider.is-dragging .split-handle-puck {
-  border-color: var(--accent-cyan);
-  background: var(--bg-elevated);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
-  transform: scale(1.1);
-}
-.split-divider:hover .split-handle-puck::after,
-.split-divider.is-dragging .split-handle-puck::after {
-  color: var(--accent-cyan);
-}
-[data-theme="light"] .split-handle-puck {
-  background: var(--bg-surface);
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-}
-[data-theme="light"] .split-divider:hover .split-handle-puck,
-[data-theme="light"] .split-divider.is-dragging .split-handle-puck {
-  border-color: #0284c7;
-  box-shadow: 0 0 8px rgba(2, 132, 199, 0.3);
 }
 
 @media (max-width: 1200px) {
@@ -655,77 +593,21 @@ body {
     flex-direction: column;
   }
   .map-center-split > .map-card,
-  .map-center-split > .browse-card {
+  .map-center-split > .split-left {
     flex: 1 1 auto;
     width: 100%;
     max-width: 100%;
     min-width: 0;
   }
-  .split-divider {
-    display: none;
-  }
+  /* Stacked order: map first, then the Browse column (Summary is hoisted
+     to the top of the column by positionSummaryPanel()). */
+  .map-center-split > .map-card { order: 1; }
+  .map-center-split > .split-left { order: 2; }
+  .split-left { gap: 12px; }
   .map-layout-grid {
     grid-template-columns: 1fr;
     gap: 14px;
   }
-}
-
-/* Horizontal splitter — drag to resize the Summary panel. Mirrors .split-divider. */
-.split-divider-h {
-  position: relative;
-  height: 16px;
-  margin: 2px 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: row-resize;
-  user-select: none;
-  touch-action: none;
-  z-index: 10;
-  flex-shrink: 0;
-}
-.split-divider-h::before {
-  content: "";
-  position: absolute;
-  left: 8px;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 1px;
-  background: var(--border-subtle);
-  transition: background 0.15s ease, height 0.15s ease;
-}
-.split-divider-h:hover::before,
-.split-divider-h.is-dragging::before {
-  background: var(--accent-cyan);
-  height: 2px;
-}
-.split-divider-h .split-handle-puck {
-  width: 52px;
-  height: 16px;
-  cursor: row-resize;
-}
-.split-divider-h .split-handle-puck::after {
-  content: "⋯";
-}
-.split-divider-h:hover .split-handle-puck,
-.split-divider-h.is-dragging .split-handle-puck {
-  border-color: var(--accent-cyan);
-  background: var(--bg-elevated);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
-  transform: scale(1.1);
-}
-.split-divider-h:hover .split-handle-puck::after,
-.split-divider-h.is-dragging .split-handle-puck::after {
-  color: var(--accent-cyan);
-}
-[data-theme="light"] .split-divider-h:hover .split-handle-puck,
-[data-theme="light"] .split-divider-h.is-dragging .split-handle-puck {
-  border-color: #0284c7;
-  box-shadow: 0 0 8px rgba(2, 132, 199, 0.3);
-}
-@media (max-width: 990px) {
-  .split-divider-h { display: none; }
 }
 
 /* Display-only token (no clear button) — selection pills in the Summary head
@@ -846,271 +728,286 @@ body {
    Area Summary — institutional tearsheet strip
    Pinned to the base of the Browse card, beneath the table.
    ============================================================ */
+/* One-line strip above the map + browse: "Summary of <occ> in <area>" on the
+   left, then Employment / Median / Mean / Top-sector inline. Fixed height,
+   never scrolls; the rare hourly-wage disclosure wraps to a second line. */
+/* Summary and the wage-metric control below it share one fixed, centred width
+   so the Summary doesn't jump around as you pick different areas/occupations —
+   long names wrap inside it instead. */
+.area-summary,
+.page-metric-bar {
+  flex: 0 0 auto;
+  align-self: center;
+  width: 100%;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
 .area-summary {
   --area-rule: rgba(255, 255, 255, 0.14);
-  /* Fixed height so clicking around never resizes the map above it (that read
-     as the map "jumping"). The horizontal resizer overrides --summary-h; extra
-     content like the hourly disclosure scrolls inside. */
-  flex: 0 0 var(--summary-h, 216px);
-  min-height: 0;
-  overflow: auto;
-  border: 1px solid var(--border-subtle);
+  position: relative;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 26%, transparent);
   border-radius: var(--radius-lg);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, var(--shadow-md);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, var(--shadow-sm);
   background:
-    linear-gradient(180deg, rgba(126, 174, 212, 0.045), transparent 45%),
+    linear-gradient(180deg, rgba(126, 174, 212, 0.05), transparent 70%),
     var(--bg-elevated);
 }
 [data-theme="light"] .area-summary {
-  --area-rule: rgba(15, 23, 42, 0.14);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, var(--shadow-md);
+  --area-rule: rgba(15, 23, 42, 0.12);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, var(--shadow-sm);
 }
-@media (max-width: 990px) {
-  .area-summary { flex: 0 0 auto; min-height: 0; overflow: visible; }
+.area-metric[hidden] { display: none; }
+
+/* The single page-wide wage-metric control, directly under the Summary. */
+.page-metric-bar {
+  display: flex;
+  justify-content: center;
+  padding: 2px 0 0;
 }
+.page-metric-bar .segmented-control {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+}
+.page-metric-bar .segmented-btn {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.page-metric-bar .segmented-btn.active {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+@media (max-width: 760px) {
+  .page-metric-bar { overflow-x: auto; scrollbar-width: none; justify-content: flex-start; }
+  .page-metric-bar::-webkit-scrollbar { display: none; }
+  .page-metric-bar .segmented-btn { padding: 6px 11px; font-size: 11.5px; }
+  .map-legend-wrapper { gap: 8px; }
+  .legend-edge-wage { font-size: 11px; min-width: 46px; }
+  .legend-metric-badge { font-size: 10px; padding: 2px 7px; }
+}
+
+/* Map style toggle, stacked just left of the zoom +/- stack. */
+/* wrapper only — the two clusters position themselves on opposite sides */
+.map-overlay-controls { display: contents; }
+#mapModeTabs.seg-vertical {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 8;
+}
+.segmented-control.seg-vertical {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-md);
+  background: var(--bg-surface);
+}
+.seg-vertical .segmented-btn {
+  padding: 7px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  color: var(--text-secondary);
+  border: 0;
+  background: var(--bg-surface);
+  white-space: nowrap;
+}
+.seg-vertical .segmented-btn + .segmented-btn { border-top: 1px solid var(--border-subtle); }
+.seg-vertical .segmented-btn.active { background: var(--bg-elevated); color: var(--accent-cyan); }
+
 .area-summary-head {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 6px 6px;
-  padding: 13px 24px 12px;
+  gap: 4px 6px;
+  min-height: 44px;
+  padding: 8px 16px;
+  width: 100%;
   border-bottom: 1px solid var(--area-rule);
 }
-/* Long labels wrap onto a second line instead of clipping to an ellipsis.
-   Plain inline-block block-flow so wrapping is reliable on iOS Safari — the
-   -webkit-box + line-clamp combo did not wrap there and left the label cut. */
-.area-summary-head .pill-token:not([hidden]) {
-  flex: 0 1 auto;
-  display: inline-block;
-  max-width: 100%;
-  min-width: 0;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  overflow: hidden;
-  text-overflow: clip;
-  border-radius: 13px;
-  line-height: 1.25;
-  text-align: center;
-}
-@media (max-width: 760px) {
-  .area-summary-head {
-    justify-content: flex-start;
-    padding: 12px 16px;
-  }
-  .data-year-flag { position: static; margin-left: auto; }
-}
-.area-summary-eyebrow {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0;
-  color: var(--text-primary);
-  white-space: nowrap;
-}
+.area-summary-eyebrow,
 .area-summary-conn {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--text-primary);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .area-summary-conn[hidden] { display: none; }
+.area-summary-head .pill-token:not([hidden]) {
+  display: inline-block;
+  flex: 0 1 auto;
+  min-width: 2ch;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  overflow: visible;
+  text-overflow: clip;
+  border-radius: 13px;
+  line-height: 1.28;
+  text-align: center;
+}
 .area-summary-context {
   font-size: 12px;
-  letter-spacing: 0;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .data-year-flag {
-  position: absolute;
-  right: 24px;
-  top: 12px;
   flex-shrink: 0;
-  font-size: 11px;
+  margin-left: 4px;
+  font-size: 10.5px;
   font-weight: 500;
   white-space: nowrap;
-  padding: 1px 8px;
+  padding: 1px 7px;
   border-radius: 999px;
   color: var(--accent-gold);
   background: color-mix(in srgb, var(--accent-gold) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--accent-gold) 30%, transparent);
   cursor: help;
 }
+.data-year-flag[hidden] { display: none; }
+
 .area-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: min-content;
-  align-content: start;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: stretch;
+  justify-content: center;
 }
-.area-summary-disclosure {
-  margin: 0;
-  padding: 12px 24px 14px;
-  border-top: 1px solid var(--area-rule);
-  font-size: 12.5px;
-  line-height: 1.55;
-  color: var(--text-secondary);
-}
-.area-summary-disclosure[hidden] { display: none; }
 .area-metric {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 12px 24px 12px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 3px;
+  flex: 1 1 0;
   min-width: 0;
+  min-height: 44px;
+  padding: 10px 14px;
   border-left: 1px solid var(--area-rule);
-  border-top: 1px solid var(--area-rule);
-}
-.area-metric:nth-child(odd) {
-  border-left: none;
-}
-.area-metric:nth-child(1),
-.area-metric:nth-child(2) {
-  border-top: none;
-}
-/* Sector name is prose, not a figure — let it wrap instead of truncating. */
-.area-metric-value.is-text {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-  white-space: normal;
-  overflow: visible;
-}
-.area-metric-label {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0;
-  color: var(--text-muted);
-  line-height: 1.3;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+}
+.area-metric:first-child { border-left: none; }
+.area-metric-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 .area-metric-value {
   font-family: var(--font-mono);
-  font-size: 21px;
+  font-size: 16px;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   color: var(--text-primary);
-  line-height: 1.1;
   font-feature-settings: "tnum" 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
 }
+.area-metric-value.is-text { font-size: 12.5px; }
 .area-metric-meta {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  min-width: 0;
-  min-height: 13px;
+  align-items: center;
+  justify-content: center;
+  min-height: 12px;
 }
-.area-metric-chip {
-  flex-shrink: 0;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-.area-metric-chip.pos {
-  color: var(--accent-emerald);
-  font-weight: 600;
-}
-.area-metric-chip.pos::before { content: "▲ "; font-size: 8px; vertical-align: 1px; }
-.area-metric-chip.neg {
-  color: var(--accent-rose);
-  font-weight: 600;
-}
-.area-metric-chip.neg::before { content: "▼ "; font-size: 8px; vertical-align: 1px; }
-/* Verbose captions removed by request — values + comparison carry the meaning. */
-.area-metric-note {
-  display: none;
-}
-@media (max-width: 560px) {
-  .area-summary-grid {
-    grid-template-columns: 1fr;
-  }
-  .area-metric,
-  .area-metric:nth-child(odd) {
-    border-left: none;
-    border-top: 1px solid var(--area-rule);
-  }
-  .area-metric:first-child {
-    border-top: none;
-  }
-  .area-summary-context {
-    display: none;
-  }
-}
+.area-metric-note { display: none; }
 
-/* Stacked layout: the Summary is the first thing on the page and pins under
-   the masthead, compressed to one header line + a single 4-up figure strip so
-   the whole thing (plus the top of the map) is on screen without scrolling.
-   Placed after the narrower blocks above so it wins the cascade. */
+.area-summary-disclosure {
+  flex: 1 1 100%;
+  max-width: 620px;
+  margin: 0;
+  padding: 8px 18px 9px;
+  border-top: 1px solid var(--area-rule);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  white-space: normal;
+}
+.area-summary-disclosure[hidden] { display: none; }
+
+/* Stacked layout: the Summary pins under the masthead as a header row + a
+   4-up figure strip (each figure label over value), so it plus the top of
+   the map are on screen without scrolling. Placed after the narrower blocks
+   above so it wins the cascade. */
 @media (max-width: 990px) {
   .area-summary {
     position: sticky;
     top: 44px;
     z-index: 40;
-    flex: 0 0 auto;
-    overflow: visible;
+    align-self: stretch;
     border-radius: 0;
     border-left: 0;
     border-right: 0;
     box-shadow: 0 8px 16px -10px rgba(0, 0, 0, 0.55);
   }
   .area-summary-head {
-    justify-content: flex-start;
+    flex: 1 1 100%;
+    min-height: 0;
     align-items: baseline;
     gap: 3px 6px;
     padding: 7px 14px 6px;
+    border-right: 0;
+    border-bottom: 1px solid var(--area-rule);
   }
   .area-summary-eyebrow,
   .area-summary-conn { font-size: 11.5px; }
   .area-summary-head .pill-token:not([hidden]) {
     font-size: 10.5px;
-    padding: 1px 8px;
-    border-radius: 999px;
-    line-height: 1.3;
+    max-width: 60vw;
   }
   .area-summary-context { display: none; }
   .data-year-flag { display: none; }
 
-  .area-summary-grid { grid-template-columns: repeat(4, 1fr); }
-  .area-metric,
-  .area-metric:nth-child(odd),
-  .area-metric:nth-child(1),
-  .area-metric:nth-child(2),
-  .area-metric:first-child {
-    padding: 6px 8px 7px;
+  .area-summary-grid { flex: 1 1 100%; justify-content: stretch; }
+  .area-metric {
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     gap: 1px;
-    border-top: 0;
-    border-left: 1px solid var(--area-rule);
+    min-height: 0;
+    padding: 7px 6px 8px;
   }
-  .area-metric:nth-child(4n + 1) { border-left: 0; }
   .area-metric-label {
     font-size: 8.5px;
     letter-spacing: 0.03em;
-    text-transform: uppercase;
     white-space: normal;
-    overflow: visible;
     line-height: 1.2;
   }
   .area-metric-value { font-size: 12.5px; }
   .area-metric-value.is-text {
     font-size: 10px;
     line-height: 1.15;
+    white-space: normal;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-    overflow: hidden;
   }
-  .area-metric-meta,
   .area-summary-disclosure { display: none; }
 }
 
@@ -1314,6 +1211,197 @@ body {
   border-color: var(--accent-cyan);
   color: var(--accent-cyan);
 }
+
+/* ---- Browse: plain-language card list ---------------------------------- */
+.browse-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+}
+.browse-crumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px 4px;
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+.browse-crumbs .crumb {
+  background: none;
+  border: 0;
+  padding: 2px 3px;
+  font: inherit;
+  color: var(--accent-cyan);
+  cursor: pointer;
+  border-radius: 4px;
+}
+.browse-crumbs button.crumb:hover { background: color-mix(in srgb, var(--accent-cyan) 14%, transparent); }
+.browse-crumbs .crumb.current {
+  color: var(--text-primary);
+  font-weight: 700;
+  cursor: default;
+}
+.browse-crumbs .crumb-sep { color: var(--text-muted); }
+
+.browse-list-wrap { overflow: auto; }
+.browse-list { display: flex; flex-direction: column; }
+
+/* Spreadsheet grid: name | count | pay | chevron */
+.browse-head,
+.browse-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 86px 98px;
+  align-items: stretch;
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-sans);
+}
+.browse-list.cols-4 .browse-head,
+.browse-list.cols-4 .browse-row {
+  grid-template-columns: minmax(0, 1fr) 72px 88px 60px;
+}
+.browse-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-medium);
+}
+.bh {
+  background: none;
+  border: 0;
+  padding: 9px 12px;
+  font: 700 10.5px/1.2 var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.bh-num { text-align: right; border-left: 1px solid var(--border-subtle); }
+.bh:hover { color: var(--text-secondary); }
+.bh.on { color: var(--accent-cyan); }
+.bh-dir { margin-left: 3px; font-size: 9px; }
+
+.browse-row {
+  background: none;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+button.browse-row:hover { background: var(--bg-elevated); }
+.browse-row.active { background: color-mix(in srgb, var(--accent-cyan) 12%, transparent); }
+.browse-row.active .browse-row-title { color: var(--accent-cyan); }
+.browse-row-title {
+  align-self: center;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.browse-col {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 9px 12px;
+  border-left: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.browse-col.is-secondary { color: var(--text-secondary); font-weight: 500; }
+.browse-col-dens { color: var(--text-muted); }
+.browse-col-dens.hot { color: var(--accent-emerald); }
+.browse-col-dens.low { color: var(--accent-rose); }
+.browse-tag {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.06);
+  vertical-align: 1px;
+}
+.browse-tag.hot {
+  color: var(--accent-emerald);
+  background: rgba(16, 185, 129, 0.14);
+}
+[data-theme="light"] .browse-tag { background: rgba(15, 23, 42, 0.06); }
+.browse-dens {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.browse-dens.hot { color: var(--accent-emerald); }
+.browse-dens.low { color: var(--accent-rose); }
+.browse-empty {
+  padding: 28px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.browse-row.browse-row-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+}
+.browse-row-all .browse-row-title { padding: 0; }
+.browse-row-all .browse-row-go {
+  font-size: 18px;
+  color: var(--accent-cyan);
+}
+.browse-row-all .browse-row-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+.browse-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+}
+.region-filter {
+  flex: 0 1 200px;
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 5px 9px;
+}
+.region-filter:focus { outline: none; border-color: var(--accent-cyan); }
 .badge-density {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -1644,6 +1732,7 @@ body {
   border-top: 1px solid var(--border-subtle);
   position: relative;
   min-width: 0;
+  overflow: hidden;            /* legend pucks never escape the map card */
 }
 [data-theme="light"] .map-legend-container {
   background: var(--bg-canvas);
@@ -1657,10 +1746,24 @@ body {
 }
 .legend-edge-wage {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--text-muted);
   white-space: nowrap;
   min-width: 58px;
+}
+/* Selected metric, highlighted, just left of the low edge value. */
+.legend-metric-badge {
+  flex-shrink: 0;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  padding: 2px 9px;
+  border-radius: 999px;
+  color: var(--accent-cyan);
+  background: color-mix(in srgb, var(--accent-cyan) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 42%, transparent);
 }
 #legendMinLabel {
   text-align: right;
@@ -1718,13 +1821,15 @@ body {
 .legend-puck-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
+  max-width: 230px;
+  overflow: hidden;
   background: var(--bg-surface);
   border: 1px solid var(--border-medium);
-  padding: 2.5px 8px;
+  padding: 3.5px 10px;
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
   line-height: 1.2;
@@ -1737,7 +1842,7 @@ body {
 .puck-area-name {
   color: var(--text-secondary);
   font-weight: 500;
-  max-width: 200px;
+  max-width: 108px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2398,51 +2503,30 @@ body {
                 </div>
                 <div id="areaDropdown" class="combobox-dropdown"></div>
               </div>
-              <div class="map-toolbar-area-info" id="mapToolbarAreaInfo">
-                <span class="hud-metro-counties" id="hudMetroCounties">National View</span>
-              </div>
             </div>
-
-            <!-- Horizontal Map Controls Bar: Wage Metric & Map Style -->
-            <div class="map-card-controls-bar">
-              <!-- Wage Metric Tabs -->
-              <div class="map-controls-cluster">
-                <div class="segmented-control" id="mapMetricTabs">
-                  <button class="segmented-btn active" data-metric="median">Median</button>
-                  <button class="segmented-btn" data-metric="mean">Mean</button>
-                  <button class="segmented-btn" data-metric="p25">Bottom 25%</button>
-                  <button class="segmented-btn" data-metric="p75">Top 25%</button>
-                  <button class="segmented-btn" data-metric="emp">Employment</button>
-                  <button class="segmented-btn" data-metric="lq">Density</button>
-                </div>
-              </div>
-
-              <!-- Map Style Tabs -->
-              <div class="map-controls-cluster">
-                <span class="map-controls-label">Style</span>
-                <div class="segmented-control" id="mapModeTabs">
-                  <button class="segmented-btn active" data-mode="area">Area Map</button>
-                  <button class="segmented-btn" data-mode="bubble">Bubble Map</button>
-                </div>
-              </div>
-
-              <strong id="sidebarActiveJobTitle" hidden>All Occupations</strong>
-            </div>
+            <strong id="sidebarActiveJobTitle" hidden>All Occupations</strong>
 
             <!-- Responsive SVG Viewport (Albers USA 975x610) -->
             <div class="map-svg-container" id="mapSvgContainer">
-              <div class="map-zoom-overlay" id="mapZoomButtonsGroup">
-                <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
-                <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
-                <button class="map-zoom-btn map-zoom-btn--reset" id="mapResetBtn" aria-label="Reset map — deselect the area and zoom out" title="Reset map view">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M3 12a9 9 0 1 0 2.6-6.4"></path>
-                    <path d="M3 4v5h5"></path>
-                  </svg>
-                </button>
+              <div class="map-overlay-controls">
+                <!-- Map style, sitting left of the zoom stack -->
+                <div class="segmented-control seg-vertical" id="mapModeTabs" role="group" aria-label="Map style">
+                  <button class="segmented-btn active" data-mode="area" title="Area choropleth">Area</button>
+                  <button class="segmented-btn" data-mode="bubble" title="Proportional bubbles">Bubble</button>
+                </div>
+                <div class="map-zoom-overlay" id="mapZoomButtonsGroup">
+                  <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+                  <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+                  <button class="map-zoom-btn map-zoom-btn--reset" id="mapResetBtn" aria-label="Reset map — deselect the area and zoom out" title="Reset map view">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M3 12a9 9 0 1 0 2.6-6.4"></path>
+                      <path d="M3 4v5h5"></path>
+                    </svg>
+                  </button>
+                </div>
               </div>
               <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
-                <g id="mapZoomGroup" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
+                <g id="mapZoomGroup" transform="translate(73, 46) scale(0.85)" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
                   <!-- Base US States Layer -->
                   <g id="statesLayer"></g>
                   <!-- Mode 1: Statistical Areas (MSAs & Non-Metro) Area Lines & Choropleth Layer -->
@@ -2464,7 +2548,8 @@ body {
             <!-- Continuous Color Scale Legend -->
             <div class="map-legend-container">
               <div class="map-legend-wrapper">
-                <!-- Min Wage on the Left -->
+                <!-- Selected metric, then the low edge value -->
+                <span class="legend-metric-badge" id="legendMetricBadge">Median</span>
                 <span id="legendMinLabel" class="tabular legend-edge-wage">$0</span>
 
                 <!-- Center Column with Two Pucks (Area Above, US Below) and Color Bar in the middle -->
@@ -2504,12 +2589,9 @@ body {
             </div>
           </div>
 
-          <!-- Dynamic Resizer Puck Divider between Map and Search/Browse -->
-          <div class="split-divider" id="mapBrowseDivider" title="Drag to adjust Map and Browse sizes" role="separator" aria-orientation="vertical">
-            <div class="split-handle-puck" aria-hidden="true"></div>
-          </div>
-
-          <!-- Right Visualizer: Browse Occupations & Regional Area Breakdown -->
+          <!-- LEFT column: Browse, with the Summary + wage-metric control beneath it -->
+          <div class="split-left" id="splitLeft">
+          <!-- Browse Occupations & Regional Area Breakdown -->
           <div class="browse-card" id="browseCardContainer">
             <!-- Browse Toolbar -->
             <div class="browse-card-toolbar">
@@ -2530,87 +2612,18 @@ body {
               </div>
             </div>
 
-            <!-- Browse Filter Controls Bar -->
-            <div class="control-bar" id="browseControlBar">
-              <select id="browseEduFilter" class="control-select">
-                <option value="-1">Education</option>
-                <option value="0">No Formal Requirement</option>
-                <option value="1">High School / GED</option>
-                <option value="2">Certificate / License</option>
-                <option value="3">Associate's Degree</option>
-                <option value="4">Bachelor's Degree</option>
-                <option value="5">Master's Degree</option>
-                <option value="6">Doctoral / Professional</option>
-              </select>
-              <select id="browseGroupFilter" class="control-select">
-                <option value="-1">Sectors</option>
-              </select>
-              <select id="browseWageMetric" class="control-select" aria-label="Wage metric shown">
-                <option value="median">Median</option>
-                <option value="mean">Mean</option>
-                <option value="p25">Bottom 25%</option>
-                <option value="p75">Top 25%</option>
-              </select>
+            <!-- Where you are -->
+            <div class="browse-nav">
+              <nav class="browse-crumbs" id="browseCrumbs" aria-label="Browse location"></nav>
             </div>
 
-            <!-- Drilldown header when an occupation row is clicked -->
-            <div id="browseDrilldownBar" style="display: none; align-items: center; justify-content: space-between; padding: 9px 14px; background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); gap: 10px; flex-wrap: wrap;">
-              <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
-                <button id="browseDrilldownBackBtn" class="browse-back-btn" title="Return to all occupations in this area">
-                  ← All Occupations
-                </button>
-                <span style="font-weight: 700; color: var(--text-primary); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="browseDrilldownTitle"></span>
-              </div>
-              <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
-                <select id="drilldownRegionFilter" class="control-select" style="max-width: 190px;">
-                  <option value="ALL">All Regions</option>
-                </select>
-                <select id="drilldownWageMetric" class="control-select" style="flex: 0 1 130px; min-width: 96px;" aria-label="Wage metric shown">
-                  <option value="median">Median</option>
-                  <option value="mean">Mean</option>
-                  <option value="p25">Bottom 25%</option>
-                  <option value="p75">Top 25%</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Table Container -->
-            <div class="table-responsive" id="browseTableResponsive" style="overflow: auto;">
-              <!-- Table A: Occupations in Area -->
-              <table class="data-table" id="occupationsTable">
-                <thead>
-                  <tr>
-                    <th data-col="title">Occupation Title</th>
-                    <th data-col="emp" style="text-align: right;">Employment</th>
-                    <th data-col="wage" style="text-align: right;" id="occWageColHeader">Median Wage</th>
-                    <th data-col="lq" style="text-align: right;">Density</th>
-                  </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-              </table>
-
-              <!-- Table B: Areas for Clicked Profession -->
-              <table class="data-table" id="occupationAreasTable" style="display: none;">
-                <thead>
-                  <tr>
-                    <th data-col="name">Statistical Area / Region</th>
-                    <th data-col="emp" style="text-align: right;">Employment</th>
-                    <th data-col="wage" style="text-align: right;" id="areaWageColHeader">Median Wage</th>
-                    <th data-col="lq" style="text-align: right;">Density</th>
-                  </tr>
-                </thead>
-                <tbody id="occupationAreasTableBody"></tbody>
-              </table>
+            <!-- The list -->
+            <div class="browse-list-wrap" id="browseTableResponsive">
+              <div class="browse-list" id="browseList" role="list"></div>
             </div>
           </div>
-        </div>
 
-        <!-- Horizontal resizer — drag to resize the Area Summary (mirrors the vertical splitter) -->
-        <div class="split-divider-h" id="summaryDivider" title="Drag to resize the Area Summary" role="separator" aria-orientation="horizontal">
-          <div class="split-handle-puck" aria-hidden="true"></div>
-        </div>
-
-        <!-- Area Summary — its own resizable panel beneath the map + browse -->
+        <!-- Summary — a compact strip that sits directly under the Browse card -->
         <div class="area-summary" id="kpiBar">
           <div class="area-summary-head">
                 <span class="area-summary-eyebrow">Summary</span>
@@ -2642,7 +2655,7 @@ body {
                   </div>
                 </div>
 
-                <div class="area-metric">
+                <div class="area-metric" hidden>
                   <div class="area-metric-label" id="kpiMeanLabel">Annual Mean Wage</div>
                   <div class="area-metric-value tabular" id="kpiMeanWage">—</div>
                   <div class="area-metric-meta">
@@ -2652,8 +2665,8 @@ body {
                 </div>
 
                 <div class="area-metric">
-                  <div class="area-metric-label" id="kpiTopLqLabel">Top Sector Concentration</div>
-                  <div class="area-metric-value is-text" id="kpiTopLqSector">—</div>
+                  <div class="area-metric-label" id="kpiTopLqLabel">Density</div>
+                  <div class="area-metric-value tabular" id="kpiTopLqSector">—</div>
                   <div class="area-metric-meta">
                     <span class="area-metric-chip pos" id="kpiTopLqBadge">LQ</span>
                     <span class="area-metric-note" id="kpiTopLqFootnote">Relative to national baseline</span>
@@ -2662,6 +2675,21 @@ body {
               </div>
           <p class="area-summary-disclosure" id="kpiDisclosure" hidden></p>
         </div>
+
+        <!-- One wage-metric control for the whole page (drives the map colour
+             and the browse table's wage column). Sits under the Summary. -->
+        <div class="page-metric-bar" id="pageMetricBar">
+          <div class="segmented-control" id="mapMetricTabs" role="group" aria-label="Wage metric">
+            <button class="segmented-btn active" data-metric="median">Median</button>
+            <button class="segmented-btn" data-metric="mean">Mean</button>
+            <button class="segmented-btn" data-metric="p25">Bottom 25%</button>
+            <button class="segmented-btn" data-metric="p75">Top 25%</button>
+            <button class="segmented-btn" data-metric="emp">Employment</button>
+            <button class="segmented-btn" data-metric="lq">Density</button>
+          </div>
+        </div>
+        </div><!-- /.split-left -->
+        </div><!-- /.map-center-split -->
       </div>
     </div>
   </section>
@@ -2761,7 +2789,10 @@ const state = {
   tableSort: { col: "wage", asc: false },
   drilldownSoc: null,
   drilldownRegion: "ALL",
-  browseWageMetric: "median",   // 'median' | 'mean' | 'p25' | 'p75' — shared by both browse tables
+  browseWageMetric: "median",   // 'median' | 'mean' | 'p25' | 'p75' — the one page-wide wage metric
+  browseSector: null,           // null = sectors overview; 0..21 = that sector's occupations
+  browseSort: { key: "wage", asc: false },   // spreadsheet sort: key + direction
+  regionFilter: "",             // type-to-filter text for the regional (drill-down) list
   jobDataYear: null,            // year the active occupation's data actually came from (fallback when the selected year is incomplete)
   jobPrior: new Map(),         // soc -> { "2024": payload, "2023": payload, "2022": payload } for per-field gap-fill
   _priorLoading: new Set(),
@@ -2779,7 +2810,7 @@ const state = {
   mapMode: "area",           // 'area' | 'bubble'
   jobCache: new Map(),
   activeJobPayload: null,
-  mapZoom: { scale: 1, x: 0, y: 0 },
+  mapZoom: { scale: 0.85, x: 73, y: 46 },
   dragSuppressedClick: false,
   _areaLoadToken: 0,
   _areaEls: null,
@@ -2892,23 +2923,31 @@ function getChoroplethFill(val, minVal, maxVal, isDark = true, isLog = false) {
   return `rgba(${last[0]}, ${last[1]}, ${last[2]}, ${alpha})`;
 }
 
-// Initialize Application
-// Stacked layout (phones/tablets, <=990px): the Summary is the first section,
-// above the map, and pins under the masthead in a compressed form so the
-// current area + its figures are always on screen. On desktop it's its own
-// full-width panel below the map+browse split. Move the actual node (a CSS
-// display:contents reorder did not take on iOS Safari) and re-settle it on
-// breakpoint changes.
+// Where the Summary strip + the page-wide wage-metric control live depends on
+// the viewport:
+//   • Desktop — inside the left column, directly beneath the Browse card
+//     (map on the right, no drag slider).
+//   • Stacked (≤990px) — hoisted to the very top of the column so the reader
+//     meets Summary, then map, then Browse.
+// (A CSS-only reorder via display:contents did not take on iOS Safari, so the
+// nodes are physically moved.)
 function positionSummaryPanel() {
   const summary = document.getElementById("kpiBar");
+  const metricBar = document.getElementById("pageMetricBar");
   const col = document.getElementById("mapCanvasColumn");
   const split = document.getElementById("mapCenterSplit");
-  if (!summary || !col || !split) return;
+  const left = document.getElementById("splitLeft");
+  if (!col || !split || !left || !summary || !metricBar) return;
+
   const stacked = window.matchMedia("(max-width: 990px)").matches;
   if (stacked) {
-    if (col.firstElementChild !== summary) col.insertBefore(summary, split);
-  } else if (summary.parentElement !== col || summary.nextElementSibling) {
-    col.appendChild(summary);   // back to last child, after #summaryDivider
+    if (col.firstElementChild !== summary) col.insertBefore(summary, col.firstElementChild);
+    if (summary.nextElementSibling !== metricBar) col.insertBefore(metricBar, summary.nextElementSibling);
+  } else {
+    if (metricBar.parentElement !== left) left.appendChild(metricBar);
+    if (summary.parentElement !== left || summary.nextElementSibling !== metricBar) {
+      left.insertBefore(summary, metricBar);
+    }
   }
 }
 
@@ -2919,9 +2958,7 @@ async function init() {
   setupYearSelect();
   introTraceSearchBars();
   positionSummaryPanel();
-  try {
-    window.matchMedia("(max-width: 990px)").addEventListener("change", positionSummaryPanel);
-  } catch (e) { window.addEventListener("resize", positionSummaryPanel); }
+  window.matchMedia("(max-width: 990px)").addEventListener("change", positionSummaryPanel);
 
   const urlParams = new URLSearchParams(window.location.search);
   const requestedArea = urlParams.get("area");
@@ -3179,10 +3216,10 @@ function zoomToState(stateIdOrCode) {
 
 function resetMapZoom() {
   state.focusedState = null;
-  state.mapZoom = { scale: 1, x: 0, y: 0 };
+  state.mapZoom = { scale: 0.85, x: 73, y: 46 };
   const zoomGroup = document.getElementById("mapZoomGroup");
   if (zoomGroup) {
-    zoomGroup.setAttribute("transform", "translate(0, 0) scale(1)");
+    zoomGroup.setAttribute("transform", "translate(73, 46) scale(0.85)");
   }
   refreshBubblesForZoom();
 
@@ -3562,6 +3599,14 @@ function updateMapLegend() {
   if (minEl) minEl.textContent = fmtMetric(minVal, metricKind);
   if (maxEl) maxEl.textContent = fmtMetric(maxVal, metricKind);
 
+  // Selected-metric highlight, sitting just left of the low value.
+  const badgeEl = document.getElementById("legendMetricBadge");
+  if (badgeEl) {
+    badgeEl.textContent = metricKind === "emp" ? "Employment"
+      : metricKind === "density" ? "Density"
+      : ({ median: "Median", mean: "Mean", p25: "Bottom 25%", p75: "Top 25%" }[state.browseWageMetric] || metricName || "Median");
+  }
+
   // 2. U.S. Puck (Below line, arrow points up ▲)
   const usPuck = document.getElementById("mapLegendUsPuck");
   const usNameEl = document.getElementById("puckUsName");
@@ -3570,7 +3615,7 @@ function updateMapLegend() {
 
   if (usPuck && usNameEl && usValEl && natVal && natVal > 0 && maxVal > minVal) {
     const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal)) * 100));
-    usPuck.style.left = `${natPct}%`;
+    usPuck.style.left = `${Math.max(6, Math.min(94, natPct))}%`;
     usPuck.style.display = "flex";
 
     const isAllJobs = !state.activeMapSoc || state.activeMapSoc === "00-0000";
@@ -3580,23 +3625,23 @@ function updateMapLegend() {
       if (occName.length > 24) occName = occName.slice(0, 22) + "…";
     }
 
-    const natWord = metricKind === "emp" ? "Total" : metricName;
+    // Metric name lives in the legend badge now — keep the puck label clean.
     if (isAllJobs) {
-      usNameEl.textContent = `U.S. National ${natWord}`;
+      usNameEl.textContent = "U.S. National";
     } else {
-      usNameEl.textContent = `U.S. ${natWord} (${occName})`;
+      usNameEl.textContent = `U.S. (${occName})`;
     }
     usValEl.textContent = fmtMetric(natVal, metricKind);
 
     // Edge clamping so badge does not clip off container boundaries
-    if (natPct < 12) {
+    if (natPct < 20) {
       usPuck.style.transform = "translateX(0%)";
       if (usArrow) {
         usArrow.style.alignSelf = "flex-start";
         usArrow.style.marginLeft = "12px";
         usArrow.style.marginRight = "0";
       }
-    } else if (natPct > 88) {
+    } else if (natPct > 80) {
       usPuck.style.transform = "translateX(-100%)";
       if (usArrow) {
         usArrow.style.alignSelf = "flex-end";
@@ -3637,7 +3682,7 @@ function updateMapLegend() {
 
     if (displayVal && displayVal > 0 && maxVal > minVal) {
       const pct = Math.max(0, Math.min(100, ((displayVal - minVal) / (maxVal - minVal)) * 100));
-      areaPuck.style.left = `${pct}%`;
+      areaPuck.style.left = `${Math.max(6, Math.min(94, pct))}%`;
       areaPuck.style.display = "flex";
 
       areaNameEl.textContent = cleanName;
@@ -3663,14 +3708,14 @@ function updateMapLegend() {
       }
 
       // Edge clamping so badge does not clip off container boundaries
-      if (pct < 12) {
+      if (pct < 20) {
         areaPuck.style.transform = "translateX(0%)";
         if (areaArrow) {
           areaArrow.style.alignSelf = "flex-start";
           areaArrow.style.marginLeft = "12px";
           areaArrow.style.marginRight = "0";
         }
-      } else if (pct > 88) {
+      } else if (pct > 80) {
         areaPuck.style.transform = "translateX(-100%)";
         if (areaArrow) {
           areaArrow.style.alignSelf = "flex-end";
@@ -3688,7 +3733,7 @@ function updateMapLegend() {
     } else {
       // Area selected, but data suppressed
       const pct = natVal && maxVal > minVal ? Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal)) * 100)) : 50;
-      areaPuck.style.left = `${pct}%`;
+      areaPuck.style.left = `${Math.max(6, Math.min(94, pct))}%`;
       areaPuck.style.display = "flex";
       areaNameEl.textContent = cleanName;
       areaValEl.textContent = "Data Suppressed";
@@ -4142,7 +4187,17 @@ function setupMapControls() {
     btn.addEventListener("click", () => {
       document.querySelectorAll("#mapMetricTabs .segmented-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      state.activeMapMetric = btn.dataset.metric;
+      const m = btn.dataset.metric;
+      state.activeMapMetric = m;
+      // The wage percentiles also drive the browse table's wage column and the
+      // Summary's wage figure — one control for the whole page.
+      if (m === "median" || m === "mean" || m === "p25" || m === "p75") {
+        state.browseWageMetric = m;
+        syncWageColHeaders();
+        if (state.drilldownSoc) renderOccupationAreasTable();
+        else renderBrowseTable();
+        renderHeroAndKPIs();
+      }
       renderMetroMap();
     });
   });
@@ -4373,7 +4428,7 @@ function setupMapControls() {
     const oldScale = state.mapZoom.scale;
     const newScale = Math.max(1, oldScale / 1.35);
     if (newScale === 1) {
-      state.mapZoom = { scale: 1, x: 0, y: 0 };
+      state.mapZoom = { scale: 0.85, x: 73, y: 46 };
     } else {
       state.mapZoom.x = Math.round(cx - (cx - state.mapZoom.x) * (newScale / oldScale));
       state.mapZoom.y = Math.round(cy - (cy - state.mapZoom.y) * (newScale / oldScale));
@@ -4385,126 +4440,6 @@ function setupMapControls() {
   const mzr = document.getElementById("mapZoomReset");
   if (mzr) mzr.addEventListener("click", resetMapZoom);
   // #mapResetBtn (the ⟲ in the zoom stack) is wired in setupEventListeners.
-
-  // -------------------------------------------------------------
-  // Dynamic Splitter Puck between Map and Search/Browse
-  // -------------------------------------------------------------
-  setupSplitterPuck();
-  setupSummaryResizer();
-}
-
-// Horizontal splitter: drag up/down to resize the Summary panel against the
-// map + browse split above it. Bar is horizontal, motion is vertical.
-function setupSummaryResizer() {
-  const divider = document.getElementById("summaryDivider");
-  const col = document.getElementById("mapCanvasColumn");
-  const panel = document.getElementById("kpiBar");
-  if (!divider || !col || !panel) return;
-
-  let dragging = false, startY = 0, startH = 0, colH = 0;
-  const clientY = (e) => e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
-
-  const down = (e) => {
-    if (e.button && e.button !== 0) return;
-    dragging = true;
-    divider.classList.add("is-dragging");
-    document.body.style.cursor = "row-resize";
-    document.body.style.userSelect = "none";
-    startY = clientY(e);
-    startH = panel.getBoundingClientRect().height;
-    colH = col.getBoundingClientRect().height;
-    if (e.cancelable && e.type === "touchstart") e.preventDefault();
-  };
-  const move = (e) => {
-    if (!dragging) return;
-    const dy = clientY(e) - startY;
-    // drag down -> summary shrinks; drag up -> summary grows
-    const minH = 120;
-    const maxH = Math.max(minH, colH - 260);
-    const h = Math.max(minH, Math.min(maxH, startH - dy));
-    col.style.setProperty("--summary-h", `${h.toFixed(0)}px`);
-  };
-  const up = () => {
-    if (!dragging) return;
-    dragging = false;
-    divider.classList.remove("is-dragging");
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-  };
-
-  divider.addEventListener("mousedown", down);
-  window.addEventListener("mousemove", move);
-  window.addEventListener("mouseup", up);
-  divider.addEventListener("touchstart", down, { passive: false });
-  window.addEventListener("touchmove", move, { passive: true });
-  window.addEventListener("touchend", up, { passive: true });
-  window.addEventListener("touchcancel", up, { passive: true });
-}
-
-function setupSplitterPuck() {
-  const divider = document.getElementById("mapBrowseDivider");
-  const splitParent = document.getElementById("mapCenterSplit");
-  if (!divider || !splitParent) return;
-
-  let isDraggingSplitter = false;
-  let startClientX = 0;
-  let initialMapWidth = 0;
-  let splitParentWidth = 0;
-
-  const onSplitPointerDown = (e) => {
-    if (e.button && e.button !== 0) return;
-    isDraggingSplitter = true;
-    divider.classList.add("is-dragging");
-    document.body.style.cursor = "col-resize";
-    document.body.style.userSelect = "none";
-
-    startClientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    const splitRect = splitParent.getBoundingClientRect();
-    splitParentWidth = splitRect.width;
-
-    const mapCard = document.getElementById("mapCardContainer");
-    if (mapCard) {
-      initialMapWidth = mapCard.getBoundingClientRect().width;
-    }
-
-    if (e.cancelable && e.type === "touchstart") {
-      e.preventDefault();
-    }
-  };
-
-  const onSplitPointerMove = (e) => {
-    if (!isDraggingSplitter) return;
-    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    const dx = clientX - startClientX;
-
-    if (splitParentWidth > 0) {
-      const newWidthPx = initialMapWidth + dx;
-      // Clamp between 32% and 68% of the container width
-      const minPx = Math.max(340, splitParentWidth * 0.32);
-      const maxPx = Math.min(splitParentWidth - 340, splitParentWidth * 0.68);
-      const clampedPx = Math.max(minPx, Math.min(maxPx, newWidthPx));
-      const pct = (clampedPx / splitParentWidth) * 100;
-
-      splitParent.style.setProperty("--map-split-width", `${pct.toFixed(2)}%`);
-    }
-  };
-
-  const onSplitPointerUp = () => {
-    if (!isDraggingSplitter) return;
-    isDraggingSplitter = false;
-    divider.classList.remove("is-dragging");
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-  };
-
-  divider.addEventListener("mousedown", onSplitPointerDown);
-  window.addEventListener("mousemove", onSplitPointerMove);
-  window.addEventListener("mouseup", onSplitPointerUp);
-
-  divider.addEventListener("touchstart", onSplitPointerDown, { passive: false });
-  window.addEventListener("touchmove", onSplitPointerMove, { passive: true });
-  window.addEventListener("touchend", onSplitPointerUp, { passive: true });
-  window.addEventListener("touchcancel", onSplitPointerUp, { passive: true });
 }
 
 function filterMapJobDropdown(query) {
@@ -4737,10 +4672,10 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
       c.classList.remove("bubble-focused", "bubble-dimmed", "highlighted");
     });
     if (shouldZoom) {
-      state.mapZoom = { scale: 1, x: 0, y: 0 };
+      state.mapZoom = { scale: 0.85, x: 73, y: 46 };
       const zoomGroup = document.getElementById("mapZoomGroup");
       if (zoomGroup) {
-        zoomGroup.setAttribute("transform", "translate(0, 0) scale(1)");
+        zoomGroup.setAttribute("transform", "translate(73, 46) scale(0.85)");
       }
     }
   }
@@ -5185,6 +5120,55 @@ function renderHeroAndKPIs() {
       kpiLqFootnote.textContent = "Balanced national baseline";
     }
   }
+
+  // The Summary shows Employment · <selected wage> · Density, each with a
+  // "vs U.S." line beneath. The three cells own their whole content here so a
+  // metric switch always leaves them consistent.
+  const setCell = (labelId, valId, chipId, label, valTxt, chipTxt, chipCls) => {
+    const l = document.getElementById(labelId);
+    const v = document.getElementById(valId);
+    const c = document.getElementById(chipId);
+    if (l) l.textContent = label;
+    if (v) v.textContent = valTxt;
+    if (c) { c.textContent = chipTxt || ""; c.className = "area-metric-chip" + (chipCls ? " " + chipCls : ""); }
+  };
+  const pctVsUs = (area, nat) => {
+    if (!(area > 0) || !(nat > 0)) return null;
+    const p = ((area - nat) / nat) * 100;
+    return { txt: `${p >= 0 ? "+" : ""}${p.toFixed(1)}% vs U.S.`, cls: Math.abs(p) < 0.2 ? "" : (p > 0 ? "pos" : "neg") };
+  };
+
+  const occRow = isAllJobs ? null : (data.occupations || []).find(x => x[0] === state.activeMapSoc);
+  const wKey = state.browseWageMetric;                       // median | mean | p25 | p75
+  const wLabel = { median: "Median", mean: "Mean", p25: "Bottom 25%", p75: "Top 25%" }[wKey] || "Median";
+  const areaW = isAllJobs
+    ? (data.total ? data.total[wKey] : null)
+    : (occRow ? occRow[{ mean: 5, median: 6, p25: 8, p75: 9 }[wKey]] : null);
+  const natW = isAllJobs
+    ? (state.nationalTotals ? state.nationalTotals[wKey] : null)
+    : (wKey === "mean" ? natJobMean : wKey === "median" ? natJobMedian : null);
+  const wDelta = pctVsUs(areaW, natW);
+  setCell("kpiEmpLabel", "kpiTotalEmp", "kpiEmpShare", "Employment",
+    document.getElementById("kpiTotalEmp").textContent,
+    document.getElementById("kpiEmpShare").textContent,
+    document.getElementById("kpiEmpShare").className.includes("pos") ? "pos" : "");
+  setCell("kpiMedianLabel", "kpiMedianWage", "kpiMedianDelta", wLabel,
+    (areaW > 0) ? fmt.currency(areaW) : "N/A",
+    wDelta ? wDelta.txt : (isAllJobs && data.id === "99" ? "U.S. reference" : ""),
+    wDelta ? wDelta.cls : "");
+
+  let densTxt = "1.00×", densChip = "", densCls = "";
+  if (!isAllJobs) {
+    densTxt = (occLq != null && occLq > 0) ? `${occLq.toFixed(2)}×` : "N/A";
+    if (occLq != null && occLq > 0) {
+      const p = (occLq - 1) * 100;
+      densChip = `${p >= 0 ? "+" : ""}${p.toFixed(0)}% vs U.S. avg`;
+      densCls = Math.abs(p) < 1 ? "" : (p > 0 ? "pos" : "neg");
+    }
+  } else if (data.id !== "99") {
+    densChip = "U.S. baseline";
+  }
+  setCell("kpiTopLqLabel", "kpiTopLqSector", "kpiTopLqBadge", "Density", densTxt, densChip, densCls);
 }
 
 function findTopConcentrationSector(data) {
@@ -5338,9 +5322,6 @@ function setupDropdowns() {
     }
   });
 
-  // Populate the Major Sector filter
-  const browseGf = document.getElementById("browseGroupFilter");
-  if (browseGf) GROUPS.forEach((name, idx) => browseGf.add(new Option(name, idx)));
 }
 
 // Resolve a free-text query to specific areas via ZIP, place name, or county.
@@ -5478,353 +5459,344 @@ function closeAreaDropdown() {
 // -------------------------------------------------------------
 // Set the first column's header text ("Sector" for the sectors overview,
 // "Occupation Title" otherwise).
-function setBrowseTitleHeader(text) {
-  const th = document.querySelector('#occupationsTable th[data-col="title"]');
-  if (th) th.textContent = text;
+/* ------------------------------------------------------------------
+   Browse: a plain-language card list, three levels, one breadcrumb.
+     0  every sector            (22 cards)
+     1  jobs inside a sector    (or the results of a search)
+     2  where a job pays / hires   (place cards -> click selects on map)
+   ------------------------------------------------------------------ */
+function browseLevel() {
+  if (state.drilldownSoc) return 2;
+  const q = ((document.getElementById("mapJobSearchInput") || {}).value || "").trim();
+  return (q || state.browseSector != null) ? 1 : 0;
 }
 
-// The browse table opens on the 22 major sectors. Pick one (row click or the
-// Sectors dropdown) to see its occupations; a search cuts across everything.
+function fmtJobs(n) {
+  return n > 0 ? `${fmt.number(n)} ${n === 1 ? "job" : "jobs"}` : "no job estimate";
+}
+function fmtPay(v) { return v > 0 ? `${fmt.currency(v)} a year` : "pay not reported"; }
+// Density (location quotient) shown plainly on every row, coloured by how far
+// it runs from the national norm of 1.0x.
+function densityBit(lq) {
+  if (!(lq > 0)) return null;
+  const cls = lq >= 1.25 ? "hot" : (lq < 0.8 ? "low" : "");
+  return { txt: `${lq.toFixed(2)}\u00d7`, cls };
+}
+function clearJobSearch() {
+  const i = document.getElementById("mapJobSearchInput");
+  if (i) i.value = "";
+  const c = document.getElementById("mapJobClear");
+  if (c) c.style.display = "none";
+}
+function resetBrowseScroll() {
+  const sc = document.getElementById("browseTableResponsive");
+  if (sc) sc.scrollTop = 0;
+}
+function sortRows(rows) {
+  const { key, asc } = state.browseSort;
+  rows.sort((a, b) => {
+    if (key === "title") {
+      const r = String(a.title).localeCompare(String(b.title));
+      return asc ? r : -r;
+    }
+    const va = a[key] || 0, vb = b[key] || 0;
+    return asc ? va - vb : vb - va;
+  });
+  return rows;
+}
+function setBrowseSort(key) {
+  const s = state.browseSort;
+  if (s.key === key) s.asc = !s.asc;
+  else { s.key = key; s.asc = (key === "title"); }   // A->Z for names, high->low for numbers
+  renderBrowseTable();
+}
+// Spreadsheet-style header: Name | <count> | Pay, each sortable with a
+// plain-language direction hint (A->Z, Low->High).
+function browseHead(countKey, countLabel, withDensity) {
+  const { key, asc } = state.browseSort;
+  const arrow = k => key === k ? `<span class="bh-dir">${asc ? "▲" : "▼"}</span>` : "";
+  const head = document.createElement("div");
+  head.className = "browse-head";
+  const cells = [
+    { k: "title", label: "Name", cls: "bh-name" },
+    { k: countKey, label: countLabel, cls: "bh-num" },
+    { k: "wage", label: "Pay", cls: "bh-num" }
+  ];
+  if (withDensity) cells.push({ k: "lq", label: "Density", cls: "bh-num" });
+  head.innerHTML = cells
+    .map(c => `<button class="bh ${c.cls}${key === c.k ? " on" : ""}">${c.label}${arrow(c.k)}</button>`)
+    .join("");
+  cells.forEach((c, i) => head.children[i].addEventListener("click", () => setBrowseSort(c.k)));
+  return head;
+}
+
+function renderCrumbs() {
+  const el = document.getElementById("browseCrumbs");
+  if (!el) return;
+  const lvl = browseLevel();
+  const q = ((document.getElementById("mapJobSearchInput") || {}).value || "").trim();
+
+  const crumbs = [{
+    label: "All jobs",
+    go: () => {
+      state.browseSector = null;
+      clearJobSearch();
+      if (state.drilldownSoc) closeOccupationAreaBreakdown();
+      else renderBrowseTable();
+      resetBrowseScroll();
+    }
+  }];
+  if (lvl >= 1) {
+    crumbs.push(q
+      ? { label: `“${q}”`, go: null }
+      : { label: (GROUPS[state.browseSector] || "Sector") + " Roles",
+          go: state.drilldownSoc ? () => closeOccupationAreaBreakdown() : null });
+  }
+  if (lvl === 2) {
+    const areaPicked = state.currentAreaId && state.currentAreaId !== "99";
+    crumbs.push({
+      label: state.drilldownTitle || "Job",
+      // clickable only when a region is selected further down — clears it
+      go: areaPicked
+        ? () => { if (typeof resetMapZoom === "function") resetMapZoom(); else loadArea("99", false); }
+        : null
+    });
+    if (areaPicked) {
+      const meta = state.manifest && state.manifest.find(a => a.id === state.currentAreaId);
+      crumbs.push({ label: meta ? formatAreaName(meta.name) : "Selected region", go: null });
+    }
+  }
+
+  el.innerHTML = "";
+  crumbs.forEach((c, i) => {
+    if (i) {
+      const sep = document.createElement("span");
+      sep.className = "crumb-sep";
+      sep.textContent = "›";
+      el.appendChild(sep);
+    }
+    const last = i === crumbs.length - 1;
+    const node = document.createElement(c.go && !last ? "button" : "span");
+    node.className = "crumb" + (last ? " current" : "");
+    node.textContent = c.label;
+    if (c.go && !last) node.addEventListener("click", c.go);
+    el.appendChild(node);
+  });
+}
+
+function browseRow(o) {
+  const row = document.createElement(o.onClick ? "button" : "div");
+  row.className = "browse-row" + (o.active ? " active" : "");
+  row.setAttribute("role", "listitem");
+  row.innerHTML =
+    `<span class="browse-row-title">${o.title}</span>` +
+    `<span class="browse-col browse-col-num is-secondary">${o.count}</span>` +
+    `<span class="browse-col browse-col-pay">${o.pay}</span>` +
+    (o.dens ? `<span class="browse-col browse-col-dens ${o.dens.cls}">${o.dens.txt}</span>` : "");
+  if (o.onClick) row.addEventListener("click", o.onClick);
+  return row;
+}
+
 function renderSectorsList(data) {
-  const tbody = document.getElementById("tableBody");
-  tbody.innerHTML = "";
-  setBrowseTitleHeader("Sector");
+  const list = document.getElementById("browseList");
+  if (!list) return;
+  renderCrumbs();
 
   const majBy = {};
-  (data.majors || []).forEach(m => {
-    const gi = MAJOR_SOCS.indexOf(m.soc);
-    if (gi >= 0) majBy[gi] = m;
-  });
+  (data.majors || []).forEach(m => { const gi = MAJOR_SOCS.indexOf(m.soc); if (gi >= 0) majBy[gi] = m; });
   const empByGrp = {};
+  const roleByGrp = {};
   (data.occupations || []).forEach(r => {
     empByGrp[r[2]] = (empByGrp[r[2]] || 0) + (r[4] || 0);
+    roleByGrp[r[2]] = (roleByGrp[r[2]] || 0) + 1;
   });
-  const areaEmp = (data.total && data.total.emp) || 0;
   const useMean = wageMetric().v === "mean";
 
   const rows = GROUPS.map((name, gi) => {
     const m = majBy[gi];
-    const emp = m ? m.emp : (empByGrp[gi] || 0);
-    const wage = m ? (useMean ? m.mean : m.median) : null;
-    let lq = null;
-    if (m && areaEmp && data.id !== "99" &&
-        state.nationalMajorShares && state.nationalMajorShares[m.soc]) {
-      lq = (m.emp / areaEmp) / (state.nationalMajorShares[m.soc] || 1);
-    }
-    return { gi, name, emp, wage, lq };
-  }).filter(r => r.emp > 0);
-
-  const { col, asc } = state.tableSort;
-  rows.sort((a, b) => {
-    if (col === "title") return asc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-    const key = col === "emp" ? "emp" : (col === "lq" ? "lq" : "wage");
-    return asc ? (a[key] || 0) - (b[key] || 0) : (b[key] || 0) - (a[key] || 0);
-  });
+    return {
+      gi, title: name,
+      emp: m ? m.emp : (empByGrp[gi] || 0),
+      roles: roleByGrp[gi] || 0,
+      wage: m ? (useMean ? m.mean : m.median) : 0
+    };
+  }).filter(r => r.emp > 0 || r.roles > 0);
+  sortRows(rows);
 
   const frag = document.createDocumentFragment();
-  rows.forEach(r => {
-    const tr = document.createElement("tr");
-    tr.className = "clickable-row";
-    tr.title = `View ${r.name} occupations`;
-    tr.innerHTML = `
-      <td style="font-weight: 600; color: var(--text-primary);">
-        <span style="color: var(--accent-cyan); margin-right: 4px;">›</span>${r.name}
-      </td>
-      <td style="text-align: right;" class="tabular">${fmt.number(r.emp)}</td>
-      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${r.wage ? fmt.currency(r.wage) : "—"}</td>
-      <td style="text-align: right;"><span class="badge-density ${r.lq && r.lq >= 1.25 ? 'high' : ''}">${r.lq ? fmt.lq(r.lq) : "—"}</span></td>
-    `;
-    tr.addEventListener("click", () => {
-      const sel = document.getElementById("browseGroupFilter");
-      if (sel) sel.value = String(r.gi);
-      state.tableSort = { col: "wage", asc: false };
-      renderBrowseTable();
-      const sc = document.getElementById("browseTableResponsive");
-      if (sc) sc.scrollTop = 0;
-    });
-    frag.appendChild(tr);
-  });
-  tbody.appendChild(frag);
-  updateTableSortHeaders();
+  list.classList.remove("cols-4");
+  frag.appendChild(browseHead("roles", "Roles"));
+  rows.forEach(r => frag.appendChild(browseRow({
+    title: r.title,
+    count: fmt.number(r.roles),
+    pay: r.wage > 0 ? fmt.currency(r.wage) : "\u2014",
+    onClick: () => { state.browseSector = r.gi; renderBrowseTable(); resetBrowseScroll(); }
+  })));
+  list.innerHTML = "";
+  list.appendChild(frag);
 }
 
 function renderBrowseTable() {
   const data = state.areaData;
   if (!data || !data.occupations) return;
+  if (state.drilldownSoc) { renderOccupationAreasTable(); return; }
 
-  // If currently viewing drilldown for a clicked occupation, keep drilldown active
-  if (state.drilldownSoc) {
-    renderOccupationAreasTable();
-    return;
-  }
+  const q = ((document.getElementById("mapJobSearchInput") || {}).value || "").toLowerCase().trim();
+  const grpF = state.browseSector == null ? -1 : state.browseSector;
 
-  const jobSearchEl = document.getElementById("mapJobSearchInput");
-  const q = (jobSearchEl ? jobSearchEl.value : "").toLowerCase().trim();
-  const eduF = parseInt(document.getElementById("browseEduFilter").value);
-  const grpF = parseInt(document.getElementById("browseGroupFilter").value);
+  if (!q && grpF === -1) { renderSectorsList(data); return; }
 
-  // No sector picked and nothing searched -> the sectors overview.
-  if (!q && grpF === -1) {
-    renderSectorsList(data);
-    return;
-  }
-  setBrowseTitleHeader("Occupation Title");
+  const list = document.getElementById("browseList");
+  if (!list) return;
+  renderCrumbs();
 
-  let filtered = data.occupations.filter(row => {
-    const [soc, title, grpIdx, eduLvl] = row;
-    if (q && scoreOccupation(title, soc, q) <= 0) return false;
-    if (eduF !== -1 && eduLvl !== eduF) return false;
-    if (grpF !== -1 && grpIdx !== grpF) return false;
-    return true;
-  });
-
-  const { col, asc } = state.tableSort;
   const wIdx = wageMetric().occIdx;
-  filtered.sort((a, b) => {
-    let vA, vB;
-    switch (col) {
-      case "title": vA = a[1]; vB = b[1]; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
-      case "emp": vA = a[4] || 0; vB = b[4] || 0; break;
-      case "lq": vA = a[11] || 0; vB = b[11] || 0; break;
-      case "wage": vA = a[wIdx] || 0; vB = b[wIdx] || 0; break;
-      default: vA = a[wIdx] || 0; vB = b[wIdx] || 0;
-    }
-    return asc ? vA - vB : vB - vA;
-  });
+  const rows = data.occupations
+    .filter(row => {
+      if (q && scoreOccupation(row[1], row[0], q) <= 0) return false;
+      if (grpF !== -1 && row[2] !== grpF) return false;
+      return true;
+    })
+    .map(row => ({ soc: row[0], title: row[1], emp: row[4] || 0, wage: row[wIdx] || 0, lq: row[11] || 0 }));
+  sortRows(rows);
 
-  const tbody = document.getElementById("tableBody");
-  tbody.innerHTML = "";
-
-  const fragment = document.createDocumentFragment();
-
-  // Inside a sector: a row to step back up to the sectors overview.
-  if (grpF !== -1) {
-    const back = document.createElement("tr");
-    back.className = "clickable-row";
-    back.innerHTML = `<td colspan="4" style="color: var(--accent-cyan); font-weight: 600; background: var(--bg-elevated);">‹ All sectors<span style="color: var(--text-muted); font-weight: 400;">  ·  ${GROUPS[grpF] || ""}</span></td>`;
-    back.addEventListener("click", () => {
-      const sel = document.getElementById("browseGroupFilter");
-      if (sel) sel.value = "-1";
-      state.tableSort = { col: "wage", asc: false };
-      renderBrowseTable();
-      const sc = document.getElementById("browseTableResponsive");
-      if (sc) sc.scrollTop = 0;
-    });
-    fragment.appendChild(back);
+  if (!rows.length) {
+    // q is raw user input — build with textContent so a typed "<" can't inject markup
+    list.innerHTML = "";
+    const empty = document.createElement("div");
+    empty.className = "browse-empty";
+    empty.textContent = `No jobs match “${q}”.`;
+    list.appendChild(empty);
+    return;
   }
 
-  const wIdx2 = wageMetric().occIdx;
-  filtered.slice(0, 300).forEach(row => {
-    const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90, lq] = row;
-    const wageVal = row[wIdx2];
-
-    const tr = document.createElement("tr");
-    tr.className = "clickable-row";
-    tr.title = `Click to view regional area breakdown for ${title}`;
-    tr.innerHTML = `
-      <td style="font-weight: 600; color: var(--text-primary); max-width: 280px; overflow: hidden; text-overflow: ellipsis;">
-        <span style="color: var(--accent-cyan); margin-right: 4px;">›</span>${title}
-      </td>
-      <td style="text-align: right;" class="tabular">${fmt.number(emp)}</td>
-      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(wageVal)}</td>
-      <td style="text-align: right;">
-        <span class="badge-density ${lq && lq >= 1.25 ? 'high' : ''}">
-          ${fmt.lq(lq)}
-        </span>
-      </td>
-    `;
-
-    tr.addEventListener("click", () => {
-      openOccupationAreaBreakdown(soc, title);
-    });
-
-    fragment.appendChild(tr);
-  });
-
-  tbody.appendChild(fragment);
-  updateTableSortHeaders();
+  const frag = document.createDocumentFragment();
+  list.classList.remove("cols-4");
+  frag.appendChild(browseHead("emp", "Jobs"));
+  rows.slice(0, 400).forEach(r => frag.appendChild(browseRow({
+    title: r.title,
+    count: fmt.number(r.emp),
+    pay: r.wage > 0 ? fmt.currency(r.wage) : "\u2014",
+    onClick: () => openOccupationAreaBreakdown(r.soc, r.title)
+  })));
+  list.innerHTML = "";
+  list.appendChild(frag);
 }
 
-function updateTableSortHeaders() {
-  const { col, asc } = state.tableSort;
-  document.querySelectorAll("#occupationsTable th[data-col]").forEach(th => {
-    th.classList.remove("sorted-asc", "sorted-desc");
-    if (th.dataset.col === col) {
-      th.classList.add(asc ? "sorted-asc" : "sorted-desc");
-    }
-  });
-}
-
-function populateDrilldownRegionFilter() {
-  const sel = document.getElementById("drilldownRegionFilter");
-  const payload = state.activeJobPayload;
-  if (!sel || !payload || !payload.metros) return;
-
-  const stateMetaByCode = {};
-  (state.mapData && state.mapData.metros ? state.mapData.metros : []).forEach(m => {
-    if (m.state) stateMetaByCode[m.id] = m.state;
-  });
-
-  const codeToName = {};
-  Object.values(state.statesById || {}).forEach(s => {
-    if (s && s.state && s.name) codeToName[s.state] = s.name;
-  });
-
-  const present = new Set();
-  Object.keys(payload.metros).forEach(areaId => {
-    const code = stateMetaByCode[areaId];
-    if (code) present.add(code);
-  });
-
-  const options = Array.from(present)
-    .map(code => ({ code, name: codeToName[code] || code }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  sel.innerHTML = '<option value="ALL">All Regions</option>' +
-    options.map(o => `<option value="${o.code}">${o.name}</option>`).join("");
-  sel.value = "ALL";
-}
+/* kept as no-ops so older call sites don't throw */
+function updateTableSortHeaders() {}
+function setBrowseTitleHeader() {}
+function populateDrilldownRegionFilter() {}
 
 function closeOccupationAreaBreakdown() {
   state.drilldownSoc = null;
   state.drilldownTitle = "";
   state.drilldownRegion = "ALL";
-
-  document.getElementById("browseDrilldownBar").style.display = "none";
-  document.getElementById("occupationAreasTable").style.display = "none";
-
-  document.getElementById("browseControlBar").style.display = "flex";
-  document.getElementById("occupationsTable").style.display = "";
-
   renderBrowseTable();
+  resetBrowseScroll();
 }
 
 function renderOccupationAreasTable() {
   if (!state.drilldownSoc || !state.activeJobPayload) return;
+  const list = document.getElementById("browseList");
+  if (!list) return;
+  renderCrumbs();
 
   const payload = state.activeJobPayload;
-  const metrosMap = (state.mapData && state.mapData.metros) ? state.mapData.metros : [];
-  const metroNamesById = {};
-  const metroStateById = {};
-  metrosMap.forEach(m => {
-    metroNamesById[m.id] = m.name;
-    if (m.state) metroStateById[m.id] = m.state;
-  });
-
-  const regionFilter = state.drilldownRegion && state.drilldownRegion !== "ALL" ? state.drilldownRegion : null;
-
-  const rows = [];
-  if (payload.metros) {
-    Object.keys(payload.metros).forEach(areaId => {
-      if (regionFilter && metroStateById[areaId] !== regionFilter) return;
-      const stats = payload.metros[areaId]; // [emp, mean, median, p25, p75, lq]
-      const rawName = metroNamesById[areaId] || (state.manifest ? (state.manifest.find(a => a.id === areaId)?.name) : areaId) || `Area ${areaId}`;
-      const name = formatAreaName(rawName);
-
-      rows.push({
-        id: areaId,
-        name: name,
-        emp: stats[0] || 0,
-        mean: stats[1] || 0,
-        median: stats[2] || 0,
-        p25: stats[3] || 0,
-        p75: stats[4] || 0,
-        lq: stats[5] || 0
-      });
-    });
-  }
+  const nameById = {};
+  ((state.mapData && state.mapData.metros) ? state.mapData.metros : []).forEach(m => { nameById[m.id] = m.name; });
 
   const wKey = wageMetric().v === "mean" ? "mean"
              : wageMetric().v === "p25" ? "p25"
              : wageMetric().v === "p75" ? "p75" : "median";
-  const { col, asc } = state.areaTableSort;
-  rows.sort((a, b) => {
-    let vA, vB;
-    switch (col) {
-      case "name": vA = a.name; vB = b.name; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
-      case "emp": vA = a.emp; vB = b.emp; break;
-      case "lq": vA = a.lq; vB = b.lq; break;
-      case "wage": vA = a[wKey]; vB = b[wKey]; break;
-      default: vA = a[wKey]; vB = b[wKey];
-    }
-    return asc ? vA - vB : vB - vA;
+  const IDX = { emp: 0, mean: 1, median: 2, p25: 3, p75: 4, lq: 5 };
+
+  const rows = Object.keys(payload.metros || {}).map(areaId => {
+    const s = payload.metros[areaId];
+    const raw = nameById[areaId]
+      || (state.manifest && (state.manifest.find(a => a.id === areaId) || {}).name)
+      || `Area ${areaId}`;
+    return { id: areaId, title: formatAreaName(raw), emp: s[IDX.emp] || 0, wage: s[IDX[wKey]] || 0, lq: s[IDX.lq] || 0 };
   });
+  sortRows(rows);
 
+  if (!rows.length) {
+    list.innerHTML = `<div class="browse-empty">No place-by-place data for this job yet.</div>`;
+    return;
+  }
 
-  const tbody = document.getElementById("occupationAreasTableBody");
-  tbody.innerHTML = "";
-  const fragment = document.createDocumentFragment();
+  const frag = document.createDocumentFragment();
 
-  rows.forEach(r => {
-    const isSelected = r.id === state.currentAreaId;
-    const tr = document.createElement("tr");
-    tr.className = `clickable-row ${isSelected ? 'active-area-row' : ''}`;
-    tr.dataset.id = r.id;
-    tr.title = `Click to select ${r.name} on the map`;
-
-    tr.innerHTML = `
-      <td style="font-weight: 500; color: ${isSelected ? 'var(--accent-cyan)' : 'var(--text-primary)'}; max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
-        ${r.name}
-      </td>
-      <td style="text-align: right;" class="tabular">${fmt.number(r.emp)}</td>
-      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(r[wKey])}</td>
-      <td style="text-align: right;">
-        <span class="badge-density ${r.lq >= 1.25 ? 'high' : ''}">
-          ${fmt.lq(r.lq)}
-        </span>
-      </td>
-    `;
-
-    tr.addEventListener("click", () => {
-      loadArea(r.id, true);
-      document.querySelectorAll("#occupationAreasTableBody tr").forEach(rowEl => {
-        rowEl.classList.toggle("active-area-row", rowEl.dataset.id === r.id);
-      });
+  // When a region is selected, a way back to seeing them all.
+  if (state.currentAreaId && state.currentAreaId !== "99") {
+    const all = document.createElement("button");
+    all.className = "browse-row browse-row-all";
+    all.setAttribute("role", "listitem");
+    all.innerHTML = `<span class="browse-row-go" aria-hidden="true">‹</span><span class="browse-row-title">All regions</span>`;
+    all.addEventListener("click", () => {
+      if (typeof resetMapZoom === "function") resetMapZoom();
+      else loadArea("99", false);
+      renderOccupationAreasTable();
+      resetBrowseScroll();
     });
+    frag.appendChild(all);
+  }
 
-    fragment.appendChild(tr);
-  });
+  const count = document.createElement("div");
+  count.className = "browse-count";
+  count.innerHTML =
+    `<span id="regionCount">${fmt.number(rows.length)} regions</span>` +
+    `<input type="text" id="regionFilterInput" class="region-filter" placeholder="Type a region…" autocomplete="off" aria-label="Filter regions">`;
+  frag.appendChild(count);
+  list.classList.add("cols-4");
+  frag.appendChild(browseHead("emp", "Jobs", true));
+  rows.forEach(r => frag.appendChild(browseRow({
+    title: r.title,
+    count: fmt.number(r.emp),
+    pay: r.wage > 0 ? fmt.currency(r.wage) : "\u2014",
+    dens: densityBit(r.lq),
+    active: r.id === state.currentAreaId,
+    onClick: () => { loadArea(r.id, true); renderOccupationAreasTable(); }
+  })));
+  list.innerHTML = "";
+  list.appendChild(frag);
 
-  tbody.appendChild(fragment);
-
-  // Update sort headers for occupationAreasTable
-  document.querySelectorAll("#occupationAreasTable th[data-col]").forEach(th => {
-    th.classList.remove("sorted-asc", "sorted-desc");
-    if (th.dataset.col === col) {
-      th.classList.add(asc ? "sorted-asc" : "sorted-desc");
-    }
-  });
+  // Type-to-filter the region list (selecting still runs through loadArea, so
+  // the map, Summary and legend all follow).
+  const input = document.getElementById("regionFilterInput");
+  const countEl = document.getElementById("regionCount");
+  const applyRegionFilter = () => {
+    const query = (state.regionFilter || "").toLowerCase().trim();
+    let shown = 0;
+    list.querySelectorAll(".browse-row:not(.browse-row-all)").forEach(rowEl => {
+      const t = (rowEl.querySelector(".browse-row-title") || {}).textContent || "";
+      const match = !query || t.toLowerCase().includes(query);
+      rowEl.hidden = !match;
+      if (match) shown++;
+    });
+    if (countEl) countEl.textContent = `${fmt.number(shown)} ${shown === 1 ? "region" : "regions"}`;
+  };
+  if (input) {
+    input.value = state.regionFilter || "";
+    input.addEventListener("input", () => { state.regionFilter = input.value; applyRegionFilter(); });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const first = list.querySelector(".browse-row:not(.browse-row-all):not([hidden])");
+        if (first) first.click();
+      }
+    });
+  }
+  applyRegionFilter();
 }
-
-
 async function openOccupationAreaBreakdown(soc, title) {
   state.drilldownSoc = soc;
   state.drilldownTitle = title;
-
-  // Sync with global Map job
-  if (state.activeMapSoc !== soc) {
-    await loadMapJob(soc);
-  }
-
-  // Switch display from Table A to Table B
-  document.getElementById("occupationsTable").style.display = "none";
-  document.getElementById("browseControlBar").style.display = "none";
-
-  const drilldownBar = document.getElementById("browseDrilldownBar");
-  drilldownBar.style.display = "flex";
-  document.getElementById("browseDrilldownTitle").textContent = title;
-
   state.drilldownRegion = "ALL";
-  populateDrilldownRegionFilter();
 
-  const ddWage = document.getElementById("drilldownWageMetric");
-  if (ddWage) ddWage.value = state.browseWageMetric;
-  syncWageColHeaders();
-
-  const tableAreas = document.getElementById("occupationAreasTable");
-  tableAreas.style.display = "";
-
+  // Recolour the map for this job, then show its place-by-place list.
+  if (state.activeMapSoc !== soc) await loadMapJob(soc);
   renderOccupationAreasTable();
+  resetBrowseScroll();
 }
 
 // On entry (touch devices), trace a thin line once around each search field.
@@ -5877,71 +5849,10 @@ function setupEventListeners() {
     renderBrowseTable();
   });
 
-  // Browse Filters (the occupation text search now lives in #mapJobSearchInput,
-  // wired in setupMapControls).
-  document.getElementById("browseEduFilter").addEventListener("change", renderBrowseTable);
-  document.getElementById("browseGroupFilter").addEventListener("change", renderBrowseTable);
-
-  // Wage metric selector — two copies (filter bar + occupation drilldown bar)
-  // kept in sync. Swaps which wage the single Wage column shows.
-  const wageSels = ["browseWageMetric", "drilldownWageMetric"]
-    .map(id => document.getElementById(id))
-    .filter(Boolean);
-  wageSels.forEach(sel => {
-    sel.value = state.browseWageMetric;
-    sel.addEventListener("change", () => {
-      state.browseWageMetric = sel.value;
-      wageSels.forEach(s => { if (s !== sel) s.value = sel.value; });
-      syncWageColHeaders();
-      if (state.drilldownSoc) renderOccupationAreasTable();
-      else renderBrowseTable();
-    });
-  });
+  // The one wage metric lives in #mapMetricTabs now (wired in setupMapControls);
+  // the occupation text search lives in #mapJobSearchInput. The browse list
+  // sorts by pay, high to low, with no separate control.
   syncWageColHeaders();
-
-  // Browse Table Sort Headers
-  document.querySelectorAll("#occupationsTable th[data-col]").forEach(th => {
-    th.addEventListener("click", () => {
-      const col = th.dataset.col;
-      if (state.tableSort.col === col) {
-        state.tableSort.asc = !state.tableSort.asc;
-      } else {
-        state.tableSort.col = col;
-        state.tableSort.asc = (col === "title");
-      }
-      updateTableSortHeaders();
-      renderBrowseTable();
-    });
-  });
-
-  // Area Breakdown Table Sort Headers
-  document.querySelectorAll("#occupationAreasTable th[data-col]").forEach(th => {
-    th.addEventListener("click", () => {
-      const col = th.dataset.col;
-      if (state.areaTableSort.col === col) {
-        state.areaTableSort.asc = !state.areaTableSort.asc;
-      } else {
-        state.areaTableSort.col = col;
-        state.areaTableSort.asc = (col === "name");
-      }
-      renderOccupationAreasTable();
-    });
-  });
-
-  // Back Button from Occupation Area Breakdown
-  const backBtn = document.getElementById("browseDrilldownBackBtn");
-  if (backBtn) {
-    backBtn.addEventListener("click", closeOccupationAreaBreakdown);
-  }
-
-  // Region scope filter inside the occupation drilldown
-  const drilldownRegion = document.getElementById("drilldownRegionFilter");
-  if (drilldownRegion) {
-    drilldownRegion.addEventListener("change", () => {
-      state.drilldownRegion = drilldownRegion.value || "ALL";
-      renderOccupationAreasTable();
-    });
-  }
 
   // The ⟲ button in the map's zoom stack is map-scoped: deselect the area,
   // drop the state focus, and zoom back out to the national view. It leaves
@@ -6002,11 +5913,13 @@ function moveTooltip(e) {
   const th = tooltip.offsetHeight || 200;
   let x = cx + 16;
   let y = cy + 16;
-  // Flip to the other side / clamp so the card never spills off any edge.
+  // Flip to the other side so the card never spills off — or covers — an edge.
   if (x + tw + pad > window.innerWidth) x = cx - tw - 16;
   if (x < pad) x = pad;
-  if (y + th + pad > window.innerHeight) y = window.innerHeight - th - pad;
-  if (y < pad) y = pad;
+  // Not enough room below the cursor: put the card *above* it rather than
+  // letting it clamp down over whatever sits at the bottom of the view.
+  if (y + th + pad > window.innerHeight) y = cy - th - 16;
+  if (y < pad) y = Math.min(pad, window.innerHeight - th - pad);
   tooltip.style.left = x + "px";
   tooltip.style.top = y + "px";
 }
