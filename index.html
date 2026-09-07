@@ -2509,7 +2509,7 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
                 </div>
               </div>
               <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
-                <g id="mapZoomGroup" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
+                <g id="mapZoomGroup" transform="translate(73, 46) scale(0.85)" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
                   <!-- Base US States Layer -->
                   <g id="statesLayer"></g>
                   <!-- Mode 1: Statistical Areas (MSAs & Non-Metro) Area Lines & Choropleth Layer -->
@@ -2802,7 +2802,7 @@ const state = {
   mapMode: "area",           // 'area' | 'bubble'
   jobCache: new Map(),
   activeJobPayload: null,
-  mapZoom: { scale: 1, x: 0, y: 0 },
+  mapZoom: { scale: 0.85, x: 73, y: 46 },
   dragSuppressedClick: false,
   _areaLoadToken: 0,
   _areaEls: null,
@@ -3198,10 +3198,10 @@ function zoomToState(stateIdOrCode) {
 
 function resetMapZoom() {
   state.focusedState = null;
-  state.mapZoom = { scale: 1, x: 0, y: 0 };
+  state.mapZoom = { scale: 0.85, x: 73, y: 46 };
   const zoomGroup = document.getElementById("mapZoomGroup");
   if (zoomGroup) {
-    zoomGroup.setAttribute("transform", "translate(0, 0) scale(1)");
+    zoomGroup.setAttribute("transform", "translate(73, 46) scale(0.85)");
   }
   refreshBubblesForZoom();
 
@@ -4410,7 +4410,7 @@ function setupMapControls() {
     const oldScale = state.mapZoom.scale;
     const newScale = Math.max(1, oldScale / 1.35);
     if (newScale === 1) {
-      state.mapZoom = { scale: 1, x: 0, y: 0 };
+      state.mapZoom = { scale: 0.85, x: 73, y: 46 };
     } else {
       state.mapZoom.x = Math.round(cx - (cx - state.mapZoom.x) * (newScale / oldScale));
       state.mapZoom.y = Math.round(cy - (cy - state.mapZoom.y) * (newScale / oldScale));
@@ -4725,10 +4725,10 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
       c.classList.remove("bubble-focused", "bubble-dimmed", "highlighted");
     });
     if (shouldZoom) {
-      state.mapZoom = { scale: 1, x: 0, y: 0 };
+      state.mapZoom = { scale: 0.85, x: 73, y: 46 };
       const zoomGroup = document.getElementById("mapZoomGroup");
       if (zoomGroup) {
-        zoomGroup.setAttribute("transform", "translate(0, 0) scale(1)");
+        zoomGroup.setAttribute("transform", "translate(73, 46) scale(0.85)");
       }
     }
   }
