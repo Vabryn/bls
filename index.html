@@ -545,101 +545,37 @@ body {
   min-width: 0;
   min-height: 0;
   flex: 1 1 auto;            /* take the space left over the Summary panel */
-  gap: 10px;
-  --map-split-width: 50%;    /* divider defaults to the horizontal centre */
+  gap: 14px;
+  --map-split-width: 50%;    /* map occupies the right half; no drag slider */
 }
+/* Map lives on the right; the Browse + Summary column on the left. */
 .map-center-split > .map-card {
-  order: 3;                        /* browse on the left, map on the right */
+  order: 2;
   flex: 0 0 var(--map-split-width);
   min-width: 380px;
   min-height: 0;
   max-width: calc(100% - 340px);
 }
-.map-center-split > #mapBrowseDivider { order: 2; }
-.map-center-split > .browse-card {
+.map-center-split > .split-left {
   order: 1;
   flex: 1 1 0;
   min-width: 340px;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.split-left > .browse-card { flex: 1 1 auto; min-height: 0; }
+.split-left > .area-summary,
+.split-left > .page-metric-bar {
+  flex: 0 0 auto;
+  align-self: stretch;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 @media (max-width: 990px) {
   .map-center-split { flex: 0 0 auto; }
-}
-
-/* Draggable Splitter Divider & Handle Puck */
-.split-divider {
-  width: 16px;
-  margin: 0 -2px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: col-resize;
-  user-select: none;
-  touch-action: none;
-  z-index: 10;
-  flex-shrink: 0;
-}
-.split-divider::before {
-  content: "";
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 1px;
-  background: var(--border-subtle);
-  transition: background 0.15s ease, width 0.15s ease;
-}
-.split-divider:hover::before,
-.split-divider.is-dragging::before {
-  background: var(--accent-cyan);
-  width: 2px;
-}
-.split-handle-puck {
-  width: 18px;
-  height: 46px;
-  background: var(--bg-surface);
-  border: 1.5px solid var(--border-medium);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-sm), 0 0 7px -2px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
-  position: relative;
-  z-index: 2;
-  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: col-resize;
-}
-.split-handle-puck::after {
-  content: "⋮";
-  font-size: 13px;
-  line-height: 1;
-  color: var(--text-muted);
-  letter-spacing: -1px;
-  font-weight: 700;
-  transition: color 0.15s ease;
-}
-.split-divider:hover .split-handle-puck,
-.split-divider.is-dragging .split-handle-puck {
-  border-color: var(--accent-cyan);
-  background: var(--bg-elevated);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
-  transform: scale(1.1);
-}
-.split-divider:hover .split-handle-puck::after,
-.split-divider.is-dragging .split-handle-puck::after {
-  color: var(--accent-cyan);
-}
-[data-theme="light"] .split-handle-puck {
-  background: var(--bg-surface);
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-}
-[data-theme="light"] .split-divider:hover .split-handle-puck,
-[data-theme="light"] .split-divider.is-dragging .split-handle-puck {
-  border-color: #0284c7;
-  box-shadow: 0 0 8px rgba(2, 132, 199, 0.3);
 }
 
 @media (max-width: 1200px) {
@@ -657,15 +593,17 @@ body {
     flex-direction: column;
   }
   .map-center-split > .map-card,
-  .map-center-split > .browse-card {
+  .map-center-split > .split-left {
     flex: 1 1 auto;
     width: 100%;
     max-width: 100%;
     min-width: 0;
   }
-  .split-divider {
-    display: none;
-  }
+  /* Stacked order: map first, then the Browse column (Summary is hoisted
+     to the top of the column by positionSummaryPanel()). */
+  .map-center-split > .map-card { order: 1; }
+  .map-center-split > .split-left { order: 2; }
+  .split-left { gap: 12px; }
   .map-layout-grid {
     grid-template-columns: 1fr;
     gap: 14px;
@@ -1317,97 +1255,79 @@ body {
 .browse-head,
 .browse-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 92px 108px 16px;
-  align-items: center;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 86px 98px;
+  align-items: stretch;
   width: 100%;
   text-align: left;
-  padding: 12px 16px;
   border-bottom: 1px solid var(--border-subtle);
   font-family: var(--font-sans);
+}
+.browse-list.cols-4 .browse-head,
+.browse-list.cols-4 .browse-row {
+  grid-template-columns: minmax(0, 1fr) 72px 88px 60px;
 }
 .browse-head {
   position: sticky;
   top: 0;
   z-index: 2;
-  padding-top: 9px;
-  padding-bottom: 9px;
   background: var(--bg-elevated);
   border-bottom: 1px solid var(--border-medium);
 }
 .bh {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
   background: none;
   border: 0;
-  padding: 0;
-  font: 700 10px/1.15 var(--font-sans);
+  padding: 9px 12px;
+  font: 700 10.5px/1.2 var(--font-sans);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
   cursor: pointer;
+  white-space: nowrap;
 }
-.bh-name { align-items: flex-start; text-align: left; }
-.bh-num  { align-items: flex-end;  text-align: right; }
+.bh-num { text-align: right; border-left: 1px solid var(--border-subtle); }
 .bh:hover { color: var(--text-secondary); }
 .bh.on { color: var(--accent-cyan); }
-.bh-dir {
-  font-size: 8.5px;
-  font-weight: 600;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--accent-cyan);
-}
+.bh-dir { margin-left: 3px; font-size: 9px; }
+
 .browse-row {
   background: none;
-  border-left: 0;
-  border-right: 0;
-  border-top: 0;
   cursor: pointer;
   transition: background 0.1s ease;
 }
 button.browse-row:hover { background: var(--bg-elevated); }
-.browse-row.active {
-  background: color-mix(in srgb, var(--accent-cyan) 12%, transparent);
-}
+.browse-row.active { background: color-mix(in srgb, var(--accent-cyan) 12%, transparent); }
 .browse-row.active .browse-row-title { color: var(--accent-cyan); }
 .browse-row-title {
-  font-size: 14px;
+  align-self: center;
+  padding: 9px 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
-  line-height: 1.25;
+  line-height: 1.3;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .browse-col {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 9px 12px;
+  border-left: 1px solid var(--border-subtle);
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--text-secondary);
+  font-weight: 600;
+  color: var(--text-primary);
   text-align: right;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
-.browse-col-pay {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  color: var(--text-primary);
-  font-weight: 600;
-}
-.browse-col-dens { font-size: 10px; font-weight: 500; color: var(--text-muted); }
+.browse-col.is-secondary { color: var(--text-secondary); font-weight: 500; }
+.browse-col-dens { color: var(--text-muted); }
 .browse-col-dens.hot { color: var(--accent-emerald); }
 .browse-col-dens.low { color: var(--accent-rose); }
-.browse-row-go {
-  font-size: 18px;
-  line-height: 1;
-  color: var(--text-muted);
-  text-align: center;
-}
-button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
 .browse-tag {
   display: inline-block;
   margin-left: 4px;
@@ -1437,12 +1357,13 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
   color: var(--text-muted);
   font-size: 13px;
 }
-.browse-row-all {
+.browse-row.browse-row-all {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 11px 16px;
 }
+.browse-row-all .browse-row-title { padding: 0; }
 .browse-row-all .browse-row-go {
   font-size: 18px;
   color: var(--accent-cyan);
@@ -2668,12 +2589,9 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
             </div>
           </div>
 
-          <!-- Dynamic Resizer Puck Divider between Map and Search/Browse -->
-          <div class="split-divider" id="mapBrowseDivider" title="Drag to adjust Map and Browse sizes" role="separator" aria-orientation="vertical">
-            <div class="split-handle-puck" aria-hidden="true"></div>
-          </div>
-
-          <!-- Right Visualizer: Browse Occupations & Regional Area Breakdown -->
+          <!-- LEFT column: Browse, with the Summary + wage-metric control beneath it -->
+          <div class="split-left" id="splitLeft">
+          <!-- Browse Occupations & Regional Area Breakdown -->
           <div class="browse-card" id="browseCardContainer">
             <!-- Browse Toolbar -->
             <div class="browse-card-toolbar">
@@ -2704,9 +2622,8 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
               <div class="browse-list" id="browseList" role="list"></div>
             </div>
           </div>
-        </div>
 
-        <!-- Summary — a compact one-line strip pinned above the map + browse -->
+        <!-- Summary — a compact strip that sits directly under the Browse card -->
         <div class="area-summary" id="kpiBar">
           <div class="area-summary-head">
                 <span class="area-summary-eyebrow">Summary</span>
@@ -2771,6 +2688,8 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
             <button class="segmented-btn" data-metric="lq">Density</button>
           </div>
         </div>
+        </div><!-- /.split-left -->
+        </div><!-- /.map-center-split -->
       </div>
     </div>
   </section>
@@ -2873,6 +2792,7 @@ const state = {
   browseWageMetric: "median",   // 'median' | 'mean' | 'p25' | 'p75' — the one page-wide wage metric
   browseSector: null,           // null = sectors overview; 0..21 = that sector's occupations
   browseSort: { key: "wage", asc: false },   // spreadsheet sort: key + direction
+  regionFilter: "",             // type-to-filter text for the regional (drill-down) list
   jobDataYear: null,            // year the active occupation's data actually came from (fallback when the selected year is incomplete)
   jobPrior: new Map(),         // soc -> { "2024": payload, "2023": payload, "2022": payload } for per-field gap-fill
   _priorLoading: new Set(),
@@ -3003,22 +2923,31 @@ function getChoroplethFill(val, minVal, maxVal, isDark = true, isLog = false) {
   return `rgba(${last[0]}, ${last[1]}, ${last[2]}, ${alpha})`;
 }
 
-// The Summary is the first thing in the column on every viewport — a compact
-// one-line strip above the map + browse (it pins under the masthead when the
-// layout stacks). Its DOM home is last in .map-canvas-column, so hoist it to
-// first. (A CSS display:contents reorder did not take on iOS Safari.)
+// Where the Summary strip + the page-wide wage-metric control live depends on
+// the viewport:
+//   • Desktop — inside the left column, directly beneath the Browse card
+//     (map on the right, no drag slider).
+//   • Stacked (≤990px) — hoisted to the very top of the column so the reader
+//     meets Summary, then map, then Browse.
+// (A CSS-only reorder via display:contents did not take on iOS Safari, so the
+// nodes are physically moved.)
 function positionSummaryPanel() {
   const summary = document.getElementById("kpiBar");
   const metricBar = document.getElementById("pageMetricBar");
   const col = document.getElementById("mapCanvasColumn");
   const split = document.getElementById("mapCenterSplit");
-  if (!col || !split) return;
-  // Order the column: Summary, then the wage-metric bar, then the map+browse.
-  if (metricBar && metricBar.parentElement === col && metricBar !== split.previousElementSibling) {
-    col.insertBefore(metricBar, split);
-  }
-  if (summary && col.firstElementChild !== summary) {
-    col.insertBefore(summary, col.firstElementChild);
+  const left = document.getElementById("splitLeft");
+  if (!col || !split || !left || !summary || !metricBar) return;
+
+  const stacked = window.matchMedia("(max-width: 990px)").matches;
+  if (stacked) {
+    if (col.firstElementChild !== summary) col.insertBefore(summary, col.firstElementChild);
+    if (summary.nextElementSibling !== metricBar) col.insertBefore(metricBar, summary.nextElementSibling);
+  } else {
+    if (metricBar.parentElement !== left) left.appendChild(metricBar);
+    if (summary.parentElement !== left || summary.nextElementSibling !== metricBar) {
+      left.insertBefore(summary, metricBar);
+    }
   }
 }
 
@@ -3029,6 +2958,7 @@ async function init() {
   setupYearSelect();
   introTraceSearchBars();
   positionSummaryPanel();
+  window.matchMedia("(max-width: 990px)").addEventListener("change", positionSummaryPanel);
 
   const urlParams = new URLSearchParams(window.location.search);
   const requestedArea = urlParams.get("area");
@@ -4510,77 +4440,6 @@ function setupMapControls() {
   const mzr = document.getElementById("mapZoomReset");
   if (mzr) mzr.addEventListener("click", resetMapZoom);
   // #mapResetBtn (the ⟲ in the zoom stack) is wired in setupEventListeners.
-
-  // -------------------------------------------------------------
-  // Dynamic Splitter Puck between Map and Search/Browse
-  // -------------------------------------------------------------
-  setupSplitterPuck();
-}
-
-function setupSplitterPuck() {
-  const divider = document.getElementById("mapBrowseDivider");
-  const splitParent = document.getElementById("mapCenterSplit");
-  if (!divider || !splitParent) return;
-
-  let isDraggingSplitter = false;
-  let startClientX = 0;
-  let initialMapWidth = 0;
-  let splitParentWidth = 0;
-
-  const onSplitPointerDown = (e) => {
-    if (e.button && e.button !== 0) return;
-    isDraggingSplitter = true;
-    divider.classList.add("is-dragging");
-    document.body.style.cursor = "col-resize";
-    document.body.style.userSelect = "none";
-
-    startClientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    const splitRect = splitParent.getBoundingClientRect();
-    splitParentWidth = splitRect.width;
-
-    const mapCard = document.getElementById("mapCardContainer");
-    if (mapCard) {
-      initialMapWidth = mapCard.getBoundingClientRect().width;
-    }
-
-    if (e.cancelable && e.type === "touchstart") {
-      e.preventDefault();
-    }
-  };
-
-  const onSplitPointerMove = (e) => {
-    if (!isDraggingSplitter) return;
-    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    const dx = clientX - startClientX;
-
-    if (splitParentWidth > 0) {
-      const newWidthPx = initialMapWidth - dx;   // map sits on the right now
-      // Clamp between 32% and 68% of the container width
-      const minPx = Math.max(340, splitParentWidth * 0.32);
-      const maxPx = Math.min(splitParentWidth - 340, splitParentWidth * 0.68);
-      const clampedPx = Math.max(minPx, Math.min(maxPx, newWidthPx));
-      const pct = (clampedPx / splitParentWidth) * 100;
-
-      splitParent.style.setProperty("--map-split-width", `${pct.toFixed(2)}%`);
-    }
-  };
-
-  const onSplitPointerUp = () => {
-    if (!isDraggingSplitter) return;
-    isDraggingSplitter = false;
-    divider.classList.remove("is-dragging");
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-  };
-
-  divider.addEventListener("mousedown", onSplitPointerDown);
-  window.addEventListener("mousemove", onSplitPointerMove);
-  window.addEventListener("mouseup", onSplitPointerUp);
-
-  divider.addEventListener("touchstart", onSplitPointerDown, { passive: false });
-  window.addEventListener("touchmove", onSplitPointerMove, { passive: true });
-  window.addEventListener("touchend", onSplitPointerUp, { passive: true });
-  window.addEventListener("touchcancel", onSplitPointerUp, { passive: true });
 }
 
 function filterMapJobDropdown(query) {
@@ -5621,7 +5480,7 @@ function fmtPay(v) { return v > 0 ? `${fmt.currency(v)} a year` : "pay not repor
 function densityBit(lq) {
   if (!(lq > 0)) return null;
   const cls = lq >= 1.25 ? "hot" : (lq < 0.8 ? "low" : "");
-  return { txt: `${lq.toFixed(2)}× density`, cls };
+  return { txt: `${lq.toFixed(2)}\u00d7`, cls };
 }
 function clearJobSearch() {
   const i = document.getElementById("mapJobSearchInput");
@@ -5653,19 +5512,21 @@ function setBrowseSort(key) {
 }
 // Spreadsheet-style header: Name | <count> | Pay, each sortable with a
 // plain-language direction hint (A->Z, Low->High).
-function browseHead(countKey, countLabel) {
+function browseHead(countKey, countLabel, withDensity) {
   const { key, asc } = state.browseSort;
-  const dir = (k, aLabel, dLabel) => key === k ? `<span class="bh-dir">${asc ? aLabel : dLabel}</span>` : "";
+  const arrow = k => key === k ? `<span class="bh-dir">${asc ? "▲" : "▼"}</span>` : "";
   const head = document.createElement("div");
   head.className = "browse-head";
-  head.innerHTML =
-    `<button class="bh bh-name${key === "title" ? " on" : ""}">Name${dir("title", "A→Z", "Z→A")}</button>` +
-    `<button class="bh bh-num${key === countKey ? " on" : ""}">${countLabel}${dir(countKey, "Low→High", "High→Low")}</button>` +
-    `<button class="bh bh-num${key === "wage" ? " on" : ""}">Pay${dir("wage", "Low→High", "High→Low")}</button>` +
-    `<span class="bh-gap"></span>`;
-  head.children[0].addEventListener("click", () => setBrowseSort("title"));
-  head.children[1].addEventListener("click", () => setBrowseSort(countKey));
-  head.children[2].addEventListener("click", () => setBrowseSort("wage"));
+  const cells = [
+    { k: "title", label: "Name", cls: "bh-name" },
+    { k: countKey, label: countLabel, cls: "bh-num" },
+    { k: "wage", label: "Pay", cls: "bh-num" }
+  ];
+  if (withDensity) cells.push({ k: "lq", label: "Density", cls: "bh-num" });
+  head.innerHTML = cells
+    .map(c => `<button class="bh ${c.cls}${key === c.k ? " on" : ""}">${c.label}${arrow(c.k)}</button>`)
+    .join("");
+  cells.forEach((c, i) => head.children[i].addEventListener("click", () => setBrowseSort(c.k)));
   return head;
 }
 
@@ -5729,10 +5590,9 @@ function browseRow(o) {
   row.setAttribute("role", "listitem");
   row.innerHTML =
     `<span class="browse-row-title">${o.title}</span>` +
-    `<span class="browse-col browse-col-num">${o.count}</span>` +
-    `<span class="browse-col browse-col-num browse-col-pay">${o.pay}` +
-      `${o.dens ? `<span class="browse-col-dens ${o.dens.cls}">${o.dens.txt}</span>` : ""}</span>` +
-    `<span class="browse-row-go" aria-hidden="true">${o.chevron ? "›" : ""}</span>`;
+    `<span class="browse-col browse-col-num is-secondary">${o.count}</span>` +
+    `<span class="browse-col browse-col-pay">${o.pay}</span>` +
+    (o.dens ? `<span class="browse-col browse-col-dens ${o.dens.cls}">${o.dens.txt}</span>` : "");
   if (o.onClick) row.addEventListener("click", o.onClick);
   return row;
 }
@@ -5764,12 +5624,12 @@ function renderSectorsList(data) {
   sortRows(rows);
 
   const frag = document.createDocumentFragment();
+  list.classList.remove("cols-4");
   frag.appendChild(browseHead("roles", "Roles"));
   rows.forEach(r => frag.appendChild(browseRow({
     title: r.title,
-    count: `${fmt.number(r.roles)} ${r.roles === 1 ? "role" : "roles"}`,
-    pay: fmtPay(r.wage),
-    chevron: true,
+    count: fmt.number(r.roles),
+    pay: r.wage > 0 ? fmt.currency(r.wage) : "\u2014",
     onClick: () => { state.browseSector = r.gi; renderBrowseTable(); resetBrowseScroll(); }
   })));
   list.innerHTML = "";
@@ -5801,17 +5661,22 @@ function renderBrowseTable() {
   sortRows(rows);
 
   if (!rows.length) {
-    list.innerHTML = `<div class="browse-empty">No jobs match “${q}”.</div>`;
+    // q is raw user input — build with textContent so a typed "<" can't inject markup
+    list.innerHTML = "";
+    const empty = document.createElement("div");
+    empty.className = "browse-empty";
+    empty.textContent = `No jobs match “${q}”.`;
+    list.appendChild(empty);
     return;
   }
 
   const frag = document.createDocumentFragment();
+  list.classList.remove("cols-4");
   frag.appendChild(browseHead("emp", "Jobs"));
   rows.slice(0, 400).forEach(r => frag.appendChild(browseRow({
     title: r.title,
-    count: fmtJobs(r.emp),
-    pay: fmtPay(r.wage),
-    chevron: true,
+    count: fmt.number(r.emp),
+    pay: r.wage > 0 ? fmt.currency(r.wage) : "\u2014",
     onClick: () => openOccupationAreaBreakdown(r.soc, r.title)
   })));
   list.innerHTML = "";
@@ -5883,11 +5748,12 @@ function renderOccupationAreasTable() {
     `<span id="regionCount">${fmt.number(rows.length)} regions</span>` +
     `<input type="text" id="regionFilterInput" class="region-filter" placeholder="Type a region…" autocomplete="off" aria-label="Filter regions">`;
   frag.appendChild(count);
-  frag.appendChild(browseHead("emp", "Jobs"));
+  list.classList.add("cols-4");
+  frag.appendChild(browseHead("emp", "Jobs", true));
   rows.forEach(r => frag.appendChild(browseRow({
     title: r.title,
-    count: fmtJobs(r.emp),
-    pay: fmtPay(r.wage),
+    count: fmt.number(r.emp),
+    pay: r.wage > 0 ? fmt.currency(r.wage) : "\u2014",
     dens: densityBit(r.lq),
     active: r.id === state.currentAreaId,
     onClick: () => { loadArea(r.id, true); renderOccupationAreasTable(); }
