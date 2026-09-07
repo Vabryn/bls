@@ -2233,6 +2233,18 @@ body {
   border-top: 1px solid #cbd5e1;
   color: #64748b;
 }
+
+/* iOS Safari zooms the whole page when a control smaller than 16px gets focus.
+   Bump form controls to 16px on touch devices only — desktop is untouched.
+   Placed last so it beats the narrower mobile-density rules above. */
+@media (pointer: coarse) {
+  .combobox-input,
+  .control-input,
+  .control-select,
+  #browseControlBar > .control-select {
+    font-size: 16px;
+  }
+}
 </style>
 </head>
 <body>
