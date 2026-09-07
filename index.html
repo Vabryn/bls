@@ -76,7 +76,7 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;   /* contain sideways overflow without breaking position: sticky */
 }
 
 .tabular {
@@ -93,53 +93,6 @@ body {
   z-index: 50;
 }
 
-/* Pinned area + headline wage — desktop keeps the full Summary panel in view,
-   so this only appears on the stacked layout. */
-.masthead-summary { display: none; }
-@media (max-width: 990px) {
-  .masthead-summary {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    width: 100%;
-    margin: 0;
-    padding: 7px 16px 9px;
-    border: 0;
-    border-top: 1px solid var(--border-subtle);
-    background: var(--bg-canvas);
-    font-family: var(--font-sans);
-    text-align: left;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .masthead-summary[hidden] { display: none; }
-  .mh-sum-context {
-    flex: 1 1 auto;
-    min-width: 0;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .mh-sum-metric {
-    flex-shrink: 0;
-    font-family: var(--font-mono);
-    font-size: 13.5px;
-    font-weight: 700;
-    color: var(--accent-cyan);
-    white-space: nowrap;
-  }
-  .mh-sum-metric::after {
-    content: " ›";
-    font-weight: 400;
-    color: var(--text-muted);
-  }
-  /* Land the Summary below the pinned header, not under it. */
-  .area-summary { scroll-margin-top: 92px; }
-}
 .masthead-inner {
   max-width: 1120px;
   margin: 0 auto;
@@ -1092,6 +1045,73 @@ body {
   .area-summary-context {
     display: none;
   }
+}
+
+/* Stacked layout: the Summary is the first thing on the page and pins under
+   the masthead, compressed to one header line + a single 4-up figure strip so
+   the whole thing (plus the top of the map) is on screen without scrolling.
+   Placed after the narrower blocks above so it wins the cascade. */
+@media (max-width: 990px) {
+  .area-summary {
+    position: sticky;
+    top: 44px;
+    z-index: 40;
+    flex: 0 0 auto;
+    overflow: visible;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    box-shadow: 0 8px 16px -10px rgba(0, 0, 0, 0.55);
+  }
+  .area-summary-head {
+    justify-content: flex-start;
+    align-items: baseline;
+    gap: 3px 6px;
+    padding: 7px 14px 6px;
+  }
+  .area-summary-eyebrow,
+  .area-summary-conn { font-size: 11.5px; }
+  .area-summary-head .pill-token:not([hidden]) {
+    font-size: 10.5px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    line-height: 1.3;
+  }
+  .area-summary-context { display: none; }
+  .data-year-flag { display: none; }
+
+  .area-summary-grid { grid-template-columns: repeat(4, 1fr); }
+  .area-metric,
+  .area-metric:nth-child(odd),
+  .area-metric:nth-child(1),
+  .area-metric:nth-child(2),
+  .area-metric:first-child {
+    padding: 6px 8px 7px;
+    gap: 1px;
+    border-top: 0;
+    border-left: 1px solid var(--area-rule);
+  }
+  .area-metric:nth-child(4n + 1) { border-left: 0; }
+  .area-metric-label {
+    font-size: 8.5px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: normal;
+    overflow: visible;
+    line-height: 1.2;
+  }
+  .area-metric-value { font-size: 12.5px; }
+  .area-metric-value.is-text {
+    font-size: 10px;
+    line-height: 1.15;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  .area-metric-meta,
+  .area-summary-disclosure { display: none; }
 }
 
 /* Map Card & SVG */
@@ -2346,13 +2366,6 @@ body {
       </button>
     </div>
   </div>
-  <!-- Stays pinned under the brand row on phones so the current area + its
-       headline wage travel with you while you scroll the map and the
-       occupations list. Tap to jump to the full breakdown. -->
-  <button type="button" class="masthead-summary" id="mhSummary" hidden>
-    <span class="mh-sum-context" id="mhContext">United States · all occupations</span>
-    <span class="mh-sum-metric" id="mhMetric">—</span>
-  </button>
 </header>
 
 <main class="page-container">
@@ -2871,44 +2884,23 @@ function getChoroplethFill(val, minVal, maxVal, isDark = true, isLog = false) {
 }
 
 // Initialize Application
-// Stacked layout (phones/tablets, <=990px): the pinned masthead strip carries
-// the area + headline wage, so the full Summary panel goes last — after the
-// occupations list — for anyone who wants the complete breakdown. On desktop
-// it's its own full-width panel below the map+browse split. Move the actual
-// node (a CSS display:contents reorder did not take on iOS Safari) and let it
-// settle on breakpoint changes.
+// Stacked layout (phones/tablets, <=990px): the Summary is the first section,
+// above the map, and pins under the masthead in a compressed form so the
+// current area + its figures are always on screen. On desktop it's its own
+// full-width panel below the map+browse split. Move the actual node (a CSS
+// display:contents reorder did not take on iOS Safari) and re-settle it on
+// breakpoint changes.
 function positionSummaryPanel() {
   const summary = document.getElementById("kpiBar");
   const col = document.getElementById("mapCanvasColumn");
   const split = document.getElementById("mapCenterSplit");
-  const browse = document.getElementById("browseCardContainer");
-  if (!summary || !col || !split || !browse) return;
+  if (!summary || !col || !split) return;
   const stacked = window.matchMedia("(max-width: 990px)").matches;
   if (stacked) {
-    if (summary.previousElementSibling !== browse) browse.after(summary);
-  } else if (summary.parentElement !== col) {
+    if (col.firstElementChild !== summary) col.insertBefore(summary, split);
+  } else if (summary.parentElement !== col || summary.nextElementSibling) {
     col.appendChild(summary);   // back to last child, after #summaryDivider
   }
-}
-
-// Mirror the finished KPI figures into the pinned masthead strip so the current
-// area + occupation + headline wage stay visible while scrolling. Reads the
-// already-rendered KPI DOM rather than recomputing anything.
-function updateStickySummary() {
-  const bar = document.getElementById("mhSummary");
-  if (!bar) return;
-  const pick = (id, fallback) => {
-    const el = document.getElementById(id);
-    const t = el && el.textContent && el.textContent.trim();
-    return t || fallback;
-  };
-  const area = pick("hudMetroTitle", "United States");
-  const scope = pick("browseCardHeading", "all occupations");
-  const median = pick("kpiMedianWage", "—");
-  document.getElementById("mhContext").textContent = `${area} · ${scope}`;
-  document.getElementById("mhMetric").textContent =
-    (median === "—" || median === "N/A") ? median : `${median} median`;
-  bar.hidden = false;
 }
 
 async function init() {
@@ -5184,8 +5176,6 @@ function renderHeroAndKPIs() {
       kpiLqFootnote.textContent = "Balanced national baseline";
     }
   }
-
-  updateStickySummary();
 }
 
 function findTopConcentrationSector(data) {
@@ -5856,13 +5846,6 @@ function setupEventListeners() {
   if (resetBtn) resetBtn.addEventListener("click", () => {
     if (typeof resetMapZoom === "function") resetMapZoom();
     else loadArea("99", false);
-  });
-
-  // Pinned summary strip on phones: tap to jump to the full breakdown.
-  const mhSummary = document.getElementById("mhSummary");
-  if (mhSummary) mhSummary.addEventListener("click", () => {
-    const kpi = document.getElementById("kpiBar");
-    if (kpi) kpi.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
