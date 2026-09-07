@@ -1270,6 +1270,124 @@ body {
   border-color: var(--accent-cyan);
   color: var(--accent-cyan);
 }
+
+/* ---- Browse: plain-language card list ---------------------------------- */
+.browse-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+}
+.browse-crumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px 4px;
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+.browse-crumbs .crumb {
+  background: none;
+  border: 0;
+  padding: 2px 3px;
+  font: inherit;
+  color: var(--accent-cyan);
+  cursor: pointer;
+  border-radius: 4px;
+}
+.browse-crumbs button.crumb:hover { background: color-mix(in srgb, var(--accent-cyan) 14%, transparent); }
+.browse-crumbs .crumb.current {
+  color: var(--text-primary);
+  font-weight: 700;
+  cursor: default;
+}
+.browse-crumbs .crumb-sep { color: var(--text-muted); }
+.browse-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.browse-sort select {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  cursor: pointer;
+}
+
+.browse-list-wrap { overflow: auto; }
+.browse-list { display: flex; flex-direction: column; }
+.browse-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 13px 16px;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: background 0.1s ease;
+}
+button.browse-row:hover { background: var(--bg-elevated); }
+.browse-row.active {
+  background: color-mix(in srgb, var(--accent-cyan) 12%, transparent);
+}
+.browse-row.active .browse-row-title { color: var(--accent-cyan); }
+.browse-row-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1 1 auto; }
+.browse-row-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+.browse-row-sub {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+.browse-row-go {
+  flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-muted);
+}
+button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
+.browse-tag {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.06);
+  vertical-align: 1px;
+}
+.browse-tag.hot {
+  color: var(--accent-emerald);
+  background: rgba(16, 185, 129, 0.14);
+}
+[data-theme="light"] .browse-tag { background: rgba(15, 23, 42, 0.06); }
+.browse-empty {
+  padding: 28px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
 .badge-density {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -2480,46 +2598,22 @@ body {
               </div>
             </div>
 
-            <!-- Drilldown header when an occupation row is clicked -->
-            <div id="browseDrilldownBar" style="display: none; align-items: center; justify-content: space-between; padding: 9px 14px; background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); gap: 10px; flex-wrap: wrap;">
-              <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
-                <button id="browseDrilldownBackBtn" class="browse-back-btn" title="Return to all occupations in this area">
-                  ← All Occupations
-                </button>
-                <span style="font-weight: 700; color: var(--text-primary); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="browseDrilldownTitle"></span>
-              </div>
-              <select id="drilldownRegionFilter" class="control-select" style="max-width: 190px;">
-                <option value="ALL">All Regions</option>
-              </select>
+            <!-- Where you are + how to sort -->
+            <div class="browse-nav">
+              <nav class="browse-crumbs" id="browseCrumbs" aria-label="Browse location"></nav>
+              <label class="browse-sort">
+                <span>Sort by</span>
+                <select id="browseSortSelect">
+                  <option value="wage">Pay</option>
+                  <option value="emp">Number of jobs</option>
+                  <option value="title">Name (A–Z)</option>
+                </select>
+              </label>
             </div>
 
-            <!-- Table Container -->
-            <div class="table-responsive" id="browseTableResponsive" style="overflow: auto;">
-              <!-- Table A: Occupations in Area -->
-              <table class="data-table" id="occupationsTable">
-                <thead>
-                  <tr>
-                    <th data-col="title">Occupation Title</th>
-                    <th data-col="emp" style="text-align: right;">Employment</th>
-                    <th data-col="wage" style="text-align: right;" id="occWageColHeader">Median Wage</th>
-                    <th data-col="lq" style="text-align: right;">Density</th>
-                  </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-              </table>
-
-              <!-- Table B: Areas for Clicked Profession -->
-              <table class="data-table" id="occupationAreasTable" style="display: none;">
-                <thead>
-                  <tr>
-                    <th data-col="name">Statistical Area / Region</th>
-                    <th data-col="emp" style="text-align: right;">Employment</th>
-                    <th data-col="wage" style="text-align: right;" id="areaWageColHeader">Median Wage</th>
-                    <th data-col="lq" style="text-align: right;">Density</th>
-                  </tr>
-                </thead>
-                <tbody id="occupationAreasTableBody"></tbody>
-              </table>
+            <!-- The list -->
+            <div class="browse-list-wrap" id="browseTableResponsive">
+              <div class="browse-list" id="browseList" role="list"></div>
             </div>
           </div>
         </div>
@@ -2690,6 +2784,7 @@ const state = {
   drilldownRegion: "ALL",
   browseWageMetric: "median",   // 'median' | 'mean' | 'p25' | 'p75' — the one page-wide wage metric
   browseSector: null,           // null = sectors overview; 0..21 = that sector's occupations
+  browseSort: "wage",           // 'wage' | 'emp' | 'title' — one sort for every browse level
   jobDataYear: null,            // year the active occupation's data actually came from (fallback when the selected year is incomplete)
   jobPrior: new Map(),         // soc -> { "2024": payload, "2023": payload, "2022": payload } for per-field gap-fill
   _priorLoading: new Set(),
@@ -5417,343 +5512,233 @@ function closeAreaDropdown() {
 // -------------------------------------------------------------
 // Set the first column's header text ("Sector" for the sectors overview,
 // "Occupation Title" otherwise).
-function setBrowseTitleHeader(text) {
-  const th = document.querySelector('#occupationsTable th[data-col="title"]');
-  if (th) th.textContent = text;
+/* ------------------------------------------------------------------
+   Browse: a plain-language card list, three levels, one breadcrumb.
+     0  every sector            (22 cards)
+     1  jobs inside a sector    (or the results of a search)
+     2  where a job pays / hires   (place cards -> click selects on map)
+   ------------------------------------------------------------------ */
+function browseLevel() {
+  if (state.drilldownSoc) return 2;
+  const q = ((document.getElementById("mapJobSearchInput") || {}).value || "").trim();
+  return (q || state.browseSector != null) ? 1 : 0;
 }
 
-// The browse table opens on the 22 major sectors. Pick one (row click or the
-// Sectors dropdown) to see its occupations; a search cuts across everything.
+function fmtJobs(n) {
+  return n > 0 ? `${fmt.number(n)} ${n === 1 ? "job" : "jobs"}` : "no job estimate";
+}
+function fmtPay(v) { return v > 0 ? `${fmt.currency(v)} a year` : "pay not reported"; }
+function demandChip(lq) {
+  if (!(lq > 0)) return "";
+  if (lq >= 1.4)  return `<span class="browse-tag hot">Especially common here</span>`;
+  if (lq >= 1.15) return `<span class="browse-tag">More common here</span>`;
+  return "";
+}
+function clearJobSearch() {
+  const i = document.getElementById("mapJobSearchInput");
+  if (i) i.value = "";
+  const c = document.getElementById("mapJobClear");
+  if (c) c.style.display = "none";
+}
+function resetBrowseScroll() {
+  const sc = document.getElementById("browseTableResponsive");
+  if (sc) sc.scrollTop = 0;
+}
+function sortRows(rows) {
+  const s = state.browseSort || "wage";
+  rows.sort((a, b) => {
+    if (s === "title") return String(a.title).localeCompare(String(b.title));
+    return (b[s] || 0) - (a[s] || 0);          // pay / jobs: high to low
+  });
+  return rows;
+}
+
+function renderCrumbs() {
+  const el = document.getElementById("browseCrumbs");
+  if (!el) return;
+  const lvl = browseLevel();
+  const q = ((document.getElementById("mapJobSearchInput") || {}).value || "").trim();
+
+  const crumbs = [{
+    label: "All jobs",
+    go: () => {
+      state.browseSector = null;
+      clearJobSearch();
+      if (state.drilldownSoc) closeOccupationAreaBreakdown();
+      else renderBrowseTable();
+      resetBrowseScroll();
+    }
+  }];
+  if (lvl >= 1) {
+    crumbs.push(q
+      ? { label: `“${q}”`, go: null }
+      : { label: GROUPS[state.browseSector] || "Sector",
+          go: state.drilldownSoc ? () => closeOccupationAreaBreakdown() : null });
+  }
+  if (lvl === 2) crumbs.push({ label: state.drilldownTitle || "Job", go: null });
+
+  el.innerHTML = "";
+  crumbs.forEach((c, i) => {
+    if (i) {
+      const sep = document.createElement("span");
+      sep.className = "crumb-sep";
+      sep.textContent = "›";
+      el.appendChild(sep);
+    }
+    const last = i === crumbs.length - 1;
+    const node = document.createElement(c.go && !last ? "button" : "span");
+    node.className = "crumb" + (last ? " current" : "");
+    node.textContent = c.label;
+    if (c.go && !last) node.addEventListener("click", c.go);
+    el.appendChild(node);
+  });
+}
+
+function browseRow(opts) {
+  const row = document.createElement(opts.onClick ? "button" : "div");
+  row.className = "browse-row" + (opts.active ? " active" : "");
+  row.setAttribute("role", "listitem");
+  row.innerHTML =
+    `<span class="browse-row-main">` +
+      `<span class="browse-row-title">${opts.title}</span>` +
+      `<span class="browse-row-sub">${opts.sub}${opts.tag ? " " + opts.tag : ""}</span>` +
+    `</span>` +
+    (opts.chevron ? `<span class="browse-row-go" aria-hidden="true">›</span>` : "");
+  if (opts.onClick) row.addEventListener("click", opts.onClick);
+  return row;
+}
+
 function renderSectorsList(data) {
-  const tbody = document.getElementById("tableBody");
-  tbody.innerHTML = "";
-  setBrowseTitleHeader("Sector");
+  const list = document.getElementById("browseList");
+  if (!list) return;
+  renderCrumbs();
 
   const majBy = {};
-  (data.majors || []).forEach(m => {
-    const gi = MAJOR_SOCS.indexOf(m.soc);
-    if (gi >= 0) majBy[gi] = m;
-  });
+  (data.majors || []).forEach(m => { const gi = MAJOR_SOCS.indexOf(m.soc); if (gi >= 0) majBy[gi] = m; });
   const empByGrp = {};
-  (data.occupations || []).forEach(r => {
-    empByGrp[r[2]] = (empByGrp[r[2]] || 0) + (r[4] || 0);
-  });
-  const areaEmp = (data.total && data.total.emp) || 0;
+  (data.occupations || []).forEach(r => { empByGrp[r[2]] = (empByGrp[r[2]] || 0) + (r[4] || 0); });
   const useMean = wageMetric().v === "mean";
 
   const rows = GROUPS.map((name, gi) => {
     const m = majBy[gi];
-    const emp = m ? m.emp : (empByGrp[gi] || 0);
-    const wage = m ? (useMean ? m.mean : m.median) : null;
-    let lq = null;
-    if (m && areaEmp && data.id !== "99" &&
-        state.nationalMajorShares && state.nationalMajorShares[m.soc]) {
-      lq = (m.emp / areaEmp) / (state.nationalMajorShares[m.soc] || 1);
-    }
-    return { gi, name, emp, wage, lq };
+    return { gi, title: name, emp: m ? m.emp : (empByGrp[gi] || 0), wage: m ? (useMean ? m.mean : m.median) : 0 };
   }).filter(r => r.emp > 0);
-
-  const { col, asc } = state.tableSort;
-  rows.sort((a, b) => {
-    if (col === "title") return asc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-    const key = col === "emp" ? "emp" : (col === "lq" ? "lq" : "wage");
-    return asc ? (a[key] || 0) - (b[key] || 0) : (b[key] || 0) - (a[key] || 0);
-  });
+  sortRows(rows);
 
   const frag = document.createDocumentFragment();
-  rows.forEach(r => {
-    const tr = document.createElement("tr");
-    tr.className = "clickable-row";
-    tr.title = `View ${r.name} occupations`;
-    tr.innerHTML = `
-      <td style="font-weight: 600; color: var(--text-primary);">
-        <span style="color: var(--accent-cyan); margin-right: 4px;">›</span>${r.name}
-      </td>
-      <td style="text-align: right;" class="tabular">${fmt.number(r.emp)}</td>
-      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${r.wage ? fmt.currency(r.wage) : "—"}</td>
-      <td style="text-align: right;"><span class="badge-density ${r.lq && r.lq >= 1.25 ? 'high' : ''}">${r.lq ? fmt.lq(r.lq) : "—"}</span></td>
-    `;
-    tr.addEventListener("click", () => {
-      state.browseSector = r.gi;
-      state.tableSort = { col: "wage", asc: false };
-      renderBrowseTable();
-      const sc = document.getElementById("browseTableResponsive");
-      if (sc) sc.scrollTop = 0;
-    });
-    frag.appendChild(tr);
-  });
-  tbody.appendChild(frag);
-  updateTableSortHeaders();
+  rows.forEach(r => frag.appendChild(browseRow({
+    title: r.title,
+    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}`,
+    chevron: true,
+    onClick: () => { state.browseSector = r.gi; renderBrowseTable(); resetBrowseScroll(); }
+  })));
+  list.innerHTML = "";
+  list.appendChild(frag);
 }
 
 function renderBrowseTable() {
   const data = state.areaData;
   if (!data || !data.occupations) return;
+  if (state.drilldownSoc) { renderOccupationAreasTable(); return; }
 
-  // If currently viewing drilldown for a clicked occupation, keep drilldown active
-  if (state.drilldownSoc) {
-    renderOccupationAreasTable();
-    return;
-  }
-
-  const jobSearchEl = document.getElementById("mapJobSearchInput");
-  const q = (jobSearchEl ? jobSearchEl.value : "").toLowerCase().trim();
+  const q = ((document.getElementById("mapJobSearchInput") || {}).value || "").toLowerCase().trim();
   const grpF = state.browseSector == null ? -1 : state.browseSector;
 
-  // No sector picked and nothing searched -> the sectors overview.
-  if (!q && grpF === -1) {
-    renderSectorsList(data);
+  if (!q && grpF === -1) { renderSectorsList(data); return; }
+
+  const list = document.getElementById("browseList");
+  if (!list) return;
+  renderCrumbs();
+
+  const wIdx = wageMetric().occIdx;
+  const rows = data.occupations
+    .filter(row => {
+      if (q && scoreOccupation(row[1], row[0], q) <= 0) return false;
+      if (grpF !== -1 && row[2] !== grpF) return false;
+      return true;
+    })
+    .map(row => ({ soc: row[0], title: row[1], emp: row[4] || 0, wage: row[wIdx] || 0, lq: row[11] || 0 }));
+  sortRows(rows);
+
+  if (!rows.length) {
+    list.innerHTML = `<div class="browse-empty">No jobs match “${q}”.</div>`;
     return;
   }
-  setBrowseTitleHeader("Occupation Title");
 
-  let filtered = data.occupations.filter(row => {
-    const [soc, title, grpIdx] = row;
-    if (q && scoreOccupation(title, soc, q) <= 0) return false;
-    if (grpF !== -1 && grpIdx !== grpF) return false;
-    return true;
-  });
-
-  const { col, asc } = state.tableSort;
-  const wIdx = wageMetric().occIdx;
-  filtered.sort((a, b) => {
-    let vA, vB;
-    switch (col) {
-      case "title": vA = a[1]; vB = b[1]; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
-      case "emp": vA = a[4] || 0; vB = b[4] || 0; break;
-      case "lq": vA = a[11] || 0; vB = b[11] || 0; break;
-      case "wage": vA = a[wIdx] || 0; vB = b[wIdx] || 0; break;
-      default: vA = a[wIdx] || 0; vB = b[wIdx] || 0;
-    }
-    return asc ? vA - vB : vB - vA;
-  });
-
-  const tbody = document.getElementById("tableBody");
-  tbody.innerHTML = "";
-
-  const fragment = document.createDocumentFragment();
-
-  // Inside a sector: a row to step back up to the sectors overview.
-  if (grpF !== -1) {
-    const back = document.createElement("tr");
-    back.className = "clickable-row";
-    back.innerHTML = `<td colspan="4" style="color: var(--accent-cyan); font-weight: 600; background: var(--bg-elevated);">‹ All sectors<span style="color: var(--text-muted); font-weight: 400;">  ·  ${GROUPS[grpF] || ""}</span></td>`;
-    back.addEventListener("click", () => {
-      state.browseSector = null;
-      state.tableSort = { col: "wage", asc: false };
-      renderBrowseTable();
-      const sc = document.getElementById("browseTableResponsive");
-      if (sc) sc.scrollTop = 0;
-    });
-    fragment.appendChild(back);
-  }
-
-  const wIdx2 = wageMetric().occIdx;
-  filtered.slice(0, 300).forEach(row => {
-    const [soc, title, grpIdx, eduLvl, emp, mean, median, p10, p25, p75, p90, lq] = row;
-    const wageVal = row[wIdx2];
-
-    const tr = document.createElement("tr");
-    tr.className = "clickable-row";
-    tr.title = `Click to view regional area breakdown for ${title}`;
-    tr.innerHTML = `
-      <td style="font-weight: 600; color: var(--text-primary); max-width: 280px; overflow: hidden; text-overflow: ellipsis;">
-        <span style="color: var(--accent-cyan); margin-right: 4px;">›</span>${title}
-      </td>
-      <td style="text-align: right;" class="tabular">${fmt.number(emp)}</td>
-      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(wageVal)}</td>
-      <td style="text-align: right;">
-        <span class="badge-density ${lq && lq >= 1.25 ? 'high' : ''}">
-          ${fmt.lq(lq)}
-        </span>
-      </td>
-    `;
-
-    tr.addEventListener("click", () => {
-      openOccupationAreaBreakdown(soc, title);
-    });
-
-    fragment.appendChild(tr);
-  });
-
-  tbody.appendChild(fragment);
-  updateTableSortHeaders();
+  const frag = document.createDocumentFragment();
+  rows.slice(0, 400).forEach(r => frag.appendChild(browseRow({
+    title: r.title,
+    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}`,
+    tag: demandChip(r.lq),
+    chevron: true,
+    onClick: () => openOccupationAreaBreakdown(r.soc, r.title)
+  })));
+  list.innerHTML = "";
+  list.appendChild(frag);
 }
 
-function updateTableSortHeaders() {
-  const { col, asc } = state.tableSort;
-  document.querySelectorAll("#occupationsTable th[data-col]").forEach(th => {
-    th.classList.remove("sorted-asc", "sorted-desc");
-    if (th.dataset.col === col) {
-      th.classList.add(asc ? "sorted-asc" : "sorted-desc");
-    }
-  });
-}
-
-function populateDrilldownRegionFilter() {
-  const sel = document.getElementById("drilldownRegionFilter");
-  const payload = state.activeJobPayload;
-  if (!sel || !payload || !payload.metros) return;
-
-  const stateMetaByCode = {};
-  (state.mapData && state.mapData.metros ? state.mapData.metros : []).forEach(m => {
-    if (m.state) stateMetaByCode[m.id] = m.state;
-  });
-
-  const codeToName = {};
-  Object.values(state.statesById || {}).forEach(s => {
-    if (s && s.state && s.name) codeToName[s.state] = s.name;
-  });
-
-  const present = new Set();
-  Object.keys(payload.metros).forEach(areaId => {
-    const code = stateMetaByCode[areaId];
-    if (code) present.add(code);
-  });
-
-  const options = Array.from(present)
-    .map(code => ({ code, name: codeToName[code] || code }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  sel.innerHTML = '<option value="ALL">All Regions</option>' +
-    options.map(o => `<option value="${o.code}">${o.name}</option>`).join("");
-  sel.value = "ALL";
-}
+/* kept as no-ops so older call sites don't throw */
+function updateTableSortHeaders() {}
+function setBrowseTitleHeader() {}
+function populateDrilldownRegionFilter() {}
 
 function closeOccupationAreaBreakdown() {
   state.drilldownSoc = null;
   state.drilldownTitle = "";
   state.drilldownRegion = "ALL";
-
-  document.getElementById("browseDrilldownBar").style.display = "none";
-  document.getElementById("occupationAreasTable").style.display = "none";
-  document.getElementById("occupationsTable").style.display = "";
-
   renderBrowseTable();
+  resetBrowseScroll();
 }
 
 function renderOccupationAreasTable() {
   if (!state.drilldownSoc || !state.activeJobPayload) return;
+  const list = document.getElementById("browseList");
+  if (!list) return;
+  renderCrumbs();
 
   const payload = state.activeJobPayload;
-  const metrosMap = (state.mapData && state.mapData.metros) ? state.mapData.metros : [];
-  const metroNamesById = {};
-  const metroStateById = {};
-  metrosMap.forEach(m => {
-    metroNamesById[m.id] = m.name;
-    if (m.state) metroStateById[m.id] = m.state;
-  });
-
-  const regionFilter = state.drilldownRegion && state.drilldownRegion !== "ALL" ? state.drilldownRegion : null;
-
-  const rows = [];
-  if (payload.metros) {
-    Object.keys(payload.metros).forEach(areaId => {
-      if (regionFilter && metroStateById[areaId] !== regionFilter) return;
-      const stats = payload.metros[areaId]; // [emp, mean, median, p25, p75, lq]
-      const rawName = metroNamesById[areaId] || (state.manifest ? (state.manifest.find(a => a.id === areaId)?.name) : areaId) || `Area ${areaId}`;
-      const name = formatAreaName(rawName);
-
-      rows.push({
-        id: areaId,
-        name: name,
-        emp: stats[0] || 0,
-        mean: stats[1] || 0,
-        median: stats[2] || 0,
-        p25: stats[3] || 0,
-        p75: stats[4] || 0,
-        lq: stats[5] || 0
-      });
-    });
-  }
+  const nameById = {};
+  ((state.mapData && state.mapData.metros) ? state.mapData.metros : []).forEach(m => { nameById[m.id] = m.name; });
 
   const wKey = wageMetric().v === "mean" ? "mean"
              : wageMetric().v === "p25" ? "p25"
              : wageMetric().v === "p75" ? "p75" : "median";
-  const { col, asc } = state.areaTableSort;
-  rows.sort((a, b) => {
-    let vA, vB;
-    switch (col) {
-      case "name": vA = a.name; vB = b.name; return asc ? vA.localeCompare(vB) : vB.localeCompare(vA);
-      case "emp": vA = a.emp; vB = b.emp; break;
-      case "lq": vA = a.lq; vB = b.lq; break;
-      case "wage": vA = a[wKey]; vB = b[wKey]; break;
-      default: vA = a[wKey]; vB = b[wKey];
-    }
-    return asc ? vA - vB : vB - vA;
+  const IDX = { emp: 0, mean: 1, median: 2, p25: 3, p75: 4, lq: 5 };
+
+  const rows = Object.keys(payload.metros || {}).map(areaId => {
+    const s = payload.metros[areaId];
+    const raw = nameById[areaId]
+      || (state.manifest && (state.manifest.find(a => a.id === areaId) || {}).name)
+      || `Area ${areaId}`;
+    return { id: areaId, title: formatAreaName(raw), emp: s[IDX.emp] || 0, wage: s[IDX[wKey]] || 0, lq: s[IDX.lq] || 0 };
   });
+  sortRows(rows);
 
+  if (!rows.length) {
+    list.innerHTML = `<div class="browse-empty">No place-by-place data for this job yet.</div>`;
+    return;
+  }
 
-  const tbody = document.getElementById("occupationAreasTableBody");
-  tbody.innerHTML = "";
-  const fragment = document.createDocumentFragment();
-
-  rows.forEach(r => {
-    const isSelected = r.id === state.currentAreaId;
-    const tr = document.createElement("tr");
-    tr.className = `clickable-row ${isSelected ? 'active-area-row' : ''}`;
-    tr.dataset.id = r.id;
-    tr.title = `Click to select ${r.name} on the map`;
-
-    tr.innerHTML = `
-      <td style="font-weight: 500; color: ${isSelected ? 'var(--accent-cyan)' : 'var(--text-primary)'}; max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
-        ${r.name}
-      </td>
-      <td style="text-align: right;" class="tabular">${fmt.number(r.emp)}</td>
-      <td style="text-align: right; font-weight: 600; color: var(--text-primary);" class="tabular">${fmt.currency(r[wKey])}</td>
-      <td style="text-align: right;">
-        <span class="badge-density ${r.lq >= 1.25 ? 'high' : ''}">
-          ${fmt.lq(r.lq)}
-        </span>
-      </td>
-    `;
-
-    tr.addEventListener("click", () => {
-      loadArea(r.id, true);
-      document.querySelectorAll("#occupationAreasTableBody tr").forEach(rowEl => {
-        rowEl.classList.toggle("active-area-row", rowEl.dataset.id === r.id);
-      });
-    });
-
-    fragment.appendChild(tr);
-  });
-
-  tbody.appendChild(fragment);
-
-  // Update sort headers for occupationAreasTable
-  document.querySelectorAll("#occupationAreasTable th[data-col]").forEach(th => {
-    th.classList.remove("sorted-asc", "sorted-desc");
-    if (th.dataset.col === col) {
-      th.classList.add(asc ? "sorted-asc" : "sorted-desc");
-    }
-  });
+  const frag = document.createDocumentFragment();
+  rows.forEach(r => frag.appendChild(browseRow({
+    title: r.title,
+    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}`,
+    tag: demandChip(r.lq),
+    active: r.id === state.currentAreaId,
+    onClick: () => { loadArea(r.id, true); renderOccupationAreasTable(); }
+  })));
+  list.innerHTML = "";
+  list.appendChild(frag);
 }
-
-
 async function openOccupationAreaBreakdown(soc, title) {
   state.drilldownSoc = soc;
   state.drilldownTitle = title;
-
-  // Sync with global Map job
-  if (state.activeMapSoc !== soc) {
-    await loadMapJob(soc);
-  }
-
-  // Switch display from Table A to Table B
-  document.getElementById("occupationsTable").style.display = "none";
-
-  const drilldownBar = document.getElementById("browseDrilldownBar");
-  drilldownBar.style.display = "flex";
-  document.getElementById("browseDrilldownTitle").textContent = title;
-
   state.drilldownRegion = "ALL";
-  populateDrilldownRegionFilter();
-  syncWageColHeaders();
 
-  const tableAreas = document.getElementById("occupationAreasTable");
-  tableAreas.style.display = "";
-
+  // Recolour the map for this job, then show its place-by-place list.
+  if (state.activeMapSoc !== soc) await loadMapJob(soc);
   renderOccupationAreasTable();
+  resetBrowseScroll();
 }
 
 // On entry (touch devices), trace a thin line once around each search field.
@@ -5810,47 +5795,14 @@ function setupEventListeners() {
   // the occupation text search lives in #mapJobSearchInput.
   syncWageColHeaders();
 
-  // Browse Table Sort Headers
-  document.querySelectorAll("#occupationsTable th[data-col]").forEach(th => {
-    th.addEventListener("click", () => {
-      const col = th.dataset.col;
-      if (state.tableSort.col === col) {
-        state.tableSort.asc = !state.tableSort.asc;
-      } else {
-        state.tableSort.col = col;
-        state.tableSort.asc = (col === "title");
-      }
-      updateTableSortHeaders();
+  // Browse sort — one control for every level of the list.
+  const sortSel = document.getElementById("browseSortSelect");
+  if (sortSel) {
+    sortSel.value = state.browseSort;
+    sortSel.addEventListener("change", () => {
+      state.browseSort = sortSel.value;
       renderBrowseTable();
-    });
-  });
-
-  // Area Breakdown Table Sort Headers
-  document.querySelectorAll("#occupationAreasTable th[data-col]").forEach(th => {
-    th.addEventListener("click", () => {
-      const col = th.dataset.col;
-      if (state.areaTableSort.col === col) {
-        state.areaTableSort.asc = !state.areaTableSort.asc;
-      } else {
-        state.areaTableSort.col = col;
-        state.areaTableSort.asc = (col === "name");
-      }
-      renderOccupationAreasTable();
-    });
-  });
-
-  // Back Button from Occupation Area Breakdown
-  const backBtn = document.getElementById("browseDrilldownBackBtn");
-  if (backBtn) {
-    backBtn.addEventListener("click", closeOccupationAreaBreakdown);
-  }
-
-  // Region scope filter inside the occupation drilldown
-  const drilldownRegion = document.getElementById("drilldownRegionFilter");
-  if (drilldownRegion) {
-    drilldownRegion.addEventListener("change", () => {
-      state.drilldownRegion = drilldownRegion.value || "ALL";
-      renderOccupationAreasTable();
+      resetBrowseScroll();
     });
   }
 
