@@ -861,18 +861,20 @@ body {
   padding: 13px 24px 12px;
   border-bottom: 1px solid var(--area-rule);
 }
-/* Long labels wrap across up to two lines instead of clipping to an ellipsis. */
+/* Long labels wrap onto a second line instead of clipping to an ellipsis.
+   Plain inline-block block-flow so wrapping is reliable on iOS Safari — the
+   -webkit-box + line-clamp combo did not wrap there and left the label cut. */
 .area-summary-head .pill-token {
   flex: 0 1 auto;
+  display: inline-block;
   max-width: 100%;
+  min-width: 0;
   white-space: normal;
+  overflow-wrap: anywhere;
+  overflow: hidden;
   text-overflow: clip;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
   border-radius: 13px;
-  line-height: 1.22;
+  line-height: 1.25;
   text-align: center;
 }
 @media (max-width: 760px) {
