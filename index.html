@@ -797,7 +797,10 @@ body {
 .page-metric-bar {
   flex: 0 0 auto;
   align-self: center;
-  width: min(760px, 100%);
+  width: 100%;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .area-summary {
   --area-rule: rgba(255, 255, 255, 0.14);
@@ -949,31 +952,30 @@ body {
 }
 .area-metric {
   display: flex;
-  flex-direction: row;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 8px;
+  text-align: center;
+  gap: 3px;
   flex: 1 1 0;
   min-width: 0;
   min-height: 44px;
-  padding: 0 16px;
+  padding: 10px 14px;
   border-left: 1px solid var(--area-rule);
-  white-space: nowrap;
   overflow: hidden;
 }
 .area-metric:first-child { border-left: none; }
 .area-metric-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: var(--text-muted);
   white-space: nowrap;
-  flex-shrink: 0;
 }
 .area-metric-value {
   font-family: var(--font-mono);
-  font-size: 15.5px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text-primary);
@@ -981,10 +983,15 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
+  max-width: 100%;
 }
-.area-metric-value.is-text { font-size: 12px; }
-.area-metric-meta { display: none; }
+.area-metric-value.is-text { font-size: 12.5px; }
+.area-metric-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 12px;
+}
 .area-metric-note { display: none; }
 
 .area-summary-disclosure {
@@ -5072,41 +5079,54 @@ function renderHeroAndKPIs() {
     }
   }
 
-  // The Summary shows just Employment + the one selected wage metric. Terse
-  // labels (the head already names the occupation and area); the wage slot
-  // relabels and, for mean / p25 / p75, restates its value to match the
-  // page-wide metric control.
-  const empLabelEl = document.getElementById("kpiEmpLabel");
-  if (empLabelEl) empLabelEl.textContent = "Employment";
+  // The Summary shows Employment · <selected wage> · Density, each with a
+  // "vs U.S." line beneath. The three cells own their whole content here so a
+  // metric switch always leaves them consistent.
+  const setCell = (labelId, valId, chipId, label, valTxt, chipTxt, chipCls) => {
+    const l = document.getElementById(labelId);
+    const v = document.getElementById(valId);
+    const c = document.getElementById(chipId);
+    if (l) l.textContent = label;
+    if (v) v.textContent = valTxt;
+    if (c) { c.textContent = chipTxt || ""; c.className = "area-metric-chip" + (chipCls ? " " + chipCls : ""); }
+  };
+  const pctVsUs = (area, nat) => {
+    if (!(area > 0) || !(nat > 0)) return null;
+    const p = ((area - nat) / nat) * 100;
+    return { txt: `${p >= 0 ? "+" : ""}${p.toFixed(1)}% vs U.S.`, cls: Math.abs(p) < 0.2 ? "" : (p > 0 ? "pos" : "neg") };
+  };
 
-  const selLabel = { median: "Median", mean: "Mean", p25: "Bottom 25%", p75: "Top 25%" }[state.browseWageMetric] || "Median";
-  const wageLabelEl = document.getElementById("kpiMedianLabel");
-  const wageValEl = document.getElementById("kpiMedianWage");
-  if (wageLabelEl) wageLabelEl.textContent = selLabel;
-  if (wageValEl) {
-    if (state.browseWageMetric === "mean") {
-      const mEl = document.getElementById("kpiMeanWage");
-      if (mEl && mEl.textContent) wageValEl.textContent = mEl.textContent;
-    } else if (state.browseWageMetric === "p25" || state.browseWageMetric === "p75") {
-      const key = state.browseWageMetric;
-      let v = null;
-      if (isAllJobs && data.total) v = data.total[key];
-      else if (!isAllJobs) {
-        const r = (data.occupations || []).find(x => x[0] === state.activeMapSoc);
-        if (r) v = key === "p25" ? r[8] : r[9];
-      }
-      wageValEl.textContent = (v && v > 0) ? fmt.currency(v) : "N/A";
+  const occRow = isAllJobs ? null : (data.occupations || []).find(x => x[0] === state.activeMapSoc);
+  const wKey = state.browseWageMetric;                       // median | mean | p25 | p75
+  const wLabel = { median: "Median", mean: "Mean", p25: "Bottom 25%", p75: "Top 25%" }[wKey] || "Median";
+  const areaW = isAllJobs
+    ? (data.total ? data.total[wKey] : null)
+    : (occRow ? occRow[{ mean: 5, median: 6, p25: 8, p75: 9 }[wKey]] : null);
+  const natW = isAllJobs
+    ? (state.nationalTotals ? state.nationalTotals[wKey] : null)
+    : (wKey === "mean" ? natJobMean : wKey === "median" ? natJobMedian : null);
+  const wDelta = pctVsUs(areaW, natW);
+  setCell("kpiEmpLabel", "kpiTotalEmp", "kpiEmpShare", "Employment",
+    document.getElementById("kpiTotalEmp").textContent,
+    document.getElementById("kpiEmpShare").textContent,
+    document.getElementById("kpiEmpShare").className.includes("pos") ? "pos" : "");
+  setCell("kpiMedianLabel", "kpiMedianWage", "kpiMedianDelta", wLabel,
+    (areaW > 0) ? fmt.currency(areaW) : "N/A",
+    wDelta ? wDelta.txt : (isAllJobs && data.id === "99" ? "U.S. reference" : ""),
+    wDelta ? wDelta.cls : "");
+
+  let densTxt = "1.00×", densChip = "", densCls = "";
+  if (!isAllJobs) {
+    densTxt = (occLq != null && occLq > 0) ? `${occLq.toFixed(2)}×` : "N/A";
+    if (occLq != null && occLq > 0) {
+      const p = (occLq - 1) * 100;
+      densChip = `${p >= 0 ? "+" : ""}${p.toFixed(0)}% vs U.S. avg`;
+      densCls = Math.abs(p) < 1 ? "" : (p > 0 ? "pos" : "neg");
     }
+  } else if (data.id !== "99") {
+    densChip = "U.S. baseline";
   }
-
-  // Density sits to the right of the wage figure.
-  const densLabelEl = document.getElementById("kpiTopLqLabel");
-  const densValEl = document.getElementById("kpiTopLqSector");
-  if (densLabelEl) densLabelEl.textContent = "Density";
-  if (densValEl) {
-    if (isAllJobs) densValEl.textContent = "1.00×";
-    else densValEl.textContent = (occLq != null && occLq > 0) ? `${occLq.toFixed(2)}×` : "N/A";
-  }
+  setCell("kpiTopLqLabel", "kpiTopLqSector", "kpiTopLqBadge", "Density", densTxt, densChip, densCls);
 }
 
 function findTopConcentrationSector(data) {
