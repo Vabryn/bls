@@ -1306,25 +1306,6 @@ body {
   cursor: default;
 }
 .browse-crumbs .crumb-sep { color: var(--text-muted); }
-.browse-sort {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  font-size: 12px;
-  color: var(--text-muted);
-}
-.browse-sort select {
-  font-family: var(--font-sans);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-primary);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-sm);
-  padding: 5px 8px;
-  cursor: pointer;
-}
 
 .browse-list-wrap { overflow: auto; }
 .browse-list { display: flex; flex-direction: column; }
@@ -1394,6 +1375,19 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
   text-align: center;
   color: var(--text-muted);
   font-size: 13px;
+}
+.browse-row-all {
+  gap: 8px;
+  padding: 11px 16px;
+}
+.browse-row-all .browse-row-go {
+  font-size: 18px;
+  color: var(--accent-cyan);
+}
+.browse-row-all .browse-row-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-cyan);
 }
 .browse-count {
   padding: 8px 16px;
@@ -2615,17 +2609,9 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
               </div>
             </div>
 
-            <!-- Where you are + how to sort -->
+            <!-- Where you are -->
             <div class="browse-nav">
               <nav class="browse-crumbs" id="browseCrumbs" aria-label="Browse location"></nav>
-              <label class="browse-sort">
-                <span>Sort by</span>
-                <select id="browseSortSelect">
-                  <option value="wage">Pay</option>
-                  <option value="emp">Number of jobs</option>
-                  <option value="title">Name (A–Z)</option>
-                </select>
-              </label>
             </div>
 
             <!-- The list -->
@@ -5590,7 +5576,7 @@ function renderCrumbs() {
   if (lvl >= 1) {
     crumbs.push(q
       ? { label: `“${q}”`, go: null }
-      : { label: GROUPS[state.browseSector] || "Sector",
+      : { label: (GROUPS[state.browseSector] || "Sector") + " Roles",
           go: state.drilldownSoc ? () => closeOccupationAreaBreakdown() : null });
   }
   if (lvl === 2) {
@@ -5647,19 +5633,30 @@ function renderSectorsList(data) {
   const majBy = {};
   (data.majors || []).forEach(m => { const gi = MAJOR_SOCS.indexOf(m.soc); if (gi >= 0) majBy[gi] = m; });
   const empByGrp = {};
-  (data.occupations || []).forEach(r => { empByGrp[r[2]] = (empByGrp[r[2]] || 0) + (r[4] || 0); });
+  const roleByGrp = {};
+  (data.occupations || []).forEach(r => {
+    empByGrp[r[2]] = (empByGrp[r[2]] || 0) + (r[4] || 0);
+    roleByGrp[r[2]] = (roleByGrp[r[2]] || 0) + 1;
+  });
   const useMean = wageMetric().v === "mean";
 
   const rows = GROUPS.map((name, gi) => {
     const m = majBy[gi];
-    return { gi, title: name, emp: m ? m.emp : (empByGrp[gi] || 0), wage: m ? (useMean ? m.mean : m.median) : 0 };
-  }).filter(r => r.emp > 0);
+    return {
+      gi, title: name,
+      emp: m ? m.emp : (empByGrp[gi] || 0),
+      roles: roleByGrp[gi] || 0,
+      wage: m ? (useMean ? m.mean : m.median) : 0
+    };
+  }).filter(r => r.emp > 0 || r.roles > 0);
   sortRows(rows);
 
   const frag = document.createDocumentFragment();
   rows.forEach(r => frag.appendChild(browseRow({
     title: r.title,
-    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}`,
+    // A sector is a bucket of job types — how many roles it holds, and its
+    // typical pay, is the useful preview (not one raw headcount).
+    sub: `${r.roles} ${r.roles === 1 ? "role" : "roles"} · ${fmtPay(r.wage)}`,
     chevron: true,
     onClick: () => { state.browseSector = r.gi; renderBrowseTable(); resetBrowseScroll(); }
   })));
@@ -5699,7 +5696,7 @@ function renderBrowseTable() {
   const frag = document.createDocumentFragment();
   rows.slice(0, 400).forEach(r => frag.appendChild(browseRow({
     title: r.title,
-    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}${r.lq > 0 ? " · " + densityBit(r.lq) : ""}`,
+    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}`,
     chevron: true,
     onClick: () => openOccupationAreaBreakdown(r.soc, r.title)
   })));
@@ -5750,6 +5747,22 @@ function renderOccupationAreasTable() {
   }
 
   const frag = document.createDocumentFragment();
+
+  // When a region is selected, a way back to seeing them all.
+  if (state.currentAreaId && state.currentAreaId !== "99") {
+    const all = document.createElement("button");
+    all.className = "browse-row browse-row-all";
+    all.setAttribute("role", "listitem");
+    all.innerHTML = `<span class="browse-row-go" aria-hidden="true">‹</span><span class="browse-row-title">All regions</span>`;
+    all.addEventListener("click", () => {
+      if (typeof resetMapZoom === "function") resetMapZoom();
+      else loadArea("99", false);
+      renderOccupationAreasTable();
+      resetBrowseScroll();
+    });
+    frag.appendChild(all);
+  }
+
   const count = document.createElement("div");
   count.className = "browse-count";
   count.textContent = `${fmt.number(rows.length)} ${rows.length === 1 ? "region" : "regions"}`;
@@ -5825,19 +5838,9 @@ function setupEventListeners() {
   });
 
   // The one wage metric lives in #mapMetricTabs now (wired in setupMapControls);
-  // the occupation text search lives in #mapJobSearchInput.
+  // the occupation text search lives in #mapJobSearchInput. The browse list
+  // sorts by pay, high to low, with no separate control.
   syncWageColHeaders();
-
-  // Browse sort — one control for every level of the list.
-  const sortSel = document.getElementById("browseSortSelect");
-  if (sortSel) {
-    sortSel.value = state.browseSort;
-    sortSel.addEventListener("change", () => {
-      state.browseSort = sortSel.value;
-      renderBrowseTable();
-      resetBrowseScroll();
-    });
-  }
 
   // The ⟲ button in the map's zoom stack is map-scoped: deselect the area,
   // drop the state focus, and zoom back out to the national view. It leaves
