@@ -5840,11 +5840,13 @@ function moveTooltip(e) {
   const th = tooltip.offsetHeight || 200;
   let x = cx + 16;
   let y = cy + 16;
-  // Flip to the other side / clamp so the card never spills off any edge.
+  // Flip to the other side so the card never spills off — or covers — an edge.
   if (x + tw + pad > window.innerWidth) x = cx - tw - 16;
   if (x < pad) x = pad;
-  if (y + th + pad > window.innerHeight) y = window.innerHeight - th - pad;
-  if (y < pad) y = pad;
+  // Not enough room below the cursor: put the card *above* it rather than
+  // letting it clamp down over whatever sits at the bottom of the view.
+  if (y + th + pad > window.innerHeight) y = cy - th - 16;
+  if (y < pad) y = Math.min(pad, window.innerHeight - th - pad);
   tooltip.style.left = x + "px";
   tooltip.style.top = y + "px";
 }
