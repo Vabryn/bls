@@ -753,10 +753,19 @@ body {
   margin-left: 6px;
 }
 .pill-token[hidden] { display: none; }
-/* Hover-card pills match the Summary pills in size; just drop the ambient glow
-   so it doesn't smear inside the small tooltip. */
+/* Hover-card pills match the Summary pills in size; drop the ambient glow so
+   it doesn't smear inside the small tooltip, and let a long label wrap onto a
+   second line rather than clip (the two pills stack, one per line). */
 .custom-tooltip .pill-token {
   box-shadow: none;
+  display: block;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: clip;
+  border-radius: 13px;
+  line-height: 1.25;
 }
 
 /* Map Card Controls Bar (Wage Metric & Map Style directly above the map) */
@@ -3983,9 +3992,9 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
     : "";
 
   tooltip.innerHTML = `
-    <div style="display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; margin-bottom: 8px;">
-      <span class="pill-token" style="flex: 0 1 auto; min-width: 0;">${jobPayload.title}</span>
-      <span class="pill-token" style="flex: 0 1 auto; min-width: 0;">${formatAreaName(metro.name)}</span>
+    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 8px;">
+      <span class="pill-token">${jobPayload.title}</span>
+      <span class="pill-token">${formatAreaName(metro.name)}</span>
     </div>
 
     <div style="background: var(--bg-elevated); padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 8px;">
