@@ -524,17 +524,16 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  /* Fill the viewport so map + browse + summary all fit with no page scroll. */
+  gap: 12px;
+  /* Fill the viewport so summary + map + browse all fit with no page scroll. */
   height: calc(100vh - 100px);
   min-height: 520px;
   overflow: hidden;
 }
 @media (max-width: 990px) {
-  .map-canvas-column { height: auto; min-height: 0; overflow: visible; gap: 12px; }
-  /* Stacked phone/tablet layout. The Summary is moved by JS to sit between the
-     map and the Browse card (map -> Summary -> Browse) so it's one short scroll
-     from the map rather than behind the whole occupations list; this just keeps
-     the three cards evenly spaced once they're all in the column. */
+  .map-canvas-column { height: auto; min-height: 0; overflow: visible; }
+  /* Stacked phone/tablet layout: Summary, then map, then Browse — keep them
+     evenly spaced once they're all in the column. */
   .map-center-split { gap: 12px; }
 }
 .map-center-split {
@@ -670,64 +669,6 @@ body {
   }
 }
 
-/* Horizontal splitter — drag to resize the Summary panel. Mirrors .split-divider. */
-.split-divider-h {
-  position: relative;
-  height: 16px;
-  margin: 2px 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: row-resize;
-  user-select: none;
-  touch-action: none;
-  z-index: 10;
-  flex-shrink: 0;
-}
-.split-divider-h::before {
-  content: "";
-  position: absolute;
-  left: 8px;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 1px;
-  background: var(--border-subtle);
-  transition: background 0.15s ease, height 0.15s ease;
-}
-.split-divider-h:hover::before,
-.split-divider-h.is-dragging::before {
-  background: var(--accent-cyan);
-  height: 2px;
-}
-.split-divider-h .split-handle-puck {
-  width: 52px;
-  height: 16px;
-  cursor: row-resize;
-}
-.split-divider-h .split-handle-puck::after {
-  content: "⋯";
-}
-.split-divider-h:hover .split-handle-puck,
-.split-divider-h.is-dragging .split-handle-puck {
-  border-color: var(--accent-cyan);
-  background: var(--bg-elevated);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
-  transform: scale(1.1);
-}
-.split-divider-h:hover .split-handle-puck::after,
-.split-divider-h.is-dragging .split-handle-puck::after {
-  color: var(--accent-cyan);
-}
-[data-theme="light"] .split-divider-h:hover .split-handle-puck,
-[data-theme="light"] .split-divider-h.is-dragging .split-handle-puck {
-  border-color: #0284c7;
-  box-shadow: 0 0 8px rgba(2, 132, 199, 0.3);
-}
-@media (max-width: 990px) {
-  .split-divider-h { display: none; }
-}
-
 /* Display-only token (no clear button) — selection pills in the Summary head
    and the map hover card. Shares the removable chip's look. */
 .pill-token {
@@ -846,271 +787,195 @@ body {
    Area Summary — institutional tearsheet strip
    Pinned to the base of the Browse card, beneath the table.
    ============================================================ */
+/* One-line strip above the map + browse: "Summary of <occ> in <area>" on the
+   left, then Employment / Median / Mean / Top-sector inline. Fixed height,
+   never scrolls; the rare hourly-wage disclosure wraps to a second line. */
 .area-summary {
   --area-rule: rgba(255, 255, 255, 0.14);
-  /* Fixed height so clicking around never resizes the map above it (that read
-     as the map "jumping"). The horizontal resizer overrides --summary-h; extra
-     content like the hourly disclosure scrolls inside. */
-  flex: 0 0 var(--summary-h, 216px);
-  min-height: 0;
-  overflow: auto;
+  position: relative;
+  flex: 0 0 auto;
+  overflow: visible;
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, var(--shadow-md);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, var(--shadow-sm);
   background:
-    linear-gradient(180deg, rgba(126, 174, 212, 0.045), transparent 45%),
+    linear-gradient(180deg, rgba(126, 174, 212, 0.05), transparent 70%),
     var(--bg-elevated);
 }
 [data-theme="light"] .area-summary {
-  --area-rule: rgba(15, 23, 42, 0.14);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, var(--shadow-md);
+  --area-rule: rgba(15, 23, 42, 0.12);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, var(--shadow-sm);
 }
-@media (max-width: 990px) {
-  .area-summary { flex: 0 0 auto; min-height: 0; overflow: visible; }
-}
+
 .area-summary-head {
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 6px 6px;
-  padding: 13px 24px 12px;
-  border-bottom: 1px solid var(--area-rule);
-}
-/* Long labels wrap onto a second line instead of clipping to an ellipsis.
-   Plain inline-block block-flow so wrapping is reliable on iOS Safari — the
-   -webkit-box + line-clamp combo did not wrap there and left the label cut. */
-.area-summary-head .pill-token:not([hidden]) {
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 5px;
+  min-height: 44px;
+  padding: 0 18px;
   flex: 0 1 auto;
-  display: inline-block;
-  max-width: 100%;
   min-width: 0;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: clip;
-  border-radius: 13px;
-  line-height: 1.25;
-  text-align: center;
+  border-right: 1px solid var(--area-rule);
 }
-@media (max-width: 760px) {
-  .area-summary-head {
-    justify-content: flex-start;
-    padding: 12px 16px;
-  }
-  .data-year-flag { position: static; margin-left: auto; }
-}
-.area-summary-eyebrow {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0;
-  color: var(--text-primary);
-  white-space: nowrap;
-}
+.area-summary-eyebrow,
 .area-summary-conn {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--text-primary);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .area-summary-conn[hidden] { display: none; }
+.area-summary-head .pill-token:not([hidden]) {
+  display: inline-block;
+  flex: 0 1 auto;
+  min-width: 2ch;
+  max-width: 26ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 999px;
+  line-height: 1.3;
+}
 .area-summary-context {
   font-size: 12px;
-  letter-spacing: 0;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .data-year-flag {
-  position: absolute;
-  right: 24px;
-  top: 12px;
   flex-shrink: 0;
-  font-size: 11px;
+  margin-left: 4px;
+  font-size: 10.5px;
   font-weight: 500;
   white-space: nowrap;
-  padding: 1px 8px;
+  padding: 1px 7px;
   border-radius: 999px;
   color: var(--accent-gold);
   background: color-mix(in srgb, var(--accent-gold) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--accent-gold) 30%, transparent);
   cursor: help;
 }
+.data-year-flag[hidden] { display: none; }
+
 .area-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: min-content;
-  align-content: start;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: stretch;
 }
-.area-summary-disclosure {
-  margin: 0;
-  padding: 12px 24px 14px;
-  border-top: 1px solid var(--area-rule);
-  font-size: 12.5px;
-  line-height: 1.55;
-  color: var(--text-secondary);
-}
-.area-summary-disclosure[hidden] { display: none; }
 .area-metric {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 12px 24px 12px;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 7px;
+  flex: 1 1 0;
   min-width: 0;
+  padding: 0 14px;
   border-left: 1px solid var(--area-rule);
-  border-top: 1px solid var(--area-rule);
-}
-.area-metric:nth-child(odd) {
-  border-left: none;
-}
-.area-metric:nth-child(1),
-.area-metric:nth-child(2) {
-  border-top: none;
-}
-/* Sector name is prose, not a figure — let it wrap instead of truncating. */
-.area-metric-value.is-text {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-  white-space: normal;
-  overflow: visible;
-}
-.area-metric-label {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0;
-  color: var(--text-muted);
-  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+}
+.area-metric:first-child { border-left: none; }
+.area-metric-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .area-metric-value {
   font-family: var(--font-mono);
-  font-size: 21px;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   color: var(--text-primary);
-  line-height: 1.1;
   font-feature-settings: "tnum" 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.area-metric-meta {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
   min-width: 0;
-  min-height: 13px;
 }
-.area-metric-chip {
-  flex-shrink: 0;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-.area-metric-chip.pos {
-  color: var(--accent-emerald);
-  font-weight: 600;
-}
-.area-metric-chip.pos::before { content: "▲ "; font-size: 8px; vertical-align: 1px; }
-.area-metric-chip.neg {
-  color: var(--accent-rose);
-  font-weight: 600;
-}
-.area-metric-chip.neg::before { content: "▼ "; font-size: 8px; vertical-align: 1px; }
-/* Verbose captions removed by request — values + comparison carry the meaning. */
-.area-metric-note {
-  display: none;
-}
-@media (max-width: 560px) {
-  .area-summary-grid {
-    grid-template-columns: 1fr;
-  }
-  .area-metric,
-  .area-metric:nth-child(odd) {
-    border-left: none;
-    border-top: 1px solid var(--area-rule);
-  }
-  .area-metric:first-child {
-    border-top: none;
-  }
-  .area-summary-context {
-    display: none;
-  }
-}
+.area-metric-value.is-text { font-size: 12px; }
+.area-metric-meta { display: none; }
+.area-metric-note { display: none; }
 
-/* Stacked layout: the Summary is the first thing on the page and pins under
-   the masthead, compressed to one header line + a single 4-up figure strip so
-   the whole thing (plus the top of the map) is on screen without scrolling.
-   Placed after the narrower blocks above so it wins the cascade. */
+.area-summary-disclosure {
+  flex: 1 1 100%;
+  margin: 0;
+  padding: 8px 18px 9px;
+  border-top: 1px solid var(--area-rule);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.area-summary-disclosure[hidden] { display: none; }
+
+/* Stacked layout: the Summary pins under the masthead as a header row + a
+   4-up figure strip (each figure label over value), so it plus the top of
+   the map are on screen without scrolling. Placed after the narrower blocks
+   above so it wins the cascade. */
 @media (max-width: 990px) {
   .area-summary {
     position: sticky;
     top: 44px;
     z-index: 40;
-    flex: 0 0 auto;
-    overflow: visible;
     border-radius: 0;
     border-left: 0;
     border-right: 0;
     box-shadow: 0 8px 16px -10px rgba(0, 0, 0, 0.55);
   }
   .area-summary-head {
-    justify-content: flex-start;
+    flex: 1 1 100%;
+    min-height: 0;
     align-items: baseline;
     gap: 3px 6px;
     padding: 7px 14px 6px;
+    border-right: 0;
+    border-bottom: 1px solid var(--area-rule);
   }
   .area-summary-eyebrow,
   .area-summary-conn { font-size: 11.5px; }
   .area-summary-head .pill-token:not([hidden]) {
     font-size: 10.5px;
-    padding: 1px 8px;
-    border-radius: 999px;
-    line-height: 1.3;
+    max-width: 60vw;
   }
   .area-summary-context { display: none; }
   .data-year-flag { display: none; }
 
-  .area-summary-grid { grid-template-columns: repeat(4, 1fr); }
-  .area-metric,
-  .area-metric:nth-child(odd),
-  .area-metric:nth-child(1),
-  .area-metric:nth-child(2),
-  .area-metric:first-child {
-    padding: 6px 8px 7px;
+  .area-summary-grid { flex: 1 1 100%; }
+  .area-metric {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 1px;
-    border-top: 0;
-    border-left: 1px solid var(--area-rule);
+    padding: 6px 8px 7px;
   }
-  .area-metric:nth-child(4n + 1) { border-left: 0; }
   .area-metric-label {
     font-size: 8.5px;
     letter-spacing: 0.03em;
-    text-transform: uppercase;
     white-space: normal;
-    overflow: visible;
     line-height: 1.2;
   }
   .area-metric-value { font-size: 12.5px; }
   .area-metric-value.is-text {
     font-size: 10px;
     line-height: 1.15;
+    white-space: normal;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-    overflow: hidden;
   }
-  .area-metric-meta,
   .area-summary-disclosure { display: none; }
 }
 
@@ -2605,12 +2470,7 @@ body {
           </div>
         </div>
 
-        <!-- Horizontal resizer — drag to resize the Area Summary (mirrors the vertical splitter) -->
-        <div class="split-divider-h" id="summaryDivider" title="Drag to resize the Area Summary" role="separator" aria-orientation="horizontal">
-          <div class="split-handle-puck" aria-hidden="true"></div>
-        </div>
-
-        <!-- Area Summary — its own resizable panel beneath the map + browse -->
+        <!-- Summary — a compact one-line strip pinned above the map + browse -->
         <div class="area-summary" id="kpiBar">
           <div class="area-summary-head">
                 <span class="area-summary-eyebrow">Summary</span>
@@ -2892,24 +2752,16 @@ function getChoroplethFill(val, minVal, maxVal, isDark = true, isLog = false) {
   return `rgba(${last[0]}, ${last[1]}, ${last[2]}, ${alpha})`;
 }
 
-// Initialize Application
-// Stacked layout (phones/tablets, <=990px): the Summary is the first section,
-// above the map, and pins under the masthead in a compressed form so the
-// current area + its figures are always on screen. On desktop it's its own
-// full-width panel below the map+browse split. Move the actual node (a CSS
-// display:contents reorder did not take on iOS Safari) and re-settle it on
-// breakpoint changes.
+// The Summary is the first thing in the column on every viewport — a compact
+// one-line strip above the map + browse (it pins under the masthead when the
+// layout stacks). Its DOM home is last in .map-canvas-column, so hoist it to
+// first. (A CSS display:contents reorder did not take on iOS Safari.)
 function positionSummaryPanel() {
   const summary = document.getElementById("kpiBar");
   const col = document.getElementById("mapCanvasColumn");
   const split = document.getElementById("mapCenterSplit");
   if (!summary || !col || !split) return;
-  const stacked = window.matchMedia("(max-width: 990px)").matches;
-  if (stacked) {
-    if (col.firstElementChild !== summary) col.insertBefore(summary, split);
-  } else if (summary.parentElement !== col || summary.nextElementSibling) {
-    col.appendChild(summary);   // back to last child, after #summaryDivider
-  }
+  if (col.firstElementChild !== summary) col.insertBefore(summary, split);
 }
 
 async function init() {
@@ -2919,9 +2771,6 @@ async function init() {
   setupYearSelect();
   introTraceSearchBars();
   positionSummaryPanel();
-  try {
-    window.matchMedia("(max-width: 990px)").addEventListener("change", positionSummaryPanel);
-  } catch (e) { window.addEventListener("resize", positionSummaryPanel); }
 
   const urlParams = new URLSearchParams(window.location.search);
   const requestedArea = urlParams.get("area");
@@ -4390,55 +4239,6 @@ function setupMapControls() {
   // Dynamic Splitter Puck between Map and Search/Browse
   // -------------------------------------------------------------
   setupSplitterPuck();
-  setupSummaryResizer();
-}
-
-// Horizontal splitter: drag up/down to resize the Summary panel against the
-// map + browse split above it. Bar is horizontal, motion is vertical.
-function setupSummaryResizer() {
-  const divider = document.getElementById("summaryDivider");
-  const col = document.getElementById("mapCanvasColumn");
-  const panel = document.getElementById("kpiBar");
-  if (!divider || !col || !panel) return;
-
-  let dragging = false, startY = 0, startH = 0, colH = 0;
-  const clientY = (e) => e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
-
-  const down = (e) => {
-    if (e.button && e.button !== 0) return;
-    dragging = true;
-    divider.classList.add("is-dragging");
-    document.body.style.cursor = "row-resize";
-    document.body.style.userSelect = "none";
-    startY = clientY(e);
-    startH = panel.getBoundingClientRect().height;
-    colH = col.getBoundingClientRect().height;
-    if (e.cancelable && e.type === "touchstart") e.preventDefault();
-  };
-  const move = (e) => {
-    if (!dragging) return;
-    const dy = clientY(e) - startY;
-    // drag down -> summary shrinks; drag up -> summary grows
-    const minH = 120;
-    const maxH = Math.max(minH, colH - 260);
-    const h = Math.max(minH, Math.min(maxH, startH - dy));
-    col.style.setProperty("--summary-h", `${h.toFixed(0)}px`);
-  };
-  const up = () => {
-    if (!dragging) return;
-    dragging = false;
-    divider.classList.remove("is-dragging");
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-  };
-
-  divider.addEventListener("mousedown", down);
-  window.addEventListener("mousemove", move);
-  window.addEventListener("mouseup", up);
-  divider.addEventListener("touchstart", down, { passive: false });
-  window.addEventListener("touchmove", move, { passive: true });
-  window.addEventListener("touchend", up, { passive: true });
-  window.addEventListener("touchcancel", up, { passive: true });
 }
 
 function setupSplitterPuck() {
@@ -5185,6 +4985,18 @@ function renderHeroAndKPIs() {
       kpiLqFootnote.textContent = "Balanced national baseline";
     }
   }
+
+  // The Summary is a one-line strip — the head already names the occupation
+  // and area, so keep the four metric labels terse. (The verbose text set
+  // above stays on each label's `title` for the desktop hover.)
+  [["kpiEmpLabel", "Employment"],
+   ["kpiMedianLabel", "Median"],
+   ["kpiMeanLabel", "Mean"],
+   ["kpiTopLqLabel", isAllJobs ? "Top sector" : "Density"]
+  ].forEach(([id, txt]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = txt;
+  });
 }
 
 function findTopConcentrationSector(data) {
