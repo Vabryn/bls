@@ -1356,6 +1356,12 @@ body {
   cursor: grab;
   touch-action: none;
 }
+/* On touch devices, let a vertical swipe scroll the page past the map;
+   only horizontal/diagonal drags pan (the JS pan handler bails on
+   vertical-dominant touch moves so the two don't fight). */
+@media (pointer: coarse) {
+  .map-svg-container { touch-action: pan-y; }
+}
 .map-svg-container:active,
 .map-svg-container.is-dragging,
 .map-svg-container.is-dragging * {
@@ -1514,7 +1520,7 @@ body {
   stroke: rgba(255, 255, 255, 0.6);
   stroke-width: 0.8px;
   vector-effect: non-scaling-stroke;
-  transition: r 0.2s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.15s ease, filter 0.15s ease, opacity 0.3s ease, fill-opacity 0.2s ease;
+  transition: r 0.2s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.15s ease, opacity 0.3s ease, fill-opacity 0.2s ease;
 }
 .metro-bubble:hover, .metro-bubble.highlighted {
   stroke: rgba(56, 189, 248, 0.95) !important;
@@ -1560,6 +1566,7 @@ body {
   background: var(--bg-elevated);
   border-top: 1px solid var(--border-subtle);
   position: relative;
+  min-width: 0;
 }
 [data-theme="light"] .map-legend-container {
   background: var(--bg-canvas);
@@ -4147,12 +4154,17 @@ function setupMapControls() {
 
   const onPointerMove = (e) => {
     if (!isPointerDown) return;
+    const isTouch = !!(e.touches && e.touches.length);
     const curX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
     const curY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
     const dx = curX - startX;
     const dy = curY - startY;
 
-    if (!hasDragged && Math.hypot(dx, dy) > 8) {
+    if (!hasDragged) {
+      if (Math.hypot(dx, dy) <= 8) return;
+      // On touch, a vertical-dominant swipe is the page scrolling past the
+      // map (touch-action: pan-y), not a map pan — release and let it through.
+      if (isTouch && Math.abs(dy) > Math.abs(dx)) { isPointerDown = false; return; }
       hasDragged = true;
       svgContainer.classList.add("is-dragging");
       zoomGroup.style.transition = "none";
