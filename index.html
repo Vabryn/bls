@@ -549,12 +549,15 @@ body {
   --map-split-width: 50%;    /* divider defaults to the horizontal centre */
 }
 .map-center-split > .map-card {
+  order: 3;                        /* browse on the left, map on the right */
   flex: 0 0 var(--map-split-width);
   min-width: 380px;
   min-height: 0;
   max-width: calc(100% - 340px);
 }
+.map-center-split > #mapBrowseDivider { order: 2; }
 .map-center-split > .browse-card {
+  order: 1;
   flex: 1 1 0;
   min-width: 340px;
   min-height: 0;
@@ -1309,18 +1312,59 @@ body {
 
 .browse-list-wrap { overflow: auto; }
 .browse-list { display: flex; flex-direction: column; }
+
+/* Spreadsheet grid: name | count | pay | chevron */
+.browse-head,
 .browse-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 92px 108px 16px;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
   text-align: left;
-  padding: 13px 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-sans);
+}
+.browse-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-medium);
+}
+.bh {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
   background: none;
   border: 0;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 0;
+  font: 700 10px/1.15 var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
   cursor: pointer;
-  font-family: var(--font-sans);
+}
+.bh-name { align-items: flex-start; text-align: left; }
+.bh-num  { align-items: flex-end;  text-align: right; }
+.bh:hover { color: var(--text-secondary); }
+.bh.on { color: var(--accent-cyan); }
+.bh-dir {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--accent-cyan);
+}
+.browse-row {
+  background: none;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  cursor: pointer;
   transition: background 0.1s ease;
 }
 button.browse-row:hover { background: var(--bg-elevated); }
@@ -1328,23 +1372,40 @@ button.browse-row:hover { background: var(--bg-elevated); }
   background: color-mix(in srgb, var(--accent-cyan) 12%, transparent);
 }
 .browse-row.active .browse-row-title { color: var(--accent-cyan); }
-.browse-row-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1 1 auto; }
 .browse-row-title {
-  font-size: 14.5px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.25;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.browse-row-sub {
-  font-size: 12.5px;
+.browse-col {
+  font-family: var(--font-mono);
+  font-size: 12px;
   color: var(--text-secondary);
-  line-height: 1.3;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+.browse-col-pay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.browse-col-dens { font-size: 10px; font-weight: 500; color: var(--text-muted); }
+.browse-col-dens.hot { color: var(--accent-emerald); }
+.browse-col-dens.low { color: var(--accent-rose); }
 .browse-row-go {
-  flex-shrink: 0;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   color: var(--text-muted);
+  text-align: center;
 }
 button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
 .browse-tag {
@@ -1377,6 +1438,8 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
   font-size: 13px;
 }
 .browse-row-all {
+  display: flex;
+  align-items: center;
   gap: 8px;
   padding: 11px 16px;
 }
@@ -1390,6 +1453,10 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
   color: var(--accent-cyan);
 }
 .browse-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   padding: 8px 16px;
   font-size: 11px;
   font-weight: 700;
@@ -1399,6 +1466,21 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
   border-bottom: 1px solid var(--border-subtle);
   background: var(--bg-elevated);
 }
+.region-filter {
+  flex: 0 1 200px;
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 5px 9px;
+}
+.region-filter:focus { outline: none; border-color: var(--accent-cyan); }
 .badge-density {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -1729,6 +1811,7 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
   border-top: 1px solid var(--border-subtle);
   position: relative;
   min-width: 0;
+  overflow: hidden;            /* legend pucks never escape the map card */
 }
 [data-theme="light"] .map-legend-container {
   background: var(--bg-canvas);
@@ -1818,12 +1901,14 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  max-width: 230px;
+  overflow: hidden;
   background: var(--bg-surface);
   border: 1px solid var(--border-medium);
   padding: 3.5px 10px;
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 12px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
   line-height: 1.2;
@@ -1836,7 +1921,7 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
 .puck-area-name {
   color: var(--text-secondary);
   font-weight: 500;
-  max-width: 200px;
+  max-width: 108px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2787,7 +2872,7 @@ const state = {
   drilldownRegion: "ALL",
   browseWageMetric: "median",   // 'median' | 'mean' | 'p25' | 'p75' — the one page-wide wage metric
   browseSector: null,           // null = sectors overview; 0..21 = that sector's occupations
-  browseSort: "wage",           // 'wage' | 'emp' | 'title' — one sort for every browse level
+  browseSort: { key: "wage", asc: false },   // spreadsheet sort: key + direction
   jobDataYear: null,            // year the active occupation's data actually came from (fallback when the selected year is incomplete)
   jobPrior: new Map(),         // soc -> { "2024": payload, "2023": payload, "2022": payload } for per-field gap-fill
   _priorLoading: new Set(),
@@ -3600,7 +3685,7 @@ function updateMapLegend() {
 
   if (usPuck && usNameEl && usValEl && natVal && natVal > 0 && maxVal > minVal) {
     const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal)) * 100));
-    usPuck.style.left = `${natPct}%`;
+    usPuck.style.left = `${Math.max(6, Math.min(94, natPct))}%`;
     usPuck.style.display = "flex";
 
     const isAllJobs = !state.activeMapSoc || state.activeMapSoc === "00-0000";
@@ -3619,14 +3704,14 @@ function updateMapLegend() {
     usValEl.textContent = fmtMetric(natVal, metricKind);
 
     // Edge clamping so badge does not clip off container boundaries
-    if (natPct < 12) {
+    if (natPct < 20) {
       usPuck.style.transform = "translateX(0%)";
       if (usArrow) {
         usArrow.style.alignSelf = "flex-start";
         usArrow.style.marginLeft = "12px";
         usArrow.style.marginRight = "0";
       }
-    } else if (natPct > 88) {
+    } else if (natPct > 80) {
       usPuck.style.transform = "translateX(-100%)";
       if (usArrow) {
         usArrow.style.alignSelf = "flex-end";
@@ -3667,7 +3752,7 @@ function updateMapLegend() {
 
     if (displayVal && displayVal > 0 && maxVal > minVal) {
       const pct = Math.max(0, Math.min(100, ((displayVal - minVal) / (maxVal - minVal)) * 100));
-      areaPuck.style.left = `${pct}%`;
+      areaPuck.style.left = `${Math.max(6, Math.min(94, pct))}%`;
       areaPuck.style.display = "flex";
 
       areaNameEl.textContent = cleanName;
@@ -3693,14 +3778,14 @@ function updateMapLegend() {
       }
 
       // Edge clamping so badge does not clip off container boundaries
-      if (pct < 12) {
+      if (pct < 20) {
         areaPuck.style.transform = "translateX(0%)";
         if (areaArrow) {
           areaArrow.style.alignSelf = "flex-start";
           areaArrow.style.marginLeft = "12px";
           areaArrow.style.marginRight = "0";
         }
-      } else if (pct > 88) {
+      } else if (pct > 80) {
         areaPuck.style.transform = "translateX(-100%)";
         if (areaArrow) {
           areaArrow.style.alignSelf = "flex-end";
@@ -3718,7 +3803,7 @@ function updateMapLegend() {
     } else {
       // Area selected, but data suppressed
       const pct = natVal && maxVal > minVal ? Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal)) * 100)) : 50;
-      areaPuck.style.left = `${pct}%`;
+      areaPuck.style.left = `${Math.max(6, Math.min(94, pct))}%`;
       areaPuck.style.display = "flex";
       areaNameEl.textContent = cleanName;
       areaValEl.textContent = "Data Suppressed";
@@ -4469,7 +4554,7 @@ function setupSplitterPuck() {
     const dx = clientX - startClientX;
 
     if (splitParentWidth > 0) {
-      const newWidthPx = initialMapWidth + dx;
+      const newWidthPx = initialMapWidth - dx;   // map sits on the right now
       // Clamp between 32% and 68% of the container width
       const minPx = Math.max(340, splitParentWidth * 0.32);
       const maxPx = Math.min(splitParentWidth - 340, splitParentWidth * 0.68);
@@ -5534,9 +5619,9 @@ function fmtPay(v) { return v > 0 ? `${fmt.currency(v)} a year` : "pay not repor
 // Density (location quotient) shown plainly on every row, coloured by how far
 // it runs from the national norm of 1.0x.
 function densityBit(lq) {
-  if (!(lq > 0)) return "";
+  if (!(lq > 0)) return null;
   const cls = lq >= 1.25 ? "hot" : (lq < 0.8 ? "low" : "");
-  return `<span class="browse-dens ${cls}">${lq.toFixed(2)}&#215; density</span>`;
+  return { txt: `${lq.toFixed(2)}× density`, cls };
 }
 function clearJobSearch() {
   const i = document.getElementById("mapJobSearchInput");
@@ -5549,12 +5634,39 @@ function resetBrowseScroll() {
   if (sc) sc.scrollTop = 0;
 }
 function sortRows(rows) {
-  const s = state.browseSort || "wage";
+  const { key, asc } = state.browseSort;
   rows.sort((a, b) => {
-    if (s === "title") return String(a.title).localeCompare(String(b.title));
-    return (b[s] || 0) - (a[s] || 0);          // pay / jobs: high to low
+    if (key === "title") {
+      const r = String(a.title).localeCompare(String(b.title));
+      return asc ? r : -r;
+    }
+    const va = a[key] || 0, vb = b[key] || 0;
+    return asc ? va - vb : vb - va;
   });
   return rows;
+}
+function setBrowseSort(key) {
+  const s = state.browseSort;
+  if (s.key === key) s.asc = !s.asc;
+  else { s.key = key; s.asc = (key === "title"); }   // A->Z for names, high->low for numbers
+  renderBrowseTable();
+}
+// Spreadsheet-style header: Name | <count> | Pay, each sortable with a
+// plain-language direction hint (A->Z, Low->High).
+function browseHead(countKey, countLabel) {
+  const { key, asc } = state.browseSort;
+  const dir = (k, aLabel, dLabel) => key === k ? `<span class="bh-dir">${asc ? aLabel : dLabel}</span>` : "";
+  const head = document.createElement("div");
+  head.className = "browse-head";
+  head.innerHTML =
+    `<button class="bh bh-name${key === "title" ? " on" : ""}">Name${dir("title", "A→Z", "Z→A")}</button>` +
+    `<button class="bh bh-num${key === countKey ? " on" : ""}">${countLabel}${dir(countKey, "Low→High", "High→Low")}</button>` +
+    `<button class="bh bh-num${key === "wage" ? " on" : ""}">Pay${dir("wage", "Low→High", "High→Low")}</button>` +
+    `<span class="bh-gap"></span>`;
+  head.children[0].addEventListener("click", () => setBrowseSort("title"));
+  head.children[1].addEventListener("click", () => setBrowseSort(countKey));
+  head.children[2].addEventListener("click", () => setBrowseSort("wage"));
+  return head;
 }
 
 function renderCrumbs() {
@@ -5611,17 +5723,17 @@ function renderCrumbs() {
   });
 }
 
-function browseRow(opts) {
-  const row = document.createElement(opts.onClick ? "button" : "div");
-  row.className = "browse-row" + (opts.active ? " active" : "");
+function browseRow(o) {
+  const row = document.createElement(o.onClick ? "button" : "div");
+  row.className = "browse-row" + (o.active ? " active" : "");
   row.setAttribute("role", "listitem");
   row.innerHTML =
-    `<span class="browse-row-main">` +
-      `<span class="browse-row-title">${opts.title}</span>` +
-      `<span class="browse-row-sub">${opts.sub}${opts.tag ? " " + opts.tag : ""}</span>` +
-    `</span>` +
-    (opts.chevron ? `<span class="browse-row-go" aria-hidden="true">›</span>` : "");
-  if (opts.onClick) row.addEventListener("click", opts.onClick);
+    `<span class="browse-row-title">${o.title}</span>` +
+    `<span class="browse-col browse-col-num">${o.count}</span>` +
+    `<span class="browse-col browse-col-num browse-col-pay">${o.pay}` +
+      `${o.dens ? `<span class="browse-col-dens ${o.dens.cls}">${o.dens.txt}</span>` : ""}</span>` +
+    `<span class="browse-row-go" aria-hidden="true">${o.chevron ? "›" : ""}</span>`;
+  if (o.onClick) row.addEventListener("click", o.onClick);
   return row;
 }
 
@@ -5652,11 +5764,11 @@ function renderSectorsList(data) {
   sortRows(rows);
 
   const frag = document.createDocumentFragment();
+  frag.appendChild(browseHead("roles", "Roles"));
   rows.forEach(r => frag.appendChild(browseRow({
     title: r.title,
-    // A sector is a bucket of job types — how many roles it holds, and its
-    // typical pay, is the useful preview (not one raw headcount).
-    sub: `${r.roles} ${r.roles === 1 ? "role" : "roles"} · ${fmtPay(r.wage)}`,
+    count: `${fmt.number(r.roles)} ${r.roles === 1 ? "role" : "roles"}`,
+    pay: fmtPay(r.wage),
     chevron: true,
     onClick: () => { state.browseSector = r.gi; renderBrowseTable(); resetBrowseScroll(); }
   })));
@@ -5694,9 +5806,11 @@ function renderBrowseTable() {
   }
 
   const frag = document.createDocumentFragment();
+  frag.appendChild(browseHead("emp", "Jobs"));
   rows.slice(0, 400).forEach(r => frag.appendChild(browseRow({
     title: r.title,
-    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}`,
+    count: fmtJobs(r.emp),
+    pay: fmtPay(r.wage),
     chevron: true,
     onClick: () => openOccupationAreaBreakdown(r.soc, r.title)
   })));
@@ -5765,16 +5879,48 @@ function renderOccupationAreasTable() {
 
   const count = document.createElement("div");
   count.className = "browse-count";
-  count.textContent = `${fmt.number(rows.length)} ${rows.length === 1 ? "region" : "regions"}`;
+  count.innerHTML =
+    `<span id="regionCount">${fmt.number(rows.length)} regions</span>` +
+    `<input type="text" id="regionFilterInput" class="region-filter" placeholder="Type a region…" autocomplete="off" aria-label="Filter regions">`;
   frag.appendChild(count);
+  frag.appendChild(browseHead("emp", "Jobs"));
   rows.forEach(r => frag.appendChild(browseRow({
     title: r.title,
-    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}${r.lq > 0 ? " · " + densityBit(r.lq) : ""}`,
+    count: fmtJobs(r.emp),
+    pay: fmtPay(r.wage),
+    dens: densityBit(r.lq),
     active: r.id === state.currentAreaId,
     onClick: () => { loadArea(r.id, true); renderOccupationAreasTable(); }
   })));
   list.innerHTML = "";
   list.appendChild(frag);
+
+  // Type-to-filter the region list (selecting still runs through loadArea, so
+  // the map, Summary and legend all follow).
+  const input = document.getElementById("regionFilterInput");
+  const countEl = document.getElementById("regionCount");
+  const applyRegionFilter = () => {
+    const query = (state.regionFilter || "").toLowerCase().trim();
+    let shown = 0;
+    list.querySelectorAll(".browse-row:not(.browse-row-all)").forEach(rowEl => {
+      const t = (rowEl.querySelector(".browse-row-title") || {}).textContent || "";
+      const match = !query || t.toLowerCase().includes(query);
+      rowEl.hidden = !match;
+      if (match) shown++;
+    });
+    if (countEl) countEl.textContent = `${fmt.number(shown)} ${shown === 1 ? "region" : "regions"}`;
+  };
+  if (input) {
+    input.value = state.regionFilter || "";
+    input.addEventListener("input", () => { state.regionFilter = input.value; applyRegionFilter(); });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const first = list.querySelector(".browse-row:not(.browse-row-all):not([hidden])");
+        if (first) first.click();
+      }
+    });
+  }
+  applyRegionFilter();
 }
 async function openOccupationAreaBreakdown(soc, title) {
   state.drilldownSoc = soc;
