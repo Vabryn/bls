@@ -545,7 +545,7 @@ body {
   min-width: 0;
   min-height: 0;
   flex: 1 1 auto;            /* take the space left over the Summary panel */
-  gap: 0;
+  gap: 10px;
   --map-split-width: 50%;    /* divider defaults to the horizontal centre */
 }
 .map-center-split > .map-card {
@@ -790,18 +790,21 @@ body {
 /* One-line strip above the map + browse: "Summary of <occ> in <area>" on the
    left, then Employment / Median / Mean / Top-sector inline. Fixed height,
    never scrolls; the rare hourly-wage disclosure wraps to a second line. */
+/* Summary and the wage-metric control below it share one fixed, centred width
+   so the Summary doesn't jump around as you pick different areas/occupations —
+   long names wrap inside it instead. */
+.area-summary,
+.page-metric-bar {
+  flex: 0 0 auto;
+  align-self: center;
+  width: min(760px, 100%);
+}
 .area-summary {
   --area-rule: rgba(255, 255, 255, 0.14);
   position: relative;
-  flex: 0 0 auto;
-  align-self: center;           /* sit centred over the metric control, not full-bleed */
-  width: auto;
-  max-width: 100%;
   overflow: visible;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
+  flex-direction: column;
   border: 1px solid color-mix(in srgb, var(--accent-cyan) 26%, transparent);
   border-radius: var(--radius-lg);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, var(--shadow-sm);
@@ -817,7 +820,6 @@ body {
 
 /* The single page-wide wage-metric control, directly under the Summary. */
 .page-metric-bar {
-  flex: 0 0 auto;
   display: flex;
   justify-content: center;
   padding: 2px 0 0;
@@ -847,17 +849,19 @@ body {
   .page-metric-bar { overflow-x: auto; scrollbar-width: none; justify-content: flex-start; }
   .page-metric-bar::-webkit-scrollbar { display: none; }
   .page-metric-bar .segmented-btn { padding: 6px 11px; font-size: 11.5px; }
+  .map-legend-wrapper { gap: 8px; }
+  .legend-edge-wage { font-size: 11px; min-width: 46px; }
+  .legend-metric-badge { font-size: 10px; padding: 2px 7px; }
 }
 
 /* Map style toggle, stacked just left of the zoom +/- stack. */
-.map-overlay-controls {
+/* wrapper only — the two clusters position themselves on opposite sides */
+.map-overlay-controls { display: contents; }
+#mapModeTabs.seg-vertical {
   position: absolute;
   top: 12px;
-  right: 12px;
+  left: 12px;
   z-index: 8;
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
 }
 .segmented-control.seg-vertical {
   display: flex;
@@ -885,15 +889,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: nowrap;
-  gap: 5px;
-  min-height: 46px;
-  padding: 0 16px;
-  flex: 0 0 auto;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  border-right: 1px solid var(--area-rule);
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  min-height: 44px;
+  padding: 8px 16px;
+  width: 100%;
+  border-bottom: 1px solid var(--area-rule);
 }
 .area-summary-eyebrow,
 .area-summary-conn {
@@ -908,12 +909,14 @@ body {
   display: inline-block;
   flex: 0 1 auto;
   min-width: 2ch;
-  max-width: 26ch;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  border-radius: 999px;
-  line-height: 1.3;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  overflow: visible;
+  text-overflow: clip;
+  border-radius: 13px;
+  line-height: 1.28;
+  text-align: center;
 }
 .area-summary-context {
   font-size: 12px;
@@ -939,18 +942,20 @@ body {
 
 .area-summary-grid {
   display: flex;
-  flex: 0 0 auto;
+  width: 100%;
   min-width: 0;
-  align-items: center;
+  align-items: stretch;
+  justify-content: center;
 }
 .area-metric {
   display: flex;
   flex-direction: row;
   align-items: baseline;
+  justify-content: center;
   gap: 8px;
-  flex: 0 0 auto;
+  flex: 1 1 0;
   min-width: 0;
-  min-height: 46px;
+  min-height: 44px;
   padding: 0 16px;
   border-left: 1px solid var(--area-rule);
   white-space: nowrap;
@@ -1028,12 +1033,16 @@ body {
   .area-summary-context { display: none; }
   .data-year-flag { display: none; }
 
-  .area-summary-grid { flex: 1 1 100%; }
+  .area-summary-grid { flex: 1 1 100%; justify-content: stretch; }
   .area-metric {
+    flex: 1 1 0;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     gap: 1px;
-    padding: 6px 8px 7px;
+    min-height: 0;
+    padding: 7px 6px 8px;
   }
   .area-metric-label {
     font-size: 8.5px;
@@ -1289,6 +1298,10 @@ body {
 }
 /* Floating zoom control, pinned inside the map viewport (both themes). */
 .map-zoom-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 8;
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-md);
@@ -1593,10 +1606,24 @@ body {
 }
 .legend-edge-wage {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--text-muted);
   white-space: nowrap;
   min-width: 58px;
+}
+/* Selected metric, highlighted, just left of the low edge value. */
+.legend-metric-badge {
+  flex-shrink: 0;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  padding: 2px 9px;
+  border-radius: 999px;
+  color: var(--accent-cyan);
+  background: color-mix(in srgb, var(--accent-cyan) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 42%, transparent);
 }
 #legendMinLabel {
   text-align: right;
@@ -1654,13 +1681,13 @@ body {
 .legend-puck-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   background: var(--bg-surface);
   border: 1px solid var(--border-medium);
-  padding: 2.5px 8px;
+  padding: 3.5px 10px;
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12.5px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
   line-height: 1.2;
@@ -2379,7 +2406,8 @@ body {
             <!-- Continuous Color Scale Legend -->
             <div class="map-legend-container">
               <div class="map-legend-wrapper">
-                <!-- Min Wage on the Left -->
+                <!-- Selected metric, then the low edge value -->
+                <span class="legend-metric-badge" id="legendMetricBadge">Median</span>
                 <span id="legendMinLabel" class="tabular legend-edge-wage">$0</span>
 
                 <!-- Center Column with Two Pucks (Area Above, US Below) and Color Bar in the middle -->
@@ -2530,9 +2558,9 @@ body {
                   </div>
                 </div>
 
-                <div class="area-metric" hidden>
-                  <div class="area-metric-label" id="kpiTopLqLabel">Top Sector Concentration</div>
-                  <div class="area-metric-value is-text" id="kpiTopLqSector">—</div>
+                <div class="area-metric">
+                  <div class="area-metric-label" id="kpiTopLqLabel">Density</div>
+                  <div class="area-metric-value tabular" id="kpiTopLqSector">—</div>
                   <div class="area-metric-meta">
                     <span class="area-metric-chip pos" id="kpiTopLqBadge">LQ</span>
                     <span class="area-metric-note" id="kpiTopLqFootnote">Relative to national baseline</span>
@@ -3451,6 +3479,14 @@ function updateMapLegend() {
   if (minEl) minEl.textContent = fmtMetric(minVal, metricKind);
   if (maxEl) maxEl.textContent = fmtMetric(maxVal, metricKind);
 
+  // Selected-metric highlight, sitting just left of the low value.
+  const badgeEl = document.getElementById("legendMetricBadge");
+  if (badgeEl) {
+    badgeEl.textContent = metricKind === "emp" ? "Employment"
+      : metricKind === "density" ? "Density"
+      : ({ median: "Median", mean: "Mean", p25: "Bottom 25%", p75: "Top 25%" }[state.browseWageMetric] || metricName || "Median");
+  }
+
   // 2. U.S. Puck (Below line, arrow points up ▲)
   const usPuck = document.getElementById("mapLegendUsPuck");
   const usNameEl = document.getElementById("puckUsName");
@@ -3469,11 +3505,11 @@ function updateMapLegend() {
       if (occName.length > 24) occName = occName.slice(0, 22) + "…";
     }
 
-    const natWord = metricKind === "emp" ? "Total" : metricName;
+    // Metric name lives in the legend badge now — keep the puck label clean.
     if (isAllJobs) {
-      usNameEl.textContent = `U.S. National ${natWord}`;
+      usNameEl.textContent = "U.S. National";
     } else {
-      usNameEl.textContent = `U.S. ${natWord} (${occName})`;
+      usNameEl.textContent = `U.S. (${occName})`;
     }
     usValEl.textContent = fmtMetric(natVal, metricKind);
 
@@ -5061,6 +5097,15 @@ function renderHeroAndKPIs() {
       }
       wageValEl.textContent = (v && v > 0) ? fmt.currency(v) : "N/A";
     }
+  }
+
+  // Density sits to the right of the wage figure.
+  const densLabelEl = document.getElementById("kpiTopLqLabel");
+  const densValEl = document.getElementById("kpiTopLqSector");
+  if (densLabelEl) densLabelEl.textContent = "Density";
+  if (densValEl) {
+    if (isAllJobs) densValEl.textContent = "1.00×";
+    else densValEl.textContent = (occLq != null && occLq > 0) ? `${occLq.toFixed(2)}×` : "N/A";
   }
 }
 
