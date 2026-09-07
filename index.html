@@ -529,7 +529,14 @@ body {
   overflow: hidden;
 }
 @media (max-width: 990px) {
-  .map-canvas-column { height: auto; min-height: 0; overflow: visible; }
+  .map-canvas-column { height: auto; min-height: 0; overflow: visible; gap: 12px; }
+  /* Stacked phone/tablet layout: drop the map+browse split wrapper so the map
+     card, the Summary, and the Browse card become siblings we can reorder.
+     Order is map -> Summary -> Browse, so the Summary is one short scroll below
+     the map instead of sitting behind the whole occupations list. */
+  .map-center-split { display: contents; }
+  .area-summary { order: 1; }
+  .browse-card { order: 2; }
 }
 .map-center-split {
   display: flex;
