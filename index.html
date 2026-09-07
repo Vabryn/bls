@@ -198,7 +198,7 @@ body {
 .page-container {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 16px 24px 20px;
+  padding: 18px 44px 24px;
 }
 @media (max-width: 990px) {
   .page-container { padding: 14px 16px 40px; }
@@ -509,8 +509,8 @@ body {
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   align-items: start;
-  width: min(calc(100vw - 80px), 1640px);
-  max-width: 1640px;
+  width: min(calc(100vw - 150px), 1560px);
+  max-width: 1560px;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
@@ -798,7 +798,7 @@ body {
   display: flex;
   align-items: stretch;
   flex-wrap: wrap;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 26%, transparent);
   border-radius: var(--radius-lg);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, var(--shadow-sm);
   background:
@@ -809,6 +809,73 @@ body {
   --area-rule: rgba(15, 23, 42, 0.12);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, var(--shadow-sm);
 }
+.area-metric[hidden] { display: none; }
+
+/* The single page-wide wage-metric control, directly under the Summary. */
+.page-metric-bar {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  padding: 2px 0 0;
+}
+.page-metric-bar .segmented-control {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+}
+.page-metric-bar .segmented-btn {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.page-metric-bar .segmented-btn.active {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+@media (max-width: 760px) {
+  .page-metric-bar { overflow-x: auto; scrollbar-width: none; justify-content: flex-start; }
+  .page-metric-bar::-webkit-scrollbar { display: none; }
+  .page-metric-bar .segmented-btn { padding: 6px 11px; font-size: 11.5px; }
+}
+
+/* Map style toggle, stacked just left of the zoom +/- stack. */
+.map-overlay-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 8;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.segmented-control.seg-vertical {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-md);
+  background: var(--bg-surface);
+}
+.seg-vertical .segmented-btn {
+  padding: 7px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  color: var(--text-secondary);
+  border: 0;
+  background: var(--bg-surface);
+  white-space: nowrap;
+}
+.seg-vertical .segmented-btn + .segmented-btn { border-top: 1px solid var(--border-subtle); }
+.seg-vertical .segmented-btn.active { background: var(--bg-elevated); color: var(--accent-cyan); }
 
 .area-summary-head {
   display: flex;
@@ -816,7 +883,7 @@ body {
   justify-content: flex-start;
   flex-wrap: nowrap;
   gap: 5px;
-  min-height: 44px;
+  min-height: 55px;
   padding: 0 18px;
   flex: 0 1 auto;
   min-width: 0;
@@ -876,17 +943,17 @@ body {
   display: flex;
   flex-direction: row;
   align-items: baseline;
-  gap: 7px;
+  gap: 8px;
   flex: 1 1 0;
   min-width: 0;
-  padding: 0 14px;
+  padding: 0 18px;
   border-left: 1px solid var(--area-rule);
   white-space: nowrap;
   overflow: hidden;
 }
 .area-metric:first-child { border-left: none; }
 .area-metric-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -896,7 +963,7 @@ body {
 }
 .area-metric-value {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text-primary);
@@ -1214,10 +1281,6 @@ body {
 }
 /* Floating zoom control, pinned inside the map viewport (both themes). */
 .map-zoom-overlay {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 8;
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-md);
@@ -2263,48 +2326,27 @@ body {
                 </div>
                 <div id="areaDropdown" class="combobox-dropdown"></div>
               </div>
-              <div class="map-toolbar-area-info" id="mapToolbarAreaInfo">
-                <span class="hud-metro-counties" id="hudMetroCounties">National View</span>
-              </div>
             </div>
-
-            <!-- Horizontal Map Controls Bar: Wage Metric & Map Style -->
-            <div class="map-card-controls-bar">
-              <!-- Wage Metric Tabs -->
-              <div class="map-controls-cluster">
-                <div class="segmented-control" id="mapMetricTabs">
-                  <button class="segmented-btn active" data-metric="median">Median</button>
-                  <button class="segmented-btn" data-metric="mean">Mean</button>
-                  <button class="segmented-btn" data-metric="p25">Bottom 25%</button>
-                  <button class="segmented-btn" data-metric="p75">Top 25%</button>
-                  <button class="segmented-btn" data-metric="emp">Employment</button>
-                  <button class="segmented-btn" data-metric="lq">Density</button>
-                </div>
-              </div>
-
-              <!-- Map Style Tabs -->
-              <div class="map-controls-cluster">
-                <span class="map-controls-label">Style</span>
-                <div class="segmented-control" id="mapModeTabs">
-                  <button class="segmented-btn active" data-mode="area">Area Map</button>
-                  <button class="segmented-btn" data-mode="bubble">Bubble Map</button>
-                </div>
-              </div>
-
-              <strong id="sidebarActiveJobTitle" hidden>All Occupations</strong>
-            </div>
+            <strong id="sidebarActiveJobTitle" hidden>All Occupations</strong>
 
             <!-- Responsive SVG Viewport (Albers USA 975x610) -->
             <div class="map-svg-container" id="mapSvgContainer">
-              <div class="map-zoom-overlay" id="mapZoomButtonsGroup">
-                <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
-                <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
-                <button class="map-zoom-btn map-zoom-btn--reset" id="mapResetBtn" aria-label="Reset map — deselect the area and zoom out" title="Reset map view">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M3 12a9 9 0 1 0 2.6-6.4"></path>
-                    <path d="M3 4v5h5"></path>
-                  </svg>
-                </button>
+              <div class="map-overlay-controls">
+                <!-- Map style, sitting left of the zoom stack -->
+                <div class="segmented-control seg-vertical" id="mapModeTabs" role="group" aria-label="Map style">
+                  <button class="segmented-btn active" data-mode="area" title="Area choropleth">Area</button>
+                  <button class="segmented-btn" data-mode="bubble" title="Proportional bubbles">Bubble</button>
+                </div>
+                <div class="map-zoom-overlay" id="mapZoomButtonsGroup">
+                  <button class="map-zoom-btn" id="mapZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+                  <button class="map-zoom-btn" id="mapZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+                  <button class="map-zoom-btn map-zoom-btn--reset" id="mapResetBtn" aria-label="Reset map — deselect the area and zoom out" title="Reset map view">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M3 12a9 9 0 1 0 2.6-6.4"></path>
+                      <path d="M3 4v5h5"></path>
+                    </svg>
+                  </button>
+                </div>
               </div>
               <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
                 <g id="mapZoomGroup" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
@@ -2395,29 +2437,6 @@ body {
               </div>
             </div>
 
-            <!-- Browse Filter Controls Bar -->
-            <div class="control-bar" id="browseControlBar">
-              <select id="browseEduFilter" class="control-select">
-                <option value="-1">Education</option>
-                <option value="0">No Formal Requirement</option>
-                <option value="1">High School / GED</option>
-                <option value="2">Certificate / License</option>
-                <option value="3">Associate's Degree</option>
-                <option value="4">Bachelor's Degree</option>
-                <option value="5">Master's Degree</option>
-                <option value="6">Doctoral / Professional</option>
-              </select>
-              <select id="browseGroupFilter" class="control-select">
-                <option value="-1">Sectors</option>
-              </select>
-              <select id="browseWageMetric" class="control-select" aria-label="Wage metric shown">
-                <option value="median">Median</option>
-                <option value="mean">Mean</option>
-                <option value="p25">Bottom 25%</option>
-                <option value="p75">Top 25%</option>
-              </select>
-            </div>
-
             <!-- Drilldown header when an occupation row is clicked -->
             <div id="browseDrilldownBar" style="display: none; align-items: center; justify-content: space-between; padding: 9px 14px; background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); gap: 10px; flex-wrap: wrap;">
               <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
@@ -2426,17 +2445,9 @@ body {
                 </button>
                 <span style="font-weight: 700; color: var(--text-primary); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="browseDrilldownTitle"></span>
               </div>
-              <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
-                <select id="drilldownRegionFilter" class="control-select" style="max-width: 190px;">
-                  <option value="ALL">All Regions</option>
-                </select>
-                <select id="drilldownWageMetric" class="control-select" style="flex: 0 1 130px; min-width: 96px;" aria-label="Wage metric shown">
-                  <option value="median">Median</option>
-                  <option value="mean">Mean</option>
-                  <option value="p25">Bottom 25%</option>
-                  <option value="p75">Top 25%</option>
-                </select>
-              </div>
+              <select id="drilldownRegionFilter" class="control-select" style="max-width: 190px;">
+                <option value="ALL">All Regions</option>
+              </select>
             </div>
 
             <!-- Table Container -->
@@ -2502,7 +2513,7 @@ body {
                   </div>
                 </div>
 
-                <div class="area-metric">
+                <div class="area-metric" hidden>
                   <div class="area-metric-label" id="kpiMeanLabel">Annual Mean Wage</div>
                   <div class="area-metric-value tabular" id="kpiMeanWage">—</div>
                   <div class="area-metric-meta">
@@ -2511,7 +2522,7 @@ body {
                   </div>
                 </div>
 
-                <div class="area-metric">
+                <div class="area-metric" hidden>
                   <div class="area-metric-label" id="kpiTopLqLabel">Top Sector Concentration</div>
                   <div class="area-metric-value is-text" id="kpiTopLqSector">—</div>
                   <div class="area-metric-meta">
@@ -2521,6 +2532,19 @@ body {
                 </div>
               </div>
           <p class="area-summary-disclosure" id="kpiDisclosure" hidden></p>
+        </div>
+
+        <!-- One wage-metric control for the whole page (drives the map colour
+             and the browse table's wage column). Sits under the Summary. -->
+        <div class="page-metric-bar" id="pageMetricBar">
+          <div class="segmented-control" id="mapMetricTabs" role="group" aria-label="Wage metric">
+            <button class="segmented-btn active" data-metric="median">Median</button>
+            <button class="segmented-btn" data-metric="mean">Mean</button>
+            <button class="segmented-btn" data-metric="p25">Bottom 25%</button>
+            <button class="segmented-btn" data-metric="p75">Top 25%</button>
+            <button class="segmented-btn" data-metric="emp">Employment</button>
+            <button class="segmented-btn" data-metric="lq">Density</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2621,7 +2645,8 @@ const state = {
   tableSort: { col: "wage", asc: false },
   drilldownSoc: null,
   drilldownRegion: "ALL",
-  browseWageMetric: "median",   // 'median' | 'mean' | 'p25' | 'p75' — shared by both browse tables
+  browseWageMetric: "median",   // 'median' | 'mean' | 'p25' | 'p75' — the one page-wide wage metric
+  browseSector: null,           // null = sectors overview; 0..21 = that sector's occupations
   jobDataYear: null,            // year the active occupation's data actually came from (fallback when the selected year is incomplete)
   jobPrior: new Map(),         // soc -> { "2024": payload, "2023": payload, "2022": payload } for per-field gap-fill
   _priorLoading: new Set(),
@@ -2758,10 +2783,17 @@ function getChoroplethFill(val, minVal, maxVal, isDark = true, isLog = false) {
 // first. (A CSS display:contents reorder did not take on iOS Safari.)
 function positionSummaryPanel() {
   const summary = document.getElementById("kpiBar");
+  const metricBar = document.getElementById("pageMetricBar");
   const col = document.getElementById("mapCanvasColumn");
   const split = document.getElementById("mapCenterSplit");
-  if (!summary || !col || !split) return;
-  if (col.firstElementChild !== summary) col.insertBefore(summary, split);
+  if (!col || !split) return;
+  // Order the column: Summary, then the wage-metric bar, then the map+browse.
+  if (metricBar && metricBar.parentElement === col && metricBar !== split.previousElementSibling) {
+    col.insertBefore(metricBar, split);
+  }
+  if (summary && col.firstElementChild !== summary) {
+    col.insertBefore(summary, col.firstElementChild);
+  }
 }
 
 async function init() {
@@ -3991,7 +4023,17 @@ function setupMapControls() {
     btn.addEventListener("click", () => {
       document.querySelectorAll("#mapMetricTabs .segmented-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      state.activeMapMetric = btn.dataset.metric;
+      const m = btn.dataset.metric;
+      state.activeMapMetric = m;
+      // The wage percentiles also drive the browse table's wage column and the
+      // Summary's wage figure — one control for the whole page.
+      if (m === "median" || m === "mean" || m === "p25" || m === "p75") {
+        state.browseWageMetric = m;
+        syncWageColHeaders();
+        if (state.drilldownSoc) renderOccupationAreasTable();
+        else renderBrowseTable();
+        renderHeroAndKPIs();
+      }
       renderMetroMap();
     });
   });
@@ -4986,17 +5028,32 @@ function renderHeroAndKPIs() {
     }
   }
 
-  // The Summary is a one-line strip — the head already names the occupation
-  // and area, so keep the four metric labels terse. (The verbose text set
-  // above stays on each label's `title` for the desktop hover.)
-  [["kpiEmpLabel", "Employment"],
-   ["kpiMedianLabel", "Median"],
-   ["kpiMeanLabel", "Mean"],
-   ["kpiTopLqLabel", isAllJobs ? "Top sector" : "Density"]
-  ].forEach(([id, txt]) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = txt;
-  });
+  // The Summary shows just Employment + the one selected wage metric. Terse
+  // labels (the head already names the occupation and area); the wage slot
+  // relabels and, for mean / p25 / p75, restates its value to match the
+  // page-wide metric control.
+  const empLabelEl = document.getElementById("kpiEmpLabel");
+  if (empLabelEl) empLabelEl.textContent = "Employment";
+
+  const selLabel = { median: "Median", mean: "Mean", p25: "Bottom 25%", p75: "Top 25%" }[state.browseWageMetric] || "Median";
+  const wageLabelEl = document.getElementById("kpiMedianLabel");
+  const wageValEl = document.getElementById("kpiMedianWage");
+  if (wageLabelEl) wageLabelEl.textContent = selLabel;
+  if (wageValEl) {
+    if (state.browseWageMetric === "mean") {
+      const mEl = document.getElementById("kpiMeanWage");
+      if (mEl && mEl.textContent) wageValEl.textContent = mEl.textContent;
+    } else if (state.browseWageMetric === "p25" || state.browseWageMetric === "p75") {
+      const key = state.browseWageMetric;
+      let v = null;
+      if (isAllJobs && data.total) v = data.total[key];
+      else if (!isAllJobs) {
+        const r = (data.occupations || []).find(x => x[0] === state.activeMapSoc);
+        if (r) v = key === "p25" ? r[8] : r[9];
+      }
+      wageValEl.textContent = (v && v > 0) ? fmt.currency(v) : "N/A";
+    }
+  }
 }
 
 function findTopConcentrationSector(data) {
@@ -5150,9 +5207,6 @@ function setupDropdowns() {
     }
   });
 
-  // Populate the Major Sector filter
-  const browseGf = document.getElementById("browseGroupFilter");
-  if (browseGf) GROUPS.forEach((name, idx) => browseGf.add(new Option(name, idx)));
 }
 
 // Resolve a free-text query to specific areas via ZIP, place name, or county.
@@ -5347,8 +5401,7 @@ function renderSectorsList(data) {
       <td style="text-align: right;"><span class="badge-density ${r.lq && r.lq >= 1.25 ? 'high' : ''}">${r.lq ? fmt.lq(r.lq) : "—"}</span></td>
     `;
     tr.addEventListener("click", () => {
-      const sel = document.getElementById("browseGroupFilter");
-      if (sel) sel.value = String(r.gi);
+      state.browseSector = r.gi;
       state.tableSort = { col: "wage", asc: false };
       renderBrowseTable();
       const sc = document.getElementById("browseTableResponsive");
@@ -5372,8 +5425,7 @@ function renderBrowseTable() {
 
   const jobSearchEl = document.getElementById("mapJobSearchInput");
   const q = (jobSearchEl ? jobSearchEl.value : "").toLowerCase().trim();
-  const eduF = parseInt(document.getElementById("browseEduFilter").value);
-  const grpF = parseInt(document.getElementById("browseGroupFilter").value);
+  const grpF = state.browseSector == null ? -1 : state.browseSector;
 
   // No sector picked and nothing searched -> the sectors overview.
   if (!q && grpF === -1) {
@@ -5383,9 +5435,8 @@ function renderBrowseTable() {
   setBrowseTitleHeader("Occupation Title");
 
   let filtered = data.occupations.filter(row => {
-    const [soc, title, grpIdx, eduLvl] = row;
+    const [soc, title, grpIdx] = row;
     if (q && scoreOccupation(title, soc, q) <= 0) return false;
-    if (eduF !== -1 && eduLvl !== eduF) return false;
     if (grpF !== -1 && grpIdx !== grpF) return false;
     return true;
   });
@@ -5415,8 +5466,7 @@ function renderBrowseTable() {
     back.className = "clickable-row";
     back.innerHTML = `<td colspan="4" style="color: var(--accent-cyan); font-weight: 600; background: var(--bg-elevated);">‹ All sectors<span style="color: var(--text-muted); font-weight: 400;">  ·  ${GROUPS[grpF] || ""}</span></td>`;
     back.addEventListener("click", () => {
-      const sel = document.getElementById("browseGroupFilter");
-      if (sel) sel.value = "-1";
+      state.browseSector = null;
       state.tableSort = { col: "wage", asc: false };
       renderBrowseTable();
       const sc = document.getElementById("browseTableResponsive");
@@ -5504,8 +5554,6 @@ function closeOccupationAreaBreakdown() {
 
   document.getElementById("browseDrilldownBar").style.display = "none";
   document.getElementById("occupationAreasTable").style.display = "none";
-
-  document.getElementById("browseControlBar").style.display = "flex";
   document.getElementById("occupationsTable").style.display = "";
 
   renderBrowseTable();
@@ -5620,7 +5668,6 @@ async function openOccupationAreaBreakdown(soc, title) {
 
   // Switch display from Table A to Table B
   document.getElementById("occupationsTable").style.display = "none";
-  document.getElementById("browseControlBar").style.display = "none";
 
   const drilldownBar = document.getElementById("browseDrilldownBar");
   drilldownBar.style.display = "flex";
@@ -5628,9 +5675,6 @@ async function openOccupationAreaBreakdown(soc, title) {
 
   state.drilldownRegion = "ALL";
   populateDrilldownRegionFilter();
-
-  const ddWage = document.getElementById("drilldownWageMetric");
-  if (ddWage) ddWage.value = state.browseWageMetric;
   syncWageColHeaders();
 
   const tableAreas = document.getElementById("occupationAreasTable");
@@ -5689,26 +5733,8 @@ function setupEventListeners() {
     renderBrowseTable();
   });
 
-  // Browse Filters (the occupation text search now lives in #mapJobSearchInput,
-  // wired in setupMapControls).
-  document.getElementById("browseEduFilter").addEventListener("change", renderBrowseTable);
-  document.getElementById("browseGroupFilter").addEventListener("change", renderBrowseTable);
-
-  // Wage metric selector — two copies (filter bar + occupation drilldown bar)
-  // kept in sync. Swaps which wage the single Wage column shows.
-  const wageSels = ["browseWageMetric", "drilldownWageMetric"]
-    .map(id => document.getElementById(id))
-    .filter(Boolean);
-  wageSels.forEach(sel => {
-    sel.value = state.browseWageMetric;
-    sel.addEventListener("change", () => {
-      state.browseWageMetric = sel.value;
-      wageSels.forEach(s => { if (s !== sel) s.value = sel.value; });
-      syncWageColHeaders();
-      if (state.drilldownSoc) renderOccupationAreasTable();
-      else renderBrowseTable();
-    });
-  });
+  // The one wage metric lives in #mapMetricTabs now (wired in setupMapControls);
+  // the occupation text search lives in #mapJobSearchInput.
   syncWageColHeaders();
 
   // Browse Table Sort Headers
