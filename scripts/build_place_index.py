@@ -48,7 +48,7 @@ def norm_city(name):
 
 
 def load_cities(repo_root):
-    local = os.path.join(repo_root, "..", "bls_data", "us_cities.csv")
+    local = os.path.join(repo_root, "bls_data", "us_cities.csv")
     tmp = "/tmp/us_cities.csv"
     for path in (local, tmp):
         if os.path.exists(path):
