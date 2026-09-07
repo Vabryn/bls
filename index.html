@@ -753,10 +753,11 @@ body {
 .pill-token[hidden] { display: none; }
 /* Hover-card pills match the Summary pills in size; drop the ambient glow so
    it doesn't smear inside the small tooltip, and let a long label wrap onto a
-   second line rather than clip (the two pills stack, one per line). */
+   second line rather than clip. The pills sit left-aligned and only drop to a
+   second row when they don't both fit. */
 .custom-tooltip .pill-token {
   box-shadow: none;
-  display: block;
+  display: inline-block;
   max-width: 100%;
   white-space: normal;
   overflow-wrap: anywhere;
@@ -4014,7 +4015,7 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
     : "";
 
   tooltip.innerHTML = `
-    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 8px;">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: flex-start; gap: 5px 6px; margin-bottom: 8px;">
       <span class="pill-token">${jobPayload.title}</span>
       <span class="pill-token">${formatAreaName(metro.name)}</span>
     </div>
