@@ -1382,11 +1382,28 @@ button.browse-row:hover .browse-row-go { color: var(--accent-cyan); }
   background: rgba(16, 185, 129, 0.14);
 }
 [data-theme="light"] .browse-tag { background: rgba(15, 23, 42, 0.06); }
+.browse-dens {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.browse-dens.hot { color: var(--accent-emerald); }
+.browse-dens.low { color: var(--accent-rose); }
 .browse-empty {
   padding: 28px 20px;
   text-align: center;
   color: var(--text-muted);
   font-size: 13px;
+}
+.browse-count {
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
 }
 .badge-density {
   font-family: var(--font-mono);
@@ -5528,11 +5545,12 @@ function fmtJobs(n) {
   return n > 0 ? `${fmt.number(n)} ${n === 1 ? "job" : "jobs"}` : "no job estimate";
 }
 function fmtPay(v) { return v > 0 ? `${fmt.currency(v)} a year` : "pay not reported"; }
-function demandChip(lq) {
+// Density (location quotient) shown plainly on every row, coloured by how far
+// it runs from the national norm of 1.0x.
+function densityBit(lq) {
   if (!(lq > 0)) return "";
-  if (lq >= 1.4)  return `<span class="browse-tag hot">Especially common here</span>`;
-  if (lq >= 1.15) return `<span class="browse-tag">More common here</span>`;
-  return "";
+  const cls = lq >= 1.25 ? "hot" : (lq < 0.8 ? "low" : "");
+  return `<span class="browse-dens ${cls}">${lq.toFixed(2)}&#215; density</span>`;
 }
 function clearJobSearch() {
   const i = document.getElementById("mapJobSearchInput");
@@ -5575,7 +5593,20 @@ function renderCrumbs() {
       : { label: GROUPS[state.browseSector] || "Sector",
           go: state.drilldownSoc ? () => closeOccupationAreaBreakdown() : null });
   }
-  if (lvl === 2) crumbs.push({ label: state.drilldownTitle || "Job", go: null });
+  if (lvl === 2) {
+    const areaPicked = state.currentAreaId && state.currentAreaId !== "99";
+    crumbs.push({
+      label: state.drilldownTitle || "Job",
+      // clickable only when a region is selected further down — clears it
+      go: areaPicked
+        ? () => { if (typeof resetMapZoom === "function") resetMapZoom(); else loadArea("99", false); }
+        : null
+    });
+    if (areaPicked) {
+      const meta = state.manifest && state.manifest.find(a => a.id === state.currentAreaId);
+      crumbs.push({ label: meta ? formatAreaName(meta.name) : "Selected region", go: null });
+    }
+  }
 
   el.innerHTML = "";
   crumbs.forEach((c, i) => {
@@ -5668,8 +5699,7 @@ function renderBrowseTable() {
   const frag = document.createDocumentFragment();
   rows.slice(0, 400).forEach(r => frag.appendChild(browseRow({
     title: r.title,
-    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}`,
-    tag: demandChip(r.lq),
+    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}${r.lq > 0 ? " · " + densityBit(r.lq) : ""}`,
     chevron: true,
     onClick: () => openOccupationAreaBreakdown(r.soc, r.title)
   })));
@@ -5720,10 +5750,13 @@ function renderOccupationAreasTable() {
   }
 
   const frag = document.createDocumentFragment();
+  const count = document.createElement("div");
+  count.className = "browse-count";
+  count.textContent = `${fmt.number(rows.length)} ${rows.length === 1 ? "region" : "regions"}`;
+  frag.appendChild(count);
   rows.forEach(r => frag.appendChild(browseRow({
     title: r.title,
-    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}`,
-    tag: demandChip(r.lq),
+    sub: `${fmtJobs(r.emp)} · ${fmtPay(r.wage)}${r.lq > 0 ? " · " + densityBit(r.lq) : ""}`,
     active: r.id === state.currentAreaId,
     onClick: () => { loadArea(r.id, true); renderOccupationAreasTable(); }
   })));
