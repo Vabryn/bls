@@ -794,9 +794,13 @@ body {
   --area-rule: rgba(255, 255, 255, 0.14);
   position: relative;
   flex: 0 0 auto;
+  align-self: center;           /* sit centred over the metric control, not full-bleed */
+  width: auto;
+  max-width: 100%;
   overflow: visible;
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
   border: 1px solid color-mix(in srgb, var(--accent-cyan) 26%, transparent);
   border-radius: var(--radius-lg);
@@ -880,12 +884,12 @@ body {
 .area-summary-head {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   flex-wrap: nowrap;
   gap: 5px;
-  min-height: 55px;
-  padding: 0 18px;
-  flex: 0 1 auto;
+  min-height: 46px;
+  padding: 0 16px;
+  flex: 0 0 auto;
   min-width: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -935,18 +939,19 @@ body {
 
 .area-summary-grid {
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   min-width: 0;
-  align-items: stretch;
+  align-items: center;
 }
 .area-metric {
   display: flex;
   flex-direction: row;
   align-items: baseline;
   gap: 8px;
-  flex: 1 1 0;
+  flex: 0 0 auto;
   min-width: 0;
-  padding: 0 18px;
+  min-height: 46px;
+  padding: 0 16px;
   border-left: 1px solid var(--area-rule);
   white-space: nowrap;
   overflow: hidden;
@@ -963,7 +968,7 @@ body {
 }
 .area-metric-value {
   font-family: var(--font-mono);
-  font-size: 17px;
+  font-size: 15.5px;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text-primary);
@@ -979,12 +984,14 @@ body {
 
 .area-summary-disclosure {
   flex: 1 1 100%;
+  max-width: 620px;
   margin: 0;
   padding: 8px 18px 9px;
   border-top: 1px solid var(--area-rule);
   font-size: 11.5px;
   line-height: 1.5;
   color: var(--text-secondary);
+  white-space: normal;
 }
 .area-summary-disclosure[hidden] { display: none; }
 
@@ -997,6 +1004,7 @@ body {
     position: sticky;
     top: 44px;
     z-index: 40;
+    align-self: stretch;
     border-radius: 0;
     border-left: 0;
     border-right: 0;
