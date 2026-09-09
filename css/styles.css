@@ -1,0 +1,2327 @@
+:root {
+  --bg-canvas: #0f1012;
+  --bg-surface: #17181b;
+  --bg-elevated: #202124;
+  --bg-subtle: #2a2b2f;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.11);
+  --hairline: rgba(255, 255, 255, 0.07);
+  --text-primary: #e4e4e6;
+  --text-secondary: #9a9ba0;
+  --text-muted: #6a6c72;
+  --text-accent: #7eaed4;
+  --accent-blue: #7eaed4;
+  --accent-gold: #c9a255;
+  --accent-emerald: #5db88a;
+  --accent-rose: #c9616f;
+  --map-state-fill: #131926;
+  --map-state-stroke: rgba(255, 255, 255, 0.09);
+  --map-state-hover: #1e283d;
+  --accent-cyan: #7eaed4;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.4);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+[data-theme="light"] {
+  --bg-canvas: #edeef0;
+  --bg-surface: #fbfbfc;
+  --bg-elevated: #f2f3f5;
+  --bg-subtle: #e8e9ec;
+  --border-subtle: rgba(17, 20, 24, 0.08);
+  --border-medium: rgba(17, 20, 24, 0.14);
+  --hairline: rgba(17, 20, 24, 0.07);
+  --text-primary: #191b1f;
+  --text-secondary: #565962;
+  --text-muted: #878a93;
+  --text-accent: #1f66b8;
+  --accent-blue: #1f66b8;
+  --accent-gold: #9a6a1c;
+  --accent-emerald: #1f7a52;
+  --accent-rose: #b02a45;
+  --accent-cyan: #1f66b8;
+  --map-state-fill: #e2e8f0;
+  --map-state-stroke: #94a3b8;
+  --map-state-hover: #cbd5e1;
+  --shadow-sm: 0 1px 2px rgba(28, 25, 20, 0.06);
+  --shadow-md: 0 1px 2px rgba(28, 25, 20, 0.05), 0 6px 18px rgba(28, 25, 20, 0.07);
+  --shadow-lg: 0 2px 4px rgba(28, 25, 20, 0.05), 0 14px 36px rgba(28, 25, 20, 0.09);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-primary);
+  background-color: var(--bg-canvas);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;   /* contain sideways overflow without breaking position: sticky */
+}
+
+.tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Masthead */
+.masthead {
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-canvas);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.masthead-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.masthead-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.masthead-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+.masthead-brand:hover { opacity: 0.7; }
+.brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-blue);
+  opacity: 1;
+}
+.brand-mark svg {
+  width: 16px;
+  height: 16px;
+}
+.brand-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.masthead-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.year-select {
+  font-size: 11px;
+  color: var(--text-secondary, var(--text-muted));
+  background: var(--bg-elevated);
+  border: 1px solid var(--border, rgba(148, 163, 184, 0.25));
+  border-radius: 5px;
+  padding: 2px 6px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.year-select:focus { outline: none; border-color: var(--accent, #38bdf8); }
+.masthead-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.source-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.6;
+  display: none;
+}
+@media (min-width: 768px) {
+  .source-label { display: block; }
+}
+.theme-toggle {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  transition: all 0.15s ease;
+}
+.theme-toggle:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-blue);
+  background: var(--bg-subtle);
+}
+.theme-toggle svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+@media (max-width: 560px) {
+  .masthead-inner { padding: 0 14px; gap: 8px; }
+  .masthead-left { gap: 7px; min-width: 0; }
+  .brand-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .masthead-tag { display: none; }
+  .theme-toggle #themeLabel { display: none; }
+  .theme-toggle { padding: 5px 7px; }
+}
+
+/* Page Container */
+.page-container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 16px 24px 20px;
+}
+@media (max-width: 990px) {
+  .page-container { padding: 14px 16px 40px; }
+}
+@media (max-width: 560px) {
+  .page-container { padding: 14px 12px 40px; }
+}
+
+.search-field-group {
+  position: relative;
+  width: 100%;
+}
+.combobox-input-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 26px 0 30px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease;
+}
+.combobox-input-box:focus-within {
+  border-color: var(--accent-blue);
+}
+.combobox-input-box svg {
+  position: absolute;
+  left: 10px;
+  width: 15px;
+  height: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* One-time thin line traced around a search field on entry. */
+.combobox-input-box svg.field-trace {
+  position: absolute;
+  inset: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: 4;
+  opacity: 0;
+}
+.field-trace rect {
+  fill: none;
+  stroke: var(--accent-cyan);
+  stroke-width: 1.3;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+.field-trace.run { opacity: 1; }
+.field-trace.run rect {
+  animation: fieldTrace 0.85s cubic-bezier(0.55, 0, 0.2, 1) forwards;
+}
+@keyframes fieldTrace {
+  0%   { stroke-dashoffset: 100; opacity: 0; }
+  10%  { opacity: 1; }
+  70%  { stroke-dashoffset: 0;   opacity: 1; }
+  100% { stroke-dashoffset: 0;   opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .combobox-input-box svg.field-trace { display: none; }
+}
+.combobox-input {
+  flex: 1 1 40px;
+  min-width: 40px;
+  height: 36px;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  outline: none;
+}
+.combobox-input:focus { border: none; }
+.combobox-clear {
+  position: absolute;
+  right: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: none;
+}
+.combobox-clear:hover { color: var(--text-primary); }
+.combobox-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 360px;
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  display: none;
+}
+.combobox-dropdown.open { display: block; }
+.area-optgroup-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  padding: 8px 12px 4px;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.area-option {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.08s ease;
+}
+.area-option:last-child { border-bottom: none; }
+.area-option:hover, .area-option.highlighted {
+  background: var(--bg-elevated);
+}
+.area-option.selected {
+  background: rgba(107, 163, 214, 0.08);
+  font-weight: 600;
+}
+#areaDropdownSuggest {
+  border-bottom: 1px solid var(--border-medium);
+}
+.area-option.area-suggestion {
+  background: color-mix(in srgb, var(--accent-blue) 8%, transparent);
+}
+.area-option.area-suggestion:hover,
+.area-option.area-suggestion.highlighted {
+  background: color-mix(in srgb, var(--accent-blue) 16%, transparent);
+}
+.area-opt-name {
+  font-size: 13px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.area-opt-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+/* Metrics — compact data row, no boxes */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  margin-bottom: 20px;
+  padding: 16px 0;
+}
+@media (min-width: 900px) {
+  .metrics-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.metric-card {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: auto;
+  border-left: 1px solid var(--border-subtle);
+}
+.metric-card:first-child { border-left: none; padding-left: 0; }
+@media (max-width: 899px) {
+  .metric-card { padding: 10px 0; border-left: none; border-bottom: 1px solid var(--border-subtle); }
+  .metric-card:last-child { border-bottom: none; }
+}
+.metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+.metric-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.metric-badge {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 0;
+  background: none;
+  color: var(--text-muted);
+}
+.metric-badge.pos { color: var(--accent-emerald); }
+.metric-badge.neg { color: var(--accent-rose); }
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.metric-footnote {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Filter & Control Bar */
+.control-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.control-input {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 7px 12px;
+  outline: none;
+  min-width: 180px;
+  flex: 1;
+  transition: border-color 0.12s ease;
+}
+.control-input:focus { border-color: var(--accent-blue); }
+.control-select {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 7px 12px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.12s ease;
+}
+.control-select:focus { border-color: var(--accent-blue); }
+
+/* Browse filter row: Education / Sectors / Median Wage. */
+#browseControlBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+#browseControlBar > .control-select { flex: 0 1 150px; min-width: 96px; }
+
+/* Segmented Control */
+.segmented-control {
+  display: inline-flex;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  gap: 1px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+.segmented-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 5px 11px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+.segmented-btn:hover { color: var(--text-primary); }
+.segmented-btn.active {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ========================================================= */
+/* METRO MAP TAB STYLING                                      */
+/* ========================================================= */
+.map-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  width: min(calc(100vw - 80px), 1640px);
+  max-width: 1640px;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+}
+/* Single grid item that holds the map+browse split. Must be allowed to
+   shrink below its content's intrinsic width or the 975-unit map SVG
+   forces horizontal overflow on narrow screens. */
+.map-canvas-column {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  /* Fill the viewport so map + browse + summary all fit with no page scroll. */
+  height: calc(100vh - 100px);
+  min-height: 520px;
+  overflow: hidden;
+}
+@media (max-width: 990px) {
+  .map-canvas-column { height: auto; min-height: 0; overflow: visible; gap: 12px; }
+  /* Stacked phone/tablet layout. The Summary is moved by JS to sit between the
+     map and the Browse card (map -> Summary -> Browse) so it's one short scroll
+     from the map rather than behind the whole occupations list; this just keeps
+     the three cards evenly spaced once they're all in the column. */
+  .map-center-split { gap: 12px; }
+}
+.map-center-split {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;            /* take the space left over the Summary panel */
+  gap: 0;
+  --map-split-width: 50%;    /* divider defaults to the horizontal centre */
+}
+.map-center-split > .map-card {
+  flex: 0 0 var(--map-split-width);
+  min-width: 380px;
+  min-height: 0;
+  max-width: calc(100% - 340px);
+}
+.map-center-split > .browse-card {
+  flex: 1 1 0;
+  min-width: 340px;
+  min-height: 0;
+}
+@media (max-width: 990px) {
+  .map-center-split { flex: 0 0 auto; }
+}
+
+/* Draggable Splitter Divider & Handle Puck */
+.split-divider {
+  width: 16px;
+  margin: 0 -2px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.split-divider::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  background: var(--border-subtle);
+  transition: background 0.15s ease, width 0.15s ease;
+}
+.split-divider:hover::before,
+.split-divider.is-dragging::before {
+  background: var(--accent-cyan);
+  width: 2px;
+}
+.split-handle-puck {
+  width: 18px;
+  height: 46px;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-medium);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm), 0 0 7px -2px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
+  position: relative;
+  z-index: 2;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: col-resize;
+}
+.split-handle-puck::after {
+  content: "⋮";
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-muted);
+  letter-spacing: -1px;
+  font-weight: 700;
+  transition: color 0.15s ease;
+}
+.split-divider:hover .split-handle-puck,
+.split-divider.is-dragging .split-handle-puck {
+  border-color: var(--accent-cyan);
+  background: var(--bg-elevated);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+  transform: scale(1.1);
+}
+.split-divider:hover .split-handle-puck::after,
+.split-divider.is-dragging .split-handle-puck::after {
+  color: var(--accent-cyan);
+}
+[data-theme="light"] .split-handle-puck {
+  background: var(--bg-surface);
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] .split-divider:hover .split-handle-puck,
+[data-theme="light"] .split-divider.is-dragging .split-handle-puck {
+  border-color: #0284c7;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.3);
+}
+
+@media (max-width: 1200px) {
+  .map-layout-grid {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    left: 0;
+    transform: none;
+    margin: 0;
+    gap: 12px;
+  }
+}
+@media (max-width: 990px) {
+  .map-center-split {
+    flex-direction: column;
+  }
+  .map-center-split > .map-card,
+  .map-center-split > .browse-card {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .split-divider {
+    display: none;
+  }
+  .map-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+/* Horizontal splitter — drag to resize the Summary panel. Mirrors .split-divider. */
+.split-divider-h {
+  position: relative;
+  height: 16px;
+  margin: 2px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: row-resize;
+  user-select: none;
+  touch-action: none;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.split-divider-h::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1px;
+  background: var(--border-subtle);
+  transition: background 0.15s ease, height 0.15s ease;
+}
+.split-divider-h:hover::before,
+.split-divider-h.is-dragging::before {
+  background: var(--accent-cyan);
+  height: 2px;
+}
+.split-divider-h .split-handle-puck {
+  width: 52px;
+  height: 16px;
+  cursor: row-resize;
+}
+.split-divider-h .split-handle-puck::after {
+  content: "⋯";
+}
+.split-divider-h:hover .split-handle-puck,
+.split-divider-h.is-dragging .split-handle-puck {
+  border-color: var(--accent-cyan);
+  background: var(--bg-elevated);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+  transform: scale(1.1);
+}
+.split-divider-h:hover .split-handle-puck::after,
+.split-divider-h.is-dragging .split-handle-puck::after {
+  color: var(--accent-cyan);
+}
+[data-theme="light"] .split-divider-h:hover .split-handle-puck,
+[data-theme="light"] .split-divider-h.is-dragging .split-handle-puck {
+  border-color: #0284c7;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.3);
+}
+@media (max-width: 990px) {
+  .split-divider-h { display: none; }
+}
+
+/* Display-only token (no clear button) — selection pills in the Summary head
+   and the map hover card. Shares the removable chip's look. */
+.pill-token {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-width: 0;
+  padding: 3px 11px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-cyan) 7%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--accent-cyan) 68%, transparent);
+  color: var(--accent-cyan);
+  font-weight: 600;
+  font-size: 11.5px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 0 7px -2px color-mix(in srgb, var(--accent-cyan) 45%, transparent);
+}
+.pill-token + .pill-token {
+  margin-left: 6px;
+}
+.pill-token[hidden] { display: none; }
+/* Hover-card pills match the Summary pills in size; drop the ambient glow so
+   it doesn't smear inside the small tooltip, and let a long label wrap onto a
+   second line rather than clip. Radius + padding are pulled in to the tooltip's
+   own corner radius so the pill's left edge and its text line up with the
+   metric box and detail rows beneath it. */
+.custom-tooltip .pill-token {
+  box-shadow: none;
+  display: inline-block;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: clip;
+  border-radius: 7px;
+  padding: 2px 9px;
+  line-height: 1.25;
+}
+/* The generic "gap between adjacent pills" margin also indents the second
+   pill when it wraps to its own line — kill it here so both left edges align
+   (the flex row-gap already spaces the two rows). */
+.custom-tooltip .pill-token + .pill-token {
+  margin-left: 0;
+}
+
+/* Map Card Controls Bar (Wage Metric & Map Style directly above the map) */
+.map-card-controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: nowrap;
+  padding: 8px 18px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.map-card-controls-bar::-webkit-scrollbar { display: none; }
+@media (max-width: 760px) {
+  .map-card-controls-bar {
+    flex-wrap: wrap;
+    gap: 9px 12px;
+    padding: 9px 12px;
+    overflow-x: visible;
+  }
+  /* Each control group takes a full-width row; buttons share it evenly. */
+  .map-controls-cluster {
+    flex-wrap: nowrap;
+    width: 100%;
+    min-width: 0;
+    gap: 7px;
+  }
+  .map-card-controls-bar .segmented-control {
+    flex: 1;
+    min-width: 0;
+  }
+  .map-card-controls-bar .segmented-btn {
+    flex: 1;
+    padding: 5px 4px;
+    font-size: 10.5px;
+    text-align: center;
+  }
+}
+.map-controls-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+.map-controls-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.map-card-controls-bar .segmented-control {
+  background: var(--bg-elevated);
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  gap: 1px;
+}
+.map-card-controls-bar .segmented-btn {
+  padding: 4px 9px;
+  font-size: 11.5px;
+  font-family: var(--font-sans);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+/* ============================================================
+   Area Summary — institutional tearsheet strip
+   Pinned to the base of the Browse card, beneath the table.
+   ============================================================ */
+.area-summary {
+  --area-rule: rgba(255, 255, 255, 0.14);
+  /* Fixed height so clicking around never resizes the map above it (that read
+     as the map "jumping"). The horizontal resizer overrides --summary-h; extra
+     content like the hourly disclosure scrolls inside. */
+  flex: 0 0 var(--summary-h, 244px);
+  min-height: 0;
+  /* Safety valve only — the height above is sized so normal content never
+     needs it (keeps the map above from "jumping" as you click around). */
+  overflow: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, var(--shadow-md);
+  background:
+    linear-gradient(180deg, rgba(126, 174, 212, 0.045), transparent 45%),
+    var(--bg-elevated);
+}
+[data-theme="light"] .area-summary {
+  --area-rule: rgba(15, 23, 42, 0.14);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, var(--shadow-md);
+}
+@media (max-width: 990px) {
+  .area-summary { flex: 0 0 auto; min-height: 0; overflow: visible; }
+}
+.area-summary-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 6px;
+  padding: 13px 24px 12px;
+  border-bottom: 1px solid var(--area-rule);
+}
+/* Long labels wrap onto a second line instead of clipping to an ellipsis.
+   Plain inline-block block-flow so wrapping is reliable on iOS Safari — the
+   -webkit-box + line-clamp combo did not wrap there and left the label cut. */
+.area-summary-head .pill-token:not([hidden]) {
+  flex: 0 1 auto;
+  display: inline-block;
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: clip;
+  border-radius: 13px;
+  line-height: 1.25;
+  text-align: center;
+}
+@media (max-width: 760px) {
+  .area-summary-head {
+    justify-content: flex-start;
+    padding: 12px 16px;
+  }
+  .data-year-flag { position: static; margin-left: auto; }
+}
+.area-summary-eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.area-summary-conn {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.area-summary-conn[hidden] { display: none; }
+.area-summary-context {
+  font-size: 12px;
+  letter-spacing: 0;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.data-year-flag {
+  position: absolute;
+  right: 24px;
+  top: 12px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 1px 8px;
+  border-radius: 999px;
+  color: var(--accent-gold);
+  background: color-mix(in srgb, var(--accent-gold) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-gold) 30%, transparent);
+  cursor: help;
+}
+.area-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: min-content;
+  align-content: start;
+}
+.area-summary-disclosure {
+  margin: 0;
+  padding: 12px 24px 14px;
+  border-top: 1px solid var(--area-rule);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.area-summary-disclosure[hidden] { display: none; }
+.area-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+  padding: 10px 24px;
+  min-width: 0;
+  border-left: 1px solid var(--area-rule);
+  border-top: 1px solid var(--area-rule);
+}
+.area-metric:nth-child(odd) {
+  border-left: none;
+}
+.area-metric:nth-child(1),
+.area-metric:nth-child(2) {
+  border-top: none;
+}
+/* Sector name is prose, not a figure — let it wrap instead of truncating. */
+.area-metric-value.is-text {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  white-space: normal;
+  overflow: visible;
+}
+.area-metric-label {
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-muted);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.area-metric-value {
+  max-width: 100%;
+  font-family: var(--font-mono);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.1;
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.area-metric-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 13px;
+}
+.area-metric-chip {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.area-metric-chip.pos {
+  color: var(--accent-emerald);
+  font-weight: 600;
+}
+.area-metric-chip.pos::before { content: "▲ "; font-size: 8px; vertical-align: 1px; }
+.area-metric-chip.neg {
+  color: var(--accent-rose);
+  font-weight: 600;
+}
+.area-metric-chip.neg::before { content: "▼ "; font-size: 8px; vertical-align: 1px; }
+/* Verbose captions removed by request — values + comparison carry the meaning. */
+.area-metric-note {
+  display: none;
+}
+@media (max-width: 560px) {
+  .area-summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .area-metric,
+  .area-metric:nth-child(odd) {
+    border-left: none;
+    border-top: 1px solid var(--area-rule);
+  }
+  .area-metric:first-child {
+    border-top: none;
+  }
+  .area-summary-context {
+    display: none;
+  }
+}
+
+/* Stacked layout: the Summary is the first thing on the page and pins under
+   the masthead, compressed to one header line + a single 4-up figure strip so
+   the whole thing (plus the top of the map) is on screen without scrolling.
+   Placed after the narrower blocks above so it wins the cascade. */
+@media (max-width: 990px) {
+  .area-summary {
+    position: sticky;
+    top: 44px;
+    z-index: 40;
+    flex: 0 0 auto;
+    overflow: visible;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    box-shadow: 0 8px 16px -10px rgba(0, 0, 0, 0.55);
+  }
+  .area-summary-head {
+    justify-content: flex-start;
+    align-items: baseline;
+    gap: 3px 6px;
+    padding: 7px 14px 6px;
+  }
+  .area-summary-eyebrow,
+  .area-summary-conn { font-size: 11.5px; }
+  .area-summary-head .pill-token:not([hidden]) {
+    font-size: 10.5px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    line-height: 1.3;
+  }
+  .area-summary-context { display: none; }
+  .data-year-flag { display: none; }
+
+  .area-summary-grid { grid-template-columns: repeat(4, 1fr); }
+  .area-metric,
+  .area-metric:nth-child(odd),
+  .area-metric:nth-child(1),
+  .area-metric:nth-child(2),
+  .area-metric:first-child {
+    padding: 6px 8px 7px;
+    gap: 1px;
+    border-top: 0;
+    border-left: 1px solid var(--area-rule);
+  }
+  .area-metric:nth-child(4n + 1) { border-left: 0; }
+  .area-metric-label {
+    font-size: 8.5px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: normal;
+    overflow: visible;
+    line-height: 1.2;
+  }
+  .area-metric-value { font-size: 12.5px; }
+  .area-metric-value.is-text {
+    font-size: 10px;
+    line-height: 1.15;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  .area-metric-meta,
+  .area-summary-disclosure { display: none; }
+}
+
+/* Map Card & SVG */
+.map-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  overflow-anchor: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.map-card-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  font-size: 12.5px;
+}
+.map-toolbar-area-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+/* Search bar that now lives on the map / browse card header line. */
+.card-search {
+  flex: 1 1 170px;
+  min-width: 150px;
+  width: auto;
+}
+.card-search .combobox-dropdown { min-width: 260px; }
+
+/* Removable selection chip — the active area / occupation, shown as a token
+   inside its search field. */
+.sel-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 62%;
+  margin: 3px 0;
+  padding: 3px 5px 3px 11px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-cyan) 14%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--accent-cyan) 50%, transparent);
+  color: var(--accent-cyan);
+  font-weight: 600;
+  font-size: 12.5px;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 0 7px -2px color-mix(in srgb, var(--accent-cyan) 45%, transparent);
+}
+.sel-chip .sel-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.sel-chip .sel-chip-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.sel-chip .sel-chip-x:hover {
+  background: color-mix(in srgb, var(--accent-cyan) 28%, transparent);
+}
+.sel-chip.is-empty { display: none; }
+.map-toolbar-area-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 6px var(--accent-cyan);
+  flex-shrink: 0;
+}
+.hud-metro-title {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hud-metro-counties {
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex-shrink: 1;
+}
+[data-theme="light"] .hud-metro-counties {
+  background: var(--bg-elevated);
+  border-color: #cbd5e1;
+  color: #475569;
+}
+/* Reset lives as the third button in the map's zoom stack (+ / − / ⟲) — one
+   control, same place on every screen. */
+.map-zoom-btn--reset {
+  border-top: 1px solid var(--border-medium);
+}
+.map-zoom-btn--reset svg { width: 15px; height: 15px; display: block; }
+.map-zoom-btn--reset:hover { color: var(--accent-cyan); }
+
+.browse-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+/* ---------------------------------------------------------------
+   Surfaces — every panel is the same: one hairline border, one
+   soft ambient shadow, one shared radius. A single 1px top-edge
+   highlight is the only "gloss" — it's what catches the light on
+   a real physical panel. No gradient washes. Map card and browse
+   card are identical so the two columns read as one object.
+   --------------------------------------------------------------- */
+.map-card,
+.browse-card,
+.metric-card,
+.top-pay-card,
+.edu-summary-card,
+.table-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, var(--shadow-md);
+}
+[data-theme="light"] .map-card,
+[data-theme="light"] .browse-card,
+[data-theme="light"] .metric-card,
+[data-theme="light"] .top-pay-card,
+[data-theme="light"] .edu-summary-card,
+[data-theme="light"] .table-card {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, var(--shadow-md);
+}
+
+/* Stacked (mobile): the table keeps its own height and scrolls. */
+#browseTableResponsive { max-height: 60vh; }
+/* Side-by-side with the map: cards stretch to equal height, so the table takes
+   the leftover space and the Area Summary pinned at the base lines up with the
+   legend under the map. */
+@media (min-width: 991px) {
+  #browseTableResponsive { flex: 1 1 0; min-height: 120px; max-height: none; }
+}
+.browse-card-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  font-size: 12.5px;
+}
+.browse-back-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+  font-family: var(--font-sans);
+}
+.browse-back-btn:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.badge-density {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  display: inline-block;
+}
+.badge-density.high {
+  color: var(--accent-emerald);
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  font-weight: 600;
+}
+.data-table tr.clickable-row {
+  cursor: pointer;
+}
+.data-table tr.clickable-row:hover td {
+  background: var(--bg-elevated);
+}
+.data-table tr.active-area-row td {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.map-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+/* Floating zoom control, pinned inside the map viewport (both themes). */
+.map-zoom-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-md);
+  background: var(--bg-surface);
+}
+.map-zoom-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: none;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.map-zoom-btn + .map-zoom-btn {
+  border-top: 1px solid var(--border-subtle);
+}
+.map-zoom-btn:hover {
+  background: var(--bg-elevated);
+  color: var(--accent-blue);
+}
+@media (max-width: 760px) {
+  .map-zoom-btn {
+    min-width: 36px;
+    height: 36px;
+    font-size: 15px;
+  }
+  /* Search field + Reset stay on one line; the search flexes, Reset doesn't. */
+  .map-card-toolbar,
+  .browse-card-toolbar {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .card-search { flex: 1 1 auto; min-width: 0; width: auto; }
+  .map-toolbar-area-info,
+  .hud-metro-counties { display: none; }   /* the area chip already sits in the field */
+  .sel-chip { max-width: 72%; }
+
+  /* Education / Sectors / Median Wage — one row, sharing the width evenly. */
+  #browseControlBar {
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding: 8px 12px;
+  }
+  #browseControlBar > .control-select {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 12px;
+    padding-left: 8px; padding-right: 20px;
+  }
+
+  /* Trim the browse panel's vertical footprint on phones (~40%). */
+  #browseTableResponsive { max-height: 36vh; }
+}
+
+.map-svg-container {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg-surface);
+  user-select: none;
+  cursor: grab;
+  touch-action: none;
+}
+/* On touch devices, let a vertical swipe scroll the page past the map;
+   only horizontal/diagonal drags pan (the JS pan handler bails on
+   vertical-dominant touch moves so the two don't fight). */
+@media (pointer: coarse) {
+  .map-svg-container { touch-action: pan-y; }
+}
+.map-svg-container:active,
+.map-svg-container.is-dragging,
+.map-svg-container.is-dragging * {
+  cursor: grabbing !important;
+}
+#usMetroSvg {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  display: block;
+}
+@media (max-width: 990px) {
+  .map-svg-container { flex: 0 0 auto; min-height: 300px; }
+  #usMetroSvg { height: auto; }
+}
+
+/* State Boundaries Layer (Thin background context) */
+.state-boundary {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.42);
+  stroke-width: 0.9px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+  vector-effect: non-scaling-stroke;
+  transition: opacity 0.25s ease, stroke 0.25s ease, stroke-width 0.25s ease;
+}
+[data-theme="light"] .state-boundary {
+  stroke: rgba(15, 23, 42, 0.22);
+  stroke-width: 0.85px;
+}
+.state-boundary.state-focused {
+  stroke: #38bdf8 !important;
+  stroke-width: 1.6px !important;
+  vector-effect: non-scaling-stroke;
+  opacity: 1 !important;
+}
+[data-theme="light"] .state-boundary.state-focused {
+  stroke: #0284c7 !important;
+  stroke-width: 1.6px !important;
+  vector-effect: non-scaling-stroke;
+  opacity: 1 !important;
+}
+.state-boundary.state-dimmed {
+  opacity: 0.15;
+}
+[data-theme="light"] .state-boundary.state-dimmed {
+  opacity: 0.2;
+}
+
+/* Statistical Area Boundary Shapes (Choropleth Areas Layer) */
+.area-boundary-shape {
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 0.6px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+  transition: fill 0.2s ease, stroke 0.15s ease, opacity 0.25s ease;
+}
+[data-theme="light"] .area-boundary-shape {
+  stroke: rgba(30, 41, 59, 0.35);
+  stroke-width: 0.6px;
+}
+.area-boundary-shape:hover, .area-boundary-shape.hovered {
+  stroke: #ffffff !important;
+  stroke-width: 1.8px !important;
+  fill-opacity: 0.95 !important;
+  vector-effect: non-scaling-stroke;
+}
+[data-theme="light"] .area-boundary-shape:hover, [data-theme="light"] .area-boundary-shape.hovered {
+  stroke: #0f172a !important;
+  stroke-width: 2px !important;
+  fill-opacity: 0.95 !important;
+  vector-effect: non-scaling-stroke;
+}
+/* Selected region — a bright, heavier stroke and nothing else. No filter
+   (drop-shadow on an SVG polygon is a per-frame rasterization cost), no
+   animation. */
+.area-boundary-shape.selected {
+  stroke: rgba(56, 189, 248, 0.95) !important;
+  stroke-width: 3px !important;
+  fill-opacity: 0.95 !important;
+  vector-effect: non-scaling-stroke;
+}
+[data-theme="light"] .area-boundary-shape.selected {
+  stroke: #0284c7 !important;
+  stroke-width: 3px !important;
+  fill-opacity: 1 !important;
+  vector-effect: non-scaling-stroke;
+}
+/* When a specific region is selected, its surroundings stay on the map with
+   their choropleth colour but dimmed back, so the selected region (glowing,
+   full-strength) reads as the focus. In-state siblings sit a touch brighter
+   than out-of-state context. */
+.area-boundary-shape.area-focused {
+  opacity: 0.5;
+}
+[data-theme="light"] .area-boundary-shape.area-focused {
+  opacity: 0.62;
+}
+.area-boundary-shape.area-dimmed {
+  opacity: 0.32;
+}
+[data-theme="light"] .area-boundary-shape.area-dimmed {
+  opacity: 0.45;
+}
+
+/* Metro & Statistical Area Shape Overlay - 3D Glass Tint Highlight */
+.metro-overlay-path {
+  fill: rgba(56, 189, 248, 0.13);
+  stroke: rgba(56, 189, 248, 0.9);
+  stroke-width: 2.4px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+[data-theme="light"] .metro-overlay-path {
+  fill: rgba(2, 132, 199, 0.14);
+  stroke: #0284c7;
+  stroke-width: 2.6px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.county-overlay-path {
+  fill: transparent;
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 0.5px;
+  stroke-dasharray: 2, 2;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+  transition: fill 0.15s ease, stroke 0.15s ease;
+}
+[data-theme="light"] .county-overlay-path {
+  stroke: rgba(0, 0, 0, 0.18);
+}
+.county-overlay-path:hover {
+  fill: rgba(56, 189, 248, 0.18);
+  stroke: #ffffff;
+  stroke-width: 0.75px;
+  stroke-dasharray: none;
+}
+[data-theme="light"] .county-overlay-path:hover {
+  fill: rgba(2, 132, 199, 0.14);
+  stroke: #0284c7;
+}
+
+
+/* Bubble Map Markers Layer */
+.metro-bubble {
+  cursor: pointer;
+  fill-opacity: 0.72;
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 0.8px;
+  vector-effect: non-scaling-stroke;
+  transition: r 0.2s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.15s ease, opacity 0.3s ease, fill-opacity 0.2s ease;
+}
+.metro-bubble:hover, .metro-bubble.highlighted {
+  stroke: rgba(56, 189, 248, 0.95) !important;
+  stroke-width: 2.6px !important;
+  fill-opacity: 1 !important;
+}
+.metro-bubble.bubble-dimmed {
+  opacity: 0.15;
+  fill-opacity: 0.4;
+}
+.metro-bubble.bubble-focused {
+  stroke: rgba(56, 189, 248, 0.75) !important;
+  stroke-width: 1.6px !important;
+  fill-opacity: 0.82;
+  opacity: 1;
+}
+[data-theme="light"] .metro-bubble {
+  stroke: rgba(15, 23, 42, 0.45);
+  fill-opacity: 0.68;
+}
+[data-theme="light"] .metro-bubble:hover, [data-theme="light"] .metro-bubble.highlighted {
+  stroke: #0284c7 !important;
+  fill-opacity: 1 !important;
+}
+
+
+
+/* County Search Match Hint in Hero Combobox */
+.area-opt-county-hint {
+  font-size: 11px;
+  color: var(--accent-cyan);
+  background: var(--accent-cyan-subtle);
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: auto;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Map Legend */
+.map-legend-container {
+  padding: 8px 18px 10px;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border-subtle);
+  position: relative;
+  min-width: 0;
+}
+[data-theme="light"] .map-legend-container {
+  background: var(--bg-canvas);
+  border-top: 1px solid #e2e8f0;
+}
+.map-legend-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+.legend-edge-wage {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 58px;
+}
+#legendMinLabel {
+  text-align: right;
+}
+#legendMaxLabel {
+  text-align: left;
+}
+[data-theme="light"] .legend-edge-wage {
+  color: #64748b;
+  font-weight: 500;
+}
+.map-legend-center-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+}
+.map-legend-puck-track {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  pointer-events: none;
+}
+.map-legend-puck-track-top {
+  margin-bottom: 2px;
+}
+.map-legend-puck-track-bottom {
+  margin-top: 2px;
+}
+.map-legend-puck-top {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: left;
+  pointer-events: auto;
+  z-index: 5;
+}
+.map-legend-puck-bottom {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: left;
+  pointer-events: auto;
+  z-index: 5;
+}
+.legend-puck-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  padding: 2.5px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+[data-theme="light"] .legend-puck-badge {
+  background: var(--bg-surface);
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+}
+.puck-area-name {
+  color: var(--text-secondary);
+  font-weight: 500;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+[data-theme="light"] .puck-area-name {
+  color: #475569;
+}
+.puck-value {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+[data-theme="light"] .puck-value {
+  color: #0f172a;
+}
+.puck-comparison {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  letter-spacing: -0.01em;
+}
+.puck-comparison.pos {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.14);
+}
+[data-theme="light"] .puck-comparison.pos {
+  color: #047857;
+  background: rgba(16, 185, 129, 0.15);
+}
+.puck-comparison.neg {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.14);
+}
+[data-theme="light"] .puck-comparison.neg {
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.15);
+}
+.puck-comparison.neutral {
+  color: var(--text-muted);
+  background: var(--bg-hover);
+}
+.legend-puck-arrow-down {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid rgba(255, 255, 255, 0.62);
+  margin-top: -1px;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.45));
+}
+[data-theme="light"] .legend-puck-arrow-down {
+  border-top-color: #475569;
+  filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.6));
+}
+.legend-puck-arrow-up {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 6px solid rgba(255, 255, 255, 0.62);
+  margin-bottom: -1px;
+  filter: drop-shadow(0 -1px 1px rgba(0, 0, 0, 0.45));
+}
+[data-theme="light"] .legend-puck-arrow-up {
+  border-bottom-color: #475569;
+  filter: drop-shadow(0 -1px 1px rgba(255, 255, 255, 0.6));
+}
+
+/* Slimmed Down Gradient Color Bar Track */
+.map-legend-gradient-track {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  overflow: visible;
+  width: 100%;
+}
+.map-legend-gradient-bar {
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #312e81 0%, #0284c7 25%, #0d9488 50%, #10b981 75%, #fbbf24 100%);
+}
+
+/* Tooltip overlay */
+.custom-tooltip {
+  position: fixed;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 12px;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+  z-index: 1000;
+  display: none;
+  min-width: 240px;
+  max-width: 320px;
+  max-height: 90vh;
+  overflow: hidden;
+}
+/* Touch devices have no real hover — a tapped tooltip just gets stuck and
+   clips. Suppress it; the tap already updates the Summary + map. */
+@media (hover: none), (pointer: coarse) {
+  .custom-tooltip { display: none !important; }
+}
+
+/* Legend Bar for Spread Tab */
+.chart-legend-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.legend-items {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.legend-marker-box {
+  width: 12px;
+  height: 7px;
+  border-radius: 1px;
+}
+.legend-marker-diamond {
+  width: 7px;
+  height: 7px;
+  transform: rotate(45deg);
+  background: var(--text-primary);
+}
+
+/* Wage Spread Rows */
+.spread-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.spread-row {
+  background: var(--bg-surface);
+  border-radius: 0;
+  padding: 9px 14px;
+  display: grid;
+  grid-template-columns: 240px 1fr 130px;
+  align-items: center;
+  gap: 14px;
+  transition: background-color 0.08s ease;
+}
+.spread-row:first-child { border-radius: var(--radius-md) var(--radius-md) 0 0; }
+.spread-row:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+@media (max-width: 850px) {
+  .spread-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+.spread-row:hover {
+  background: var(--bg-elevated);
+}
+.spread-meta { overflow: hidden; }
+.spread-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 1px;
+}
+.spread-submeta {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.spread-chart-col {
+  position: relative;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+.spread-track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: var(--bg-subtle);
+  border-radius: 4px;
+}
+.spread-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  opacity: 0.8;
+}
+.spread-median-dot {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--text-primary);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+.spread-stat-col {
+  text-align: right;
+  font-family: var(--font-mono);
+}
+.spread-median-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.spread-range-label {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+/* Data Table */
+.table-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.table-responsive {
+  max-height: 600px;
+  overflow: auto;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+.data-table th {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+.data-table th:hover { color: var(--text-primary); }
+.data-table th.sorted-asc::after { content: " ↑"; }
+.data-table th.sorted-desc::after { content: " ↓"; }
+.data-table td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--bg-elevated); }
+
+/* Mobile: drop the Density column so Occupation / Employment / Wage fit
+   without a sideways scroll. Both browse tables are Title|Emp|Wage|Density. */
+@media (max-width: 560px) {
+  .data-table th,
+  .data-table td {
+    padding: 8px 10px;
+    white-space: normal;
+  }
+  #occupationsTable th:nth-child(4),
+  #occupationsTable td:nth-child(4),
+  #occupationAreasTable th:nth-child(4),
+  #occupationAreasTable td:nth-child(4) {
+    display: none;
+  }
+}
+
+/* Badges */
+.badge-edu {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 7px;
+  border-radius: 3px;
+  display: inline-block;
+  white-space: nowrap;
+}
+.badge-lq {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}
+.badge-lq.high {
+  background: rgba(63, 170, 130, 0.1);
+  color: var(--accent-emerald);
+  font-weight: 600;
+}
+
+/* Education Analysis */
+.edu-analysis-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+@media (min-width: 800px) {
+  .edu-analysis-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.edu-summary-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px;
+}
+.edu-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.edu-card-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+/* Top Paying */
+.top-paying-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+@media (min-width: 900px) {
+  .top-paying-grid { grid-template-columns: repeat(2, 1fr); gap: 2px 12px; }
+}
+.top-pay-card {
+  background: var(--bg-surface);
+  border-radius: 0;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: background 0.08s ease;
+}
+.top-pay-card:hover {
+  background: var(--bg-elevated);
+}
+.top-pay-rank {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  width: 24px;
+  flex-shrink: 0;
+}
+.top-pay-info { flex: 1; overflow: hidden; }
+.top-pay-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 1px;
+}
+.top-pay-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.top-pay-figures {
+  text-align: right;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+.top-pay-wage {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.top-pay-natcomp {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+/* Footer */
+.footer-editorial {
+  border-top: 1px solid var(--border-subtle);
+  padding: 24px 0 16px;
+  margin-top: 40px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+/* ========================================================= */
+/* LIGHT MODE CONTRAST & DEPTH ENHANCEMENTS                  */
+/* ========================================================= */
+[data-theme="light"] body {
+  background-color: var(--bg-canvas);
+  color: #0f172a;
+}
+[data-theme="light"] .masthead {
+  background: var(--bg-surface);
+  border-bottom: 1px solid #cbd5e1;
+}
+[data-theme="light"] .masthead-tag {
+  background: var(--bg-elevated);
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-weight: 600;
+}
+[data-theme="light"] .masthead-brand {
+  color: #0f172a;
+}
+[data-theme="light"] .theme-toggle {
+  background: var(--bg-surface);
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+[data-theme="light"] .theme-toggle:hover {
+  background: var(--bg-elevated);
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+[data-theme="light"] .hero-title {
+  color: #0f172a;
+}
+[data-theme="light"] .hero-subtitle {
+  color: #334155;
+}
+[data-theme="light"] .hero-meta {
+  color: #64748b;
+}
+[data-theme="light"] .metrics-grid {
+  border-top: 1px solid #cbd5e1;
+  border-bottom: 1px solid #cbd5e1;
+}
+[data-theme="light"] .metric-card {
+  border-left-color: #cbd5e1;
+}
+[data-theme="light"] .metric-label {
+  color: #475569;
+  font-weight: 600;
+}
+[data-theme="light"] .metric-badge {
+  color: #475569;
+  font-weight: 600;
+}
+[data-theme="light"] .metric-value {
+  color: #0f172a;
+}
+[data-theme="light"] .metric-footnote {
+  color: #64748b;
+  font-weight: 500;
+}
+[data-theme="light"] .combobox-input-box {
+  background: var(--bg-surface);
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  border-radius: var(--radius-md);
+}
+[data-theme="light"] .combobox-input {
+  background: transparent;
+  border: none;
+  color: #0f172a;
+}
+[data-theme="light"] .combobox-input::placeholder {
+  color: #94a3b8;
+}
+[data-theme="light"] .combobox-dropdown {
+  background: var(--bg-surface);
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+}
+[data-theme="light"] .map-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+}
+[data-theme="light"] .segmented-control {
+  background: var(--bg-elevated);
+  border: 1px solid #cbd5e1;
+}
+[data-theme="light"] .segmented-btn {
+  color: #475569;
+  font-weight: 500;
+}
+[data-theme="light"] .segmented-btn:hover {
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.8);
+}
+[data-theme="light"] .segmented-btn.active {
+  background: var(--bg-surface);
+  color: #0f172a;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+[data-theme="light"] .map-card-toolbar {
+  background: var(--bg-canvas);
+  border-bottom: 1px solid #e2e8f0;
+}
+[data-theme="light"] .map-svg-container {
+  background: var(--bg-canvas);
+}
+[data-theme="light"] .hud-metro-title {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+[data-theme="light"] .state-boundary {
+  fill: #e2e8f0;
+  stroke: #94a3b8;
+  stroke-width: 0.85px;
+}
+[data-theme="light"] .state-boundary:hover {
+  stroke: #0284c7;
+  stroke-width: 1.4px;
+}
+[data-theme="light"] .map-legend-container {
+  background: var(--bg-canvas);
+  border-top: 1px solid #e2e8f0;
+}
+[data-theme="light"] .table-card {
+  border: 1px solid #cbd5e1;
+}
+[data-theme="light"] .data-table th {
+  color: #334155;
+  background: var(--bg-elevated);
+  border-bottom: 2px solid #cbd5e1;
+}
+[data-theme="light"] .data-table td {
+  border-bottom: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+[data-theme="light"] .data-table tr:hover td {
+  background: var(--bg-elevated);
+}
+[data-theme="light"] .control-select {
+  background: var(--bg-surface);
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+[data-theme="light"] .control-input {
+  background: var(--bg-surface);
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+[data-theme="light"] .edu-summary-card {
+  background-color: var(--bg-surface);
+  border-color: var(--border-medium);
+}
+[data-theme="light"] .top-pay-card {
+  background-color: var(--bg-surface);
+  border-color: var(--border-medium);
+}
+[data-theme="light"] .spread-row:hover {
+  background: var(--bg-elevated);
+}
+[data-theme="light"] .footer-editorial {
+  border-top: 1px solid #cbd5e1;
+  color: #64748b;
+}
+
+/* iOS Safari zooms the whole page when a control smaller than 16px gets focus.
+   Bump form controls to 16px on touch devices only — desktop is untouched.
+   Placed last so it beats the narrower mobile-density rules above. */
+@media (pointer: coarse) {
+  .combobox-input,
+  .control-input,
+  .control-select,
+  #browseControlBar > .control-select {
+    font-size: 16px;
+  }
+}
