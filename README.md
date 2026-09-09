@@ -84,7 +84,12 @@ Node with `d3-geo` + `topojson-client` (already in `node_modules/`).
 
 ```
 bls/
-├── index.html            the entire app
+├── index.html            markup + layout
+├── css/
+│   └── styles.css        design system and map styles
+├── js/
+│   ├── app.js            map logic, interactivity, and UI
+│   └── constants.js      static arrays and configurations
 ├── data/                 generated JSON served to the client
 │   ├── areas.json        area manifest
 │   ├── <year>/areas/     one file per state / metro / non-metro area
@@ -93,7 +98,6 @@ bls/
 │   └── place_index.json  ZIP / city → area lookup
 ├── scripts/              offline data pipeline (not deployed)
 ├── bls_data/             raw BLS .xlsx sources (git-ignored, not deployed)
-├── bls.html              retained only as a fallback source for process_bls.py
 └── wrangler.jsonc        Cloudflare static-assets deploy config
 ```
 
