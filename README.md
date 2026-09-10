@@ -34,9 +34,9 @@ and by how concentrated each field is in that local economy.
 
 ## How it's built
 
-- **One file, no build step.** The entire client is `index.html` (~6,000 lines of
-  vanilla HTML/CSS/JS — no framework, no bundler, no dependencies shipped to the
-  browser).
+- **No build step.** Markup lives in `index.html`, styles in `css/styles.css`,
+  and application logic in `js/app.js` and `js/constants.js`. The browser loads
+  no JavaScript framework; Google Fonts is an external font dependency.
 - **Hand‑rolled SVG map.** An Albers‑USA projection (`viewBox="0 0 975 610"`)
   with a `<g>` zoom/pan group; choropleth, bubble, and selected‑region overlay
   layers are toggled in place.
@@ -76,7 +76,7 @@ python3 -m http.server 8000
 ```
 
 Regenerating data additionally needs Python 3 (stdlib only) and, for step 2,
-Node with `d3-geo` + `topojson-client` (already in `node_modules/`).
+Node with `d3-geo` + `topojson-client`, pinned as development dependencies. Run `npm ci` first.
 
 ---
 
@@ -105,11 +105,41 @@ bls/
 
 ## Data source & accuracy
 
-All figures come from the **BLS Occupational Employment and Wage Statistics
-(OEWS)** program, May 2025 estimates. Wages are annual unless a field is only
-reported hourly, in which case the app says so. Suppressed cells are shown as
-withheld rather than guessed. The client never mutates the source data — it only
-reads the committed JSON.
+Published figures come from the BLS Occupational Employment and Wage Statistics
+(OEWS) program. The app includes 2022–2025 releases and defaults to 2025. It may
+use a prior release when an occupation lacks wage data; the interface discloses
+the source year. Hourly-only wages are displayed as annual equivalents using
+2,080 hours, not actual annual earnings. This distinction matters for irregular
+schedules such as acting and dancing.
+
+`≥ $239,200` is a published lower bound, not an exact wage. Exact percentage
+comparisons are suppressed when either wage is this censored value. Map colors
+and ordering still use published bounds and should not be read as precise
+rankings among top-coded occupations. Missing/suppressed values are not zero.
+The client reads committed JSON and does not modify source observations.
+
+Sources: [BLS tables](https://www.bls.gov/oes/tables.htm) and
+[2025 methodology](https://www.bls.gov/oes/methods_25.pdf).
+
+## Checks
+
+Use Node 22.12+ and Python 3:
+
+```bash
+npm ci
+npm test
+```
+
+The Python check validates numeric values and uncensored percentile ordering in
+all annual area files. Browser tests reproduce blocked storage, out-of-order
+loads, failed requests and censored-wage comparisons, then check both themes at
+phone, tablet and desktop widths. Tests start an isolated localhost server.
+Set `AUDIT_SCREENSHOTS` to a directory to retain screenshots. These checks do not
+replace a physical Safari/Android pass or a source-spreadsheet reconciliation.
+
+Historical `bls.html` remains a pipeline education-mapping fallback;
+`bls_draft.html` remains an intentional design snapshot. Neither is deployed.
+See [AUDIT.md](AUDIT.md) for scope and remaining limitations.
 
 ## License
 

@@ -12,3 +12,9 @@ bls_draft.html
 LICENSE
 README.md
 docs
+
+node_modules
+package.json
+package-lock.json
+tests
+AUDIT.md

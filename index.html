@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+<p id="dataNotice" role="status" hidden></p>
 
 <!-- Masthead Bar -->
 <header class="masthead">
@@ -212,7 +213,7 @@
 
             <!-- Browse Filter Controls Bar -->
             <div class="control-bar" id="browseControlBar">
-              <select id="browseEduFilter" class="control-select">
+              <select id="browseEduFilter" class="control-select" aria-label="Education requirement">
                 <option value="-1">Education</option>
                 <option value="0">No Formal Requirement</option>
                 <option value="1">High School / GED</option>
@@ -222,7 +223,7 @@
                 <option value="5">Master's Degree</option>
                 <option value="6">Doctoral / Professional</option>
               </select>
-              <select id="browseGroupFilter" class="control-select">
+              <select id="browseGroupFilter" class="control-select" aria-label="Career sector">
                 <option value="-1">Sectors</option>
               </select>
               <select id="browseWageMetric" class="control-select" aria-label="Wage metric shown">

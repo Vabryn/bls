@@ -12,7 +12,7 @@ The raw BLS source spreadsheets live in `bls/bls_data/` (git-ignored — they ar
 
 - **Python 3** stdlib only (`zipfile`, `xml.etree`, `csv`, `json`) — no pip packages.
 - **Node** for the `.mjs` step: `d3-geo`, `topojson-client`
-  (already installed at `bls/node_modules/`; `npm i d3-geo topojson-client` to refresh).
+  (pinned in `bls/package.json`; run `npm ci` from `bls/`).
 
 ## Order
 

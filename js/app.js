@@ -190,6 +190,7 @@ async function init() {
       fetch(`${yb()}/areas.json`),
       fetch(`${yb()}/areas/99.json`)
     ]);
+    if (!manifestRes.ok || !natRes.ok) throw new Error('Initial wage data unavailable');
     state.manifest = await manifestRes.json();
     const natData = await natRes.json();
     state.areaCache.set("99", natData);
@@ -238,6 +239,7 @@ async function init() {
       try { await openOccupationAreaBreakdown(o.soc, o.title); } catch (e) {}
     }
   } catch (err) {
+    showDataNotice('Wage data could not be loaded. Check your connection and reload this page.');
     console.error("Failed to load BLS manifest:", err);
   }
 }
@@ -478,7 +480,10 @@ function populateMapJobDropdown() {
 }
 
 async function loadMapJob(soc) {
+  const token = state._jobLoadToken = (state._jobLoadToken || 0) + 1;
+  const previousSoc = state.activeJobPayload?.soc || '00-0000';
   state.activeMapSoc = soc;
+  showDataNotice('');
 
   const occMeta = (state.mapData && state.mapData.occupations)
     ? (state.mapData.occupations.find(o => o.soc === soc) || { title: "All Occupations" })
@@ -564,11 +569,16 @@ async function loadMapJob(soc) {
 
     if (!payload) throw new Error(`no job data for ${soc}`);
     state.jobCache.set(soc, { payload, dataYear });
+    if (token !== state._jobLoadToken) return;
+    showDataNotice('');
     state.activeJobPayload = payload;
     state.jobDataYear = dataYear;
     renderMetroMap();
     renderHeroAndKPIs();
   } catch (err) {
+    if (token !== state._jobLoadToken) return;
+    await loadMapJob(previousSoc);
+    showDataNotice('Occupation data could not be loaded. The previous occupation is still displayed; select an occupation to retry.');
     console.error(`Failed to load job data for ${soc}:`, err);
   }
 }
@@ -902,7 +912,7 @@ function updateMapLegend() {
       areaNameEl.textContent = cleanName;
       areaValEl.textContent = fmtMetric(displayVal, metricKind);
 
-      if (natVal && metricKind === "wage" && natVal > 0) {
+      if (natVal && metricKind === "wage" && natVal > 0 && natVal !== 239200 && displayVal !== 239200) {
         const diffVal = displayVal - natVal;
         const diffPct = ((displayVal - natVal) / natVal) * 100;
         const sign = diffPct >= 0 ? "+" : "";
@@ -1311,7 +1321,7 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
   else if (isEmploymentMapping) metricKind = "emp";
 
   let deltaHtml = "";
-  if (metricKind === "wage" && metricVal && natVal && natVal > 0) {
+  if (metricKind === "wage" && metricVal && natVal && natVal > 0 && metricVal !== 239200 && natVal !== 239200) {
     const diffPct = ((metricVal - natVal) / natVal) * 100;
     const sign = diffPct >= 0 ? "+" : "";
     const color = diffPct >= 0 ? "var(--accent-emerald)" : "var(--accent-rose)";
@@ -2010,38 +2020,38 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
 // -------------------------------------------------------------
 // AREA DATA ENGINE
 // -------------------------------------------------------------
+function showDataNotice(message) {
+  const notice = document.getElementById('dataNotice');
+  notice.textContent = message;
+  notice.hidden = !message;
+}
+
 async function loadArea(areaId, shouldZoom = true) {
-  // Ignore no-op reselects (rapid clicks on the already-active area).
-  if (areaId === state.currentAreaId && state.areaData && !shouldZoom) return;
-  state.currentAreaId = areaId;
-
-  const url = new URL(window.location);
-  if (areaId === "99") {
-    url.searchParams.delete("area");
-  } else {
-    url.searchParams.set("area", areaId);
-  }
-  window.history.replaceState({}, "", url);
-
-  if (state.areaCache.has(areaId)) {
-    state.areaData = state.areaCache.get(areaId);
-    renderAll(shouldZoom);
-    return;
-  }
-
-  const sc = document.getElementById("spreadCounter");
-  if (sc) sc.textContent = "Loading area data...";
-
-  // Token guard: during rapid clicking only the most recent fetch may render.
+  // Every selection invalidates earlier requests, including cache hits.
   const token = ++state._areaLoadToken;
-  try {
-    const res = await fetch(`${yb()}/areas/${areaId}.json`);
-    const data = await res.json();
-    state.areaCache.set(areaId, data);
+  const commit = data => {
     if (token !== state._areaLoadToken) return;
+    state.currentAreaId = areaId;
     state.areaData = data;
+    const url = new URL(window.location);
+    if (areaId === '99') url.searchParams.delete('area');
+    else url.searchParams.set('area', areaId);
+    window.history.replaceState({}, '', url);
+    showDataNotice('');
     renderAll(shouldZoom);
+  };
+  if (state.areaCache.has(areaId)) { commit(state.areaCache.get(areaId)); return; }
+  showDataNotice('Loading area data…');
+  try {
+    const res = await fetch(`${yb()}/areas/${encodeURIComponent(areaId)}.json`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (String(data.id) !== String(areaId) || !Array.isArray(data.occupations)) throw new Error('Invalid area data');
+    state.areaCache.set(areaId, data);
+    commit(data);
   } catch (err) {
+    if (token !== state._areaLoadToken) return;
+    showDataNotice('Area data could not be loaded. The previous area is still displayed; select an area to retry.');
     console.error(`Failed to load area ${areaId}:`, err);
   }
 }
@@ -2293,7 +2303,7 @@ function renderHeroAndKPIs() {
     }
     if (occMedian !== null && occMedian > 0) {
       kpiMedVal.textContent = fmt.currency(occMedian);
-      if (natJobMedian && data.id !== "99") {
+      if (natJobMedian && data.id !== "99" && occMedian !== 239200 && natJobMedian !== 239200) {
         const diffPct = ((occMedian - natJobMedian) / natJobMedian) * 100;
         const sign = diffPct >= 0 ? "+" : "";
         kpiMedBadge.textContent = `${sign}${diffPct.toFixed(1)}% vs US`;
@@ -2316,7 +2326,7 @@ function renderHeroAndKPIs() {
   } else {
     if (kpiMedLabel) kpiMedLabel.textContent = "Annual Median Wage";
     kpiMedVal.textContent = fmt.currency(total.median);
-    if (state.nationalTotals && state.nationalTotals.median && total.median && data.id !== "99") {
+    if (state.nationalTotals && state.nationalTotals.median && total.median && data.id !== "99" && total.median !== 239200 && state.nationalTotals.median !== 239200) {
       const diffPct = ((total.median - state.nationalTotals.median) / state.nationalTotals.median) * 100;
       const sign = diffPct >= 0 ? "+" : "";
       kpiMedBadge.textContent = `${sign}${diffPct.toFixed(1)}% vs US`;
@@ -2346,7 +2356,7 @@ function renderHeroAndKPIs() {
     if (occMean !== null && occMean > 0) {
       kpiMeanVal.textContent = fmt.currency(occMean);
       if (kpiMeanBadge) {
-        if (natJobMean && data.id !== "99") {
+        if (natJobMean && data.id !== "99" && occMean !== 239200 && natJobMean !== 239200) {
           const diffPct = ((occMean - natJobMean) / natJobMean) * 100;
           const sign = diffPct >= 0 ? "+" : "";
           kpiMeanBadge.textContent = `${sign}${diffPct.toFixed(1)}% vs US Mean`;
@@ -3213,7 +3223,8 @@ function setupEventListeners() {
 }
 
 function setupTheme() {
-  const saved = localStorage.getItem("bls-theme");
+  let saved;
+  try { saved = localStorage.getItem("bls-theme"); } catch {}
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const shouldBeDark = saved ? (saved === "dark") : prefersDark;
 
@@ -3236,13 +3247,13 @@ function applyTheme(isDark) {
   if (isDark) {
     document.documentElement.removeAttribute("data-theme");
     if (label) label.textContent = "Light Mode";
-    localStorage.setItem("bls-theme", "dark");
+    try { localStorage.setItem("bls-theme", "dark"); } catch {}
     if (sunIcon) sunIcon.style.display = "";
     if (moonIcon) moonIcon.style.display = "none";
   } else {
     document.documentElement.setAttribute("data-theme", "light");
     if (label) label.textContent = "Dark Mode";
-    localStorage.setItem("bls-theme", "light");
+    try { localStorage.setItem("bls-theme", "light"); } catch {}
     if (sunIcon) sunIcon.style.display = "none";
     if (moonIcon) moonIcon.style.display = "";
   }
