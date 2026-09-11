@@ -483,7 +483,7 @@ async function loadMapJob(soc) {
   const token = state._jobLoadToken = (state._jobLoadToken || 0) + 1;
   const previousSoc = state.activeJobPayload?.soc || '00-0000';
   state.activeMapSoc = soc;
-  showDataNotice('');
+  showDataNotice('', 'occupation');
 
   const occMeta = (state.mapData && state.mapData.occupations)
     ? (state.mapData.occupations.find(o => o.soc === soc) || { title: "All Occupations" })
@@ -570,7 +570,7 @@ async function loadMapJob(soc) {
     if (!payload) throw new Error(`no job data for ${soc}`);
     state.jobCache.set(soc, { payload, dataYear });
     if (token !== state._jobLoadToken) return;
-    showDataNotice('');
+    showDataNotice('', 'occupation');
     state.activeJobPayload = payload;
     state.jobDataYear = dataYear;
     renderMetroMap();
@@ -578,7 +578,7 @@ async function loadMapJob(soc) {
   } catch (err) {
     if (token !== state._jobLoadToken) return;
     await loadMapJob(previousSoc);
-    showDataNotice('Occupation data could not be loaded. The previous occupation is still displayed; select an occupation to retry.');
+    showDataNotice('Occupation data could not be loaded. The previous occupation is still displayed; select an occupation to retry.', 'occupation');
     console.error(`Failed to load job data for ${soc}:`, err);
   }
 }
@@ -2020,10 +2020,17 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
 // -------------------------------------------------------------
 // AREA DATA ENGINE
 // -------------------------------------------------------------
-function showDataNotice(message) {
+const dataNotices = { general: '', area: '', occupation: '' };
+function showDataNotice(message, channel = 'general') {
   const notice = document.getElementById('dataNotice');
-  notice.textContent = message;
-  notice.hidden = !message;
+  if (!notice) return;
+  dataNotices[channel] = message || '';
+  // Independent requests must not clear one another's error state. An
+  // occupation refresh finishing after a failed area request used to hide the
+  // area's recovery message while the old area remained on screen.
+  const visible = dataNotices.general || dataNotices.area || dataNotices.occupation;
+  notice.textContent = visible;
+  notice.hidden = !visible;
 }
 
 async function loadArea(areaId, shouldZoom = true) {
@@ -2037,11 +2044,11 @@ async function loadArea(areaId, shouldZoom = true) {
     if (areaId === '99') url.searchParams.delete('area');
     else url.searchParams.set('area', areaId);
     window.history.replaceState({}, '', url);
-    showDataNotice('');
+    showDataNotice('', 'area');
     renderAll(shouldZoom);
   };
   if (state.areaCache.has(areaId)) { commit(state.areaCache.get(areaId)); return; }
-  showDataNotice('Loading area data…');
+  showDataNotice('Loading area data…', 'area');
   try {
     const res = await fetch(`${yb()}/areas/${encodeURIComponent(areaId)}.json`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -2051,7 +2058,7 @@ async function loadArea(areaId, shouldZoom = true) {
     commit(data);
   } catch (err) {
     if (token !== state._areaLoadToken) return;
-    showDataNotice('Area data could not be loaded. The previous area is still displayed; select an area to retry.');
+    showDataNotice('Area data could not be loaded. The previous area is still displayed; select an area to retry.', 'area');
     console.error(`Failed to load area ${areaId}:`, err);
   }
 }
