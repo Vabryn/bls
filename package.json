@@ -2,7 +2,8 @@
   "name": "bls-wage-explorer",
   "private": true,
   "scripts": {
-    "test": "python3 tests/data.py && node tests/browser.cjs"
+    "test": "python3 tests/data.py && node tests/browser.cjs",
+    "deploy": "node scripts/stamp-version.mjs && npx wrangler deploy --tag \"$(git rev-parse --short HEAD)\" --message \"$(git log -1 --format=%s)\""
   },
   "devDependencies": {
     "puppeteer": "25.10.0",
