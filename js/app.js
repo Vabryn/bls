@@ -2048,7 +2048,6 @@ async function loadArea(areaId, shouldZoom = true) {
     renderAll(shouldZoom);
   };
   if (state.areaCache.has(areaId)) { commit(state.areaCache.get(areaId)); return; }
-  showDataNotice('Loading area data…', 'area');
   try {
     const res = await fetch(`${yb()}/areas/${encodeURIComponent(areaId)}.json`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

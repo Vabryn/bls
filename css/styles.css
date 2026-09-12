@@ -18,8 +18,8 @@
   --map-state-stroke: rgba(255, 255, 255, 0.09);
   --map-state-hover: #1e283d;
   --accent-cyan: #7eaed4;
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Cascadia Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
   --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.32);
   --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.4);
@@ -119,10 +119,7 @@ body {
   font-weight: 600;
   letter-spacing: -0.01em;
 }
-.masthead-tag {
-  font-size: 11px;
-  color: var(--text-muted);
-}
+
 .year-select {
   font-size: 11px;
   color: var(--text-secondary, var(--text-muted));
@@ -177,7 +174,7 @@ body {
   .masthead-inner { padding: 0 14px; gap: 8px; }
   .masthead-left { gap: 7px; min-width: 0; }
   .brand-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .masthead-tag { display: none; }
+
   .theme-toggle #themeLabel { display: none; }
   .theme-toggle { padding: 5px 7px; }
 }
@@ -2157,12 +2154,7 @@ body {
   background: var(--bg-surface);
   border-bottom: 1px solid #cbd5e1;
 }
-[data-theme="light"] .masthead-tag {
-  background: var(--bg-elevated);
-  border: 1px solid #cbd5e1;
-  color: #334155;
-  font-weight: 600;
-}
+
 [data-theme="light"] .masthead-brand {
   color: #0f172a;
 }
