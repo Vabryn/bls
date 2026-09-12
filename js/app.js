@@ -232,6 +232,12 @@ async function init() {
       initMetroMap()
     ]);
 
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(() => scheduleIdlePrefetch(), { timeout: 3500 });
+    } else {
+      setTimeout(scheduleIdlePrefetch, 2000);
+    }
+
     // ?occ=<soc> deep-link: open that occupation's area breakdown.
     if (state._pendingOccBreakdown) {
       const o = state._pendingOccBreakdown;
@@ -1107,9 +1113,10 @@ function bindMapLayerDelegation(layer, selector, kind) {
     if (!el || el === hovered) return;
     hovered = el;
     el.classList.add("hovered");
+    const aid = el.dataset.id;
+    if (aid) prefetchArea(aid);
     const ctx = state._mapCtx;
     if (!ctx) return;
-    const aid = el.dataset.id;
     const jobStats = (state._mapJobRows && state._mapJobRows[aid]) || ctx.payload.metros[aid];
     const val = jobStats ? jobStats[ctx.metricIdx] : null;
     const rank = ctx.rankByAid.get(aid);
@@ -1119,6 +1126,13 @@ function bindMapLayerDelegation(layer, selector, kind) {
       : (state.mapData.metros.find(m => m.id === aid) || { name: aid });
     const priorYear = state._mapPriorYear && state._mapPriorYear[aid];
     showMetroTooltip(e, meta, ctx.payload, jobStats, ctx.metricName, val, rankText, ctx.natVal, ctx.isEmploymentMapping, ctx.metricKind, priorYear);
+  });
+
+  layer.addEventListener("pointerdown", (e) => {
+    const el = e.target.closest(selector);
+    if (!el) return;
+    const aid = el.dataset.id;
+    if (aid) prefetchArea(aid);
   });
 
   layer.addEventListener("mousemove", (e) => {
@@ -1138,7 +1152,30 @@ function bindMapLayerDelegation(layer, selector, kind) {
     const el = e.target.closest(selector);
     if (!el || state.dragSuppressedClick) return;
     e.stopPropagation();
-    loadArea(el.dataset.id, true);
+    const aid = el.dataset.id;
+    // Optimistic visual feedback: immediately highlight target polygon and overlay path (<1ms)
+    if (aid && state.metroShapes && state.metroShapes[aid]) {
+      if (state._selectedAreaEl && state._selectedAreaEl !== el) {
+        state._selectedAreaEl.classList.remove("selected");
+      }
+      el.classList.add("selected");
+      state._selectedAreaEl = el;
+      const overlayLayer = document.getElementById("metroOverlayLayer");
+      if (overlayLayer) {
+        let outerPath = overlayLayer.querySelector(".metro-overlay-path");
+        if (!outerPath) {
+          outerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          outerPath.setAttribute("class", "metro-overlay-path");
+          overlayLayer.appendChild(outerPath);
+        }
+        const shape = state.metroShapes[aid];
+        if (shape && shape.d) {
+          outerPath.setAttribute("d", shape.d);
+          outerPath.style.display = "";
+        }
+      }
+    }
+    loadArea(aid, true);
   });
 }
 
@@ -1860,14 +1897,16 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
   const layer = document.getElementById("metroOverlayLayer");
   if (!layer) return;
 
-  // renderAll normally sets this before the map renders, but on some paths
-  // (init race, standalone calls) it hasn't — if it changes here, the map
-  // layer needs one more pass to grey the siblings.
   const _prevFocus = state.focusedState;
   syncFocusedStateForArea(areaId);
   const _refocused = state.focusedState !== _prevFocus;
 
-  layer.innerHTML = "";
+  let outerPath = layer.querySelector(".metro-overlay-path");
+  if (!outerPath) {
+    outerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    outerPath.setAttribute("class", "metro-overlay-path");
+    layer.appendChild(outerPath);
+  }
 
   // 1. If MSA or Non-Metro Area
   if (state.metroShapes && state.metroShapes[areaId]) {
@@ -1880,21 +1919,34 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     if (titleEl) titleEl.textContent = formatAreaName(metroMeta.name);
     if (resetBtn) resetBtn.style.display = "inline-flex";
 
-    // Parent-state perimeter highlight (~51 nodes). The area / bubble focus+dim
-    // is done by renderAreasLayer / renderBubblesLayer off state.focusedState,
-    // which syncFocusedStateForArea set before this ran.
-    (state._stateEls || document.querySelectorAll(".state-boundary")).forEach(p => {
-      const isParent = p.dataset.state === shape.state;
-      p.classList.toggle("state-focused", !!shape.state && isParent);
-      p.classList.toggle("state-dimmed", !!shape.state && !isParent);
-    });
+    // Direct O(1) polygon selection class sync
+    if (state._areaEls) {
+      if (state._selectedAreaEl && state._selectedAreaEl.dataset.id !== areaId) {
+        state._selectedAreaEl.classList.remove("selected");
+      }
+      const el = state._areaEls.get(areaId);
+      if (el) {
+        el.classList.add("selected");
+        state._selectedAreaEl = el;
+      }
+    }
 
-    // Render unified outer statistical wage area boundary polygon
+    // Parent-state perimeter highlight (~51 nodes) - avoid redundant loops if parent state didn't change
+    if (state._lastHighlightedState !== shape.state) {
+      state._lastHighlightedState = shape.state;
+      (state._stateEls || document.querySelectorAll(".state-boundary")).forEach(p => {
+        const isParent = p.dataset.state === shape.state;
+        p.classList.toggle("state-focused", !!shape.state && isParent);
+        p.classList.toggle("state-dimmed", !!shape.state && !isParent);
+      });
+    }
+
+    // Update persistent outer statistical wage area boundary polygon
     if (shape.d) {
-      const outerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      outerPath.setAttribute("class", "metro-overlay-path");
       outerPath.setAttribute("d", shape.d);
-      layer.appendChild(outerPath);
+      outerPath.style.display = "";
+    } else {
+      outerPath.style.display = "none";
     }
 
     // Smooth Auto-Zoom to Metro Bounding Box
@@ -1921,19 +1973,24 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     const stateObj = state.statesById[areaId];
     const stateMeta = state.manifest.find(a => a.id === areaId) || { name: stateObj.name, state: "" };
 
-    // Render outer state boundary path
+    state._lastHighlightedState = stateObj.state;
+    if (state._selectedAreaEl) {
+      state._selectedAreaEl.classList.remove("selected");
+      state._selectedAreaEl = null;
+    }
+
+    // Update outer state boundary path
     if (stateObj.d) {
-      const outerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      outerPath.setAttribute("class", "metro-overlay-path");
       outerPath.setAttribute("d", stateObj.d);
-      layer.appendChild(outerPath);
+      outerPath.style.display = "";
+    } else {
+      outerPath.style.display = "none";
     }
 
     // Highlight all statistical areas, bubbles, and bars in this state
     let countInState = 0;
     document.querySelectorAll(".area-boundary-shape").forEach(p => {
       const inState = p.dataset.state === stateMeta.state;
-      // Whole state selected — no sibling to grey out.
       p.classList.remove("area-focused");
       p.classList.toggle("area-dimmed", !inState);
       if (inState && p.dataset.type === "msa") countInState++;
@@ -1943,7 +2000,6 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
       c.classList.toggle("bubble-focused", inState);
       c.classList.toggle("bubble-dimmed", !inState);
     });
-
 
     // Calculate state bounds
     const b = getPathBounds(stateObj.d);
@@ -1973,6 +2029,13 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
   }
   // 3. National benchmark or reset
   else {
+    outerPath.style.display = "none";
+    state._lastHighlightedState = null;
+    if (state._selectedAreaEl) {
+      state._selectedAreaEl.classList.remove("selected");
+      state._selectedAreaEl = null;
+    }
+
     const titleEl = document.getElementById("hudMetroTitle");
     const resetBtn = document.getElementById("hudResetBtn");
     if (titleEl) titleEl.textContent = "United States";
@@ -2015,6 +2078,42 @@ function showDataNotice(message, channel = 'general') {
   notice.hidden = !visible;
 }
 
+// Pre-fetching for hover and idle background loading
+const _prefetchPromises = new Map();
+
+function prefetchArea(areaId) {
+  if (!areaId || areaId === "99" || state.areaCache.has(areaId) || _prefetchPromises.has(areaId)) return;
+  const p = fetch(`${yb()}/areas/${encodeURIComponent(areaId)}.json`)
+    .then(res => res.ok ? res.json() : null)
+    .then(data => {
+      if (data && String(data.id) === String(areaId) && Array.isArray(data.occupations)) {
+        state.areaCache.set(areaId, data);
+      }
+      return data;
+    })
+    .catch(() => null)
+    .finally(() => {
+      _prefetchPromises.delete(areaId);
+    });
+  _prefetchPromises.set(areaId, p);
+}
+
+function scheduleIdlePrefetch() {
+  const topMetros = ["35620", "31080", "16980", "19100", "26420", "47900", "37980", "33100", "12060", "41860"];
+  let i = 0;
+  function next() {
+    if (i >= topMetros.length) return;
+    const id = topMetros[i++];
+    if (!state.areaCache.has(id)) {
+      prefetchArea(id);
+      setTimeout(next, 100);
+    } else {
+      next();
+    }
+  }
+  next();
+}
+
 async function loadArea(areaId, shouldZoom = true) {
   // Every selection invalidates earlier requests, including cache hits.
   const token = ++state._areaLoadToken;
@@ -2030,6 +2129,12 @@ async function loadArea(areaId, shouldZoom = true) {
     renderAll(shouldZoom);
   };
   if (state.areaCache.has(areaId)) { commit(state.areaCache.get(areaId)); return; }
+  if (_prefetchPromises.has(areaId)) {
+    try {
+      const data = await _prefetchPromises.get(areaId);
+      if (data) { commit(data); return; }
+    } catch {}
+  }
   try {
     const res = await fetch(`${yb()}/areas/${encodeURIComponent(areaId)}.json`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -2512,6 +2617,7 @@ function populateAreaDropdown() {
         <span class="area-opt-meta">${fmt.compact(item.emp)} jobs</span>
       `;
 
+      opt.addEventListener("mouseenter", () => prefetchArea(item.id));
       opt.addEventListener("click", () => {
         loadArea(item.id, true);
         closeAreaDropdown();
