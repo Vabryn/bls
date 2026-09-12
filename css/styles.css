@@ -1118,6 +1118,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  contain: layout;
 }
 .map-card-toolbar {
   display: flex;
@@ -1220,6 +1221,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  contain: layout;
 }
 /* ---------------------------------------------------------------
    Surfaces — every panel is the same: one hairline border, one
@@ -1401,6 +1403,7 @@ body {
   user-select: none;
   cursor: grab;
   touch-action: none;
+  contain: layout paint;
 }
 /* On touch devices, let a vertical swipe scroll the page past the map;
    only horizontal/diagonal drags pan (the JS pan handler bails on
@@ -1419,6 +1422,9 @@ body {
   height: 100%;
   display: block;
 }
+#mapZoomGroup {
+  will-change: transform;
+}
 @media (max-width: 990px) {
   .map-svg-container { flex: 0 0 auto; min-height: 300px; }
   #usMetroSvg { height: auto; }
@@ -1433,7 +1439,7 @@ body {
   stroke-linecap: round;
   pointer-events: none;
   vector-effect: non-scaling-stroke;
-  transition: opacity 0.25s ease, stroke 0.25s ease, stroke-width 0.25s ease;
+  transition: opacity 0.2s ease, stroke 0.2s ease;
 }
 [data-theme="light"] .state-boundary {
   stroke: rgba(15, 23, 42, 0.22);
@@ -1466,7 +1472,7 @@ body {
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
   cursor: pointer;
-  transition: fill 0.2s ease, stroke 0.15s ease, opacity 0.25s ease;
+  transition: fill 0.15s ease, opacity 0.2s ease;
 }
 [data-theme="light"] .area-boundary-shape {
   stroke: rgba(30, 41, 59, 0.35);
