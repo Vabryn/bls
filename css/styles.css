@@ -1129,13 +1129,7 @@ body {
   background: var(--bg-elevated);
   font-size: 12.5px;
 }
-.map-toolbar-area-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 0 1 auto;
-  min-width: 0;
-}
+
 /* Search bar that now lives on the map / browse card header line. */
 .card-search {
   flex: 1 1 170px;
@@ -1209,24 +1203,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.hud-metro-counties {
-  font-size: 11px;
-  color: var(--text-secondary);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  flex-shrink: 1;
-}
-[data-theme="light"] .hud-metro-counties {
-  background: var(--bg-elevated);
-  border-color: #cbd5e1;
-  color: #475569;
-}
+
 /* Reset lives as the third button in the map's zoom stack (+ / − / ⟲) — one
    control, same place on every screen. */
 .map-zoom-btn--reset {
@@ -1394,8 +1371,7 @@ body {
     padding: 10px 12px;
   }
   .card-search { flex: 1 1 auto; min-width: 0; width: auto; }
-  .map-toolbar-area-info,
-  .hud-metro-counties { display: none; }   /* the area chip already sits in the field */
+
   .sel-chip { max-width: 72%; }
 
   /* Education / Sectors / Median Wage — one row, sharing the width evenly. */

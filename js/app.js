@@ -425,13 +425,8 @@ function zoomToState(stateIdOrCode) {
 
   // 5. Update Toolbar Area Info
   const titleEl = document.getElementById("hudMetroTitle");
-  const subEl = document.getElementById("hudMetroCounties");
   const resetBtn = document.getElementById("hudResetBtn");
   if (titleEl) titleEl.textContent = stateMeta.name;
-  const subtitle = nonmetroCount > 0
-    ? `${metroCount} Metropolitan & ${nonmetroCount} Non-Metro Areas`
-    : `${metroCount} Metropolitan Areas`;
-  if (subEl) subEl.textContent = subtitle;
   if (resetBtn) resetBtn.style.display = "inline-flex";
 
   // 6. Update Explorer Data for the State
@@ -461,10 +456,8 @@ function resetMapZoom() {
   if (layer) layer.innerHTML = "";
 
   const titleEl = document.getElementById("hudMetroTitle");
-  const subEl = document.getElementById("hudMetroCounties");
   const resetBtn = document.getElementById("hudResetBtn");
   if (titleEl) titleEl.textContent = "United States";
-  if (subEl) subEl.textContent = "National View";
   if (resetBtn) resetBtn.style.display = "inline-flex";
 
 
@@ -1883,15 +1876,8 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
 
     // Update Toolbar Area Info
     const titleEl = document.getElementById("hudMetroTitle");
-    const subEl = document.getElementById("hudMetroCounties");
     const resetBtn = document.getElementById("hudResetBtn");
     if (titleEl) titleEl.textContent = formatAreaName(metroMeta.name);
-    if (subEl) {
-      const typeLabel = shape.type === "nonmetro"
-        ? "Nonmetropolitan Region"
-        : (shape.type === "state" ? "Statewide Area" : "Metropolitan Statistical Area");
-      subEl.textContent = typeLabel;
-    }
     if (resetBtn) resetBtn.style.display = "inline-flex";
 
     // Parent-state perimeter highlight (~51 nodes). The area / bubble focus+dim
@@ -1981,19 +1967,15 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     }
 
     const titleEl = document.getElementById("hudMetroTitle");
-    const subEl = document.getElementById("hudMetroCounties");
     const resetBtn = document.getElementById("hudResetBtn");
     if (titleEl) titleEl.textContent = stateMeta.name;
-    if (subEl) subEl.textContent = `${countInState} Statistical Areas in ${stateMeta.name}`;
     if (resetBtn) resetBtn.style.display = "inline-flex";
   }
   // 3. National benchmark or reset
   else {
     const titleEl = document.getElementById("hudMetroTitle");
-    const subEl = document.getElementById("hudMetroCounties");
     const resetBtn = document.getElementById("hudResetBtn");
     if (titleEl) titleEl.textContent = "United States";
-    if (subEl) subEl.textContent = "National View";
     if (resetBtn) resetBtn.style.display = "inline-flex";
 
     (state._stateEls || document.querySelectorAll(".state-boundary")).forEach(p => {
