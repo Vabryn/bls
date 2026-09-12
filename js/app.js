@@ -1535,6 +1535,13 @@ function setupMapControls() {
   const zoomGroup = document.getElementById("mapZoomGroup");
   const svgContainer = document.getElementById("mapSvgContainer");
   let _lastZoomScale = state.mapZoom.scale;
+  let _containerRect = null;
+  const getContainerRect = () => {
+    if (!_containerRect) _containerRect = svgContainer.getBoundingClientRect();
+    return _containerRect;
+  };
+  window.addEventListener("resize", () => { _containerRect = null; }, { passive: true });
+
   const updateTransform = () => {
     zoomGroup.setAttribute(
       "transform",
@@ -1544,6 +1551,16 @@ function setupMapControls() {
       _lastZoomScale = state.mapZoom.scale;
       refreshBubblesForZoom();
     }
+  };
+
+  let _transformQueued = false;
+  const scheduleUpdateTransform = () => {
+    if (_transformQueued) return;
+    _transformQueued = true;
+    requestAnimationFrame(() => {
+      _transformQueued = false;
+      updateTransform();
+    });
   };
 
   // Click-Drag Pan Implementation (Works seamlessly even when zoomed in)
@@ -1558,6 +1575,7 @@ function setupMapControls() {
     if (e.button && e.button !== 0) return;
     isPointerDown = true;
     hasDragged = false;
+    _containerRect = svgContainer.getBoundingClientRect();
     startX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
     startY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
     startTx = state.mapZoom.x;
@@ -1583,7 +1601,7 @@ function setupMapControls() {
     }
 
     if (hasDragged) {
-      const rect = svgContainer.getBoundingClientRect();
+      const rect = getContainerRect();
       const scaleRatioX = 975 / (rect.width || 975);
       const scaleRatioY = 610 / (rect.height || 610);
 
@@ -1598,13 +1616,14 @@ function setupMapControls() {
 
       state.mapZoom.x = Math.max(minTx, Math.min(maxTx, targetX));
       state.mapZoom.y = Math.max(minTy, Math.min(maxTy, targetY));
-      updateTransform();
+      scheduleUpdateTransform();
     }
   };
 
   const onPointerUp = () => {
     if (!isPointerDown) return;
     isPointerDown = false;
+    _containerRect = null;
     if (hasDragged) {
       svgContainer.classList.remove("is-dragging");
       zoomGroup.style.transition = "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
@@ -1629,9 +1648,12 @@ function setupMapControls() {
   window.addEventListener("touchcancel", onPointerUp, { passive: true });
 
   // Mouse wheel zoom centered on cursor
+  let _wheelTransitionTimer = null;
+  let _isWheelZooming = false;
+
   svgContainer.addEventListener("wheel", (e) => {
     e.preventDefault();
-    const rect = svgContainer.getBoundingClientRect();
+    const rect = getContainerRect();
     const mouseX = (e.clientX - rect.left) * (975 / (rect.width || 975));
     const mouseY = (e.clientY - rect.top) * (610 / (rect.height || 610));
 
@@ -1649,12 +1671,19 @@ function setupMapControls() {
       state.mapZoom.y = 0;
     }
 
-    zoomGroup.style.transition = "none";
-    updateTransform();
-    clearTimeout(state._wheelTimer);
-    state._wheelTimer = setTimeout(() => {
+    if (!_isWheelZooming) {
+      _isWheelZooming = true;
+      zoomGroup.style.transition = "none";
+    }
+
+    scheduleUpdateTransform();
+
+    clearTimeout(_wheelTransitionTimer);
+    _wheelTransitionTimer = setTimeout(() => {
+      _isWheelZooming = false;
+      _containerRect = null;
       zoomGroup.style.transition = "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
-    }, 70);
+    }, 80);
   }, { passive: false });
 
   document.getElementById("mapZoomIn").addEventListener("click", () => {
@@ -1664,6 +1693,7 @@ function setupMapControls() {
     state.mapZoom.x = Math.round(cx - (cx - state.mapZoom.x) * (newScale / oldScale));
     state.mapZoom.y = Math.round(cy - (cy - state.mapZoom.y) * (newScale / oldScale));
     state.mapZoom.scale = newScale;
+    zoomGroup.style.transition = "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
     updateTransform();
   });
 
@@ -1678,6 +1708,7 @@ function setupMapControls() {
       state.mapZoom.y = Math.round(cy - (cy - state.mapZoom.y) * (newScale / oldScale));
       state.mapZoom.scale = newScale;
     }
+    zoomGroup.style.transition = "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
     updateTransform();
   });
 
