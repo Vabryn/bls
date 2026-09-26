@@ -199,7 +199,7 @@ body {
   .brand-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .theme-toggle #themeLabel { display: none; }
-  .theme-toggle { padding: 5px 7px; }
+  .theme-toggle { width: 28px; height: 28px; padding: 0; justify-content: center; }
 }
 
 /* Page Container */
@@ -482,6 +482,7 @@ body {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  margin-bottom: 0;
   padding: 10px 14px;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border-subtle);
@@ -826,12 +827,9 @@ body {
     flex: 1;
     min-width: 0;
   }
-  .map-card-controls-bar .map-metric-cluster {
-    width: min(190px, calc(100vw - 24px));
-    flex: 0 1 min(190px, calc(100vw - 24px));
-  }
   .map-card-controls-bar .map-metric-picker {
-    flex: 0 1 min(190px, calc(100vw - 24px));
+    flex: 1 1 auto;
+    width: auto;
     min-width: 0;
   }
   .map-card-controls-bar .segmented-btn {
@@ -2143,6 +2141,18 @@ body {
   white-space: nowrap;
   user-select: none;
 }
+/* iOS Safari can draw the sticky header a few pixels below the top of the
+   scroll box while scrolling, letting rows show above it. This strip covers
+   that space; the scroll box clips it when the header is at the top. */
+.data-table th::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 8px;
+  background: inherit;
+}
 .data-table th:hover { color: var(--text-primary); }
 .data-table th.sorted-asc::after { content: " ↑"; }
 .data-table th.sorted-desc::after { content: " ↓"; }
@@ -2470,12 +2480,16 @@ body {
   /* Keep primary touch targets comfortable on iPhone/iPad.  The compact
      desktop controls remain unchanged; touch devices get the recommended
      44px hit area without changing their visual hierarchy. */
-  .theme-toggle,
   .map-zoom-btn,
   #mapModeTabs .segmented-btn {
     min-height: 44px;
   }
-  .theme-toggle { min-width: 44px; }
+  /* The masthead buttons keep their small visual size; an invisible ::after
+     extends each hit area to 44px. */
+  .theme-toggle,
+  .portfolio-back { position: relative; }
+  .theme-toggle::after,
+  .portfolio-back::after { content: ""; position: absolute; inset: -8px; }
   .map-zoom-btn { min-width: 44px; height: 44px; }
   .combobox-input-box { min-height: 44px; }
 }
@@ -2493,7 +2507,7 @@ body {
 }
 @media (pointer: coarse) {
   .map-metric-trigger { min-height: 44px; gap: 8px; padding-left: 8px; padding-right: 8px; font-size: 14px; }
-  .map-metric-menu { width: 100%; }
+  .map-metric-menu { width: max-content; min-width: 100%; }
   .map-metric-option { min-height: 44px; font-size: 16px; }
 }
 @media (max-width: 560px) {

@@ -2907,9 +2907,8 @@ function resolveAreaQuery(rawQuery) {
       }
     }
     for (const k of keys) {
-      for (const [areaId, st] of state.placeIndex[k]) {
-        const pretty = k.charAt(0).toUpperCase() + k.slice(1);
-        add(areaId, `${pretty}, ${st}`);
+      for (const [areaId, st, name] of state.placeIndex[k]) {
+        add(areaId, `${name || k}, ${st}`);
       }
     }
   }

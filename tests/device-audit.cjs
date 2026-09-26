@@ -99,10 +99,16 @@ async function checkNoOverflow(page) {
   });
 }
 
+// Hit area size, including an absolutely positioned ::after that extends a
+// small visual button's touch area (see .theme-toggle).
 function touchSize(page, selectors) {
   return page.evaluate(sels => sels.map(sel => [sel, [...document.querySelectorAll(sel)].map(el => {
     const r = el.getBoundingClientRect();
-    return { width: Math.round(r.width), height: Math.round(r.height) };
+    const after = getComputedStyle(el, "::after");
+    const grow = after.content !== "none" && after.position === "absolute"
+      ? side => Math.max(0, -parseFloat(after[side]) || 0) : () => 0;
+    return { width: Math.round(r.width + grow("left") + grow("right")),
+      height: Math.round(r.height + grow("top") + grow("bottom")) };
   })]), selectors);
 }
 
@@ -346,7 +352,7 @@ test("iPhone touch boot, targets, order, and no overflow", "iphone", async page 
   assert.equal(layout.summaryPosition, "static");
   const overflow = await checkNoOverflow(page);
   assert.equal(overflow.offenders.length, 0, JSON.stringify(overflow));
-  const sizes = await touchSize(page, ["#themeToggleBtn", "#mapZoomIn", "#mapZoomOut", "#mapResetBtn", "#mapModeTabs .segmented-btn", "#mapMetricSelect", ".combobox-input-box", "#browseControlBar .control-select"]);
+  const sizes = await touchSize(page, ["#themeToggleBtn", ".portfolio-back", "#mapZoomIn", "#mapZoomOut", "#mapResetBtn", "#mapModeTabs .segmented-btn", "#mapMetricSelect", ".combobox-input-box", "#browseControlBar .control-select"]);
   for (const [, boxes] of sizes) for (const box of boxes) assert.ok(box.width >= 44 && box.height >= 44, `small touch target: ${JSON.stringify(sizes)}`);
 });
 

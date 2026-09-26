@@ -8,7 +8,7 @@ cbsa_to_counties.json by (state, county name), then filtered to the CBSAs
 the OEWS manifest actually reports.
 
 Output shape:
-    { "<city-name-normalised>": [ ["<areaId>", "<ST>"], ... ], ... }
+    { "<city-name-normalised>": [ ["<areaId>", "<ST>", "<City Name>"], ... ], ... }
 """
 import csv
 import io
@@ -98,9 +98,8 @@ def main():
         if not key:
             continue
         entry = index.setdefault(key, [])
-        pair = [area, st]
-        if pair not in entry:
-            entry.append(pair)
+        if not any(e[0] == area and e[1] == st for e in entry):
+            entry.append([area, st, row.get("CITY").strip()])
             hits += 1
 
     out_path = os.path.join(data_dir, "place_index.json")
