@@ -129,6 +129,7 @@ Use Node 22.12+ and Python 3:
 npm ci
 npm test
 npm run test:devices
+npm run test:layout
 ```
 
 The Python check validates numeric values and uncensored percentile ordering in
@@ -144,6 +145,19 @@ drilldown, deep links, themes, target sizes, overflow, and runtime errors).
 Use `BLS_URL=https://bls.riverakarom.com/ npm run test:devices` to run the same
 checks against production, or set `AUDIT_SCREENSHOTS`/`AUDIT_JSON` to retain
 visual and machine-readable artifacts.
+`npm run test:layout` drives the app into about 25 states at 320–1440px widths,
+both themes and 125% text: open menus and lists, long and multi-word searches,
+empty results, long names, low/high-wage areas, suppressed data, drill-downs,
+sorting, rapid toggles, resizing and rotating. In each it checks layout
+(overflow, clipping, overlap, covered controls, off-screen popups, row
+alignment, gaps, sideways scrolling inside boxes, sticky headers), visuals
+(WCAG contrast, NaN/undefined values, text artifacts, truncation without a
+title, small text and touch targets on phones) and behaviour (runtime errors,
+layout shift, keyboard focus visibility, Escape closing popups, search labels).
+The check list is at the top of `tests/layout-audit.cjs`. Errors fail the run
+and `--strict` fails on warnings too; accepted findings go in
+`tests/layout-audit.allow.json` with a reason. `--quick` runs one phone and one
+desktop size. `LAYOUT_SCREENSHOTS`, `LAYOUT_JSON` and `BLS_URL` work as above.
 Set `AUDIT_SCREENSHOTS` to a directory to retain screenshots. These checks do not
 replace a physical Safari/Android pass or a source-spreadsheet reconciliation.
 

@@ -230,6 +230,8 @@ body {
   position: relative;
   width: 100%;
 }
+/* Keeps a search field clear of the sticky masthead when scrolled to. */
+.card-search { scroll-margin-top: 56px; }
 .combobox-input-box {
   position: relative;
   display: flex;
@@ -315,7 +317,7 @@ body {
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  max-height: 360px;
+  max-height: min(360px, 55vh);
   overflow-y: auto;
   background: var(--bg-surface);
   border: 1px solid var(--border-medium);
@@ -1398,7 +1400,7 @@ body {
   padding: 2px 7px;
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.06);
-  color: var(--text-muted);
+  color: var(--text-secondary);
   display: inline-block;
 }
 .badge-density.high {
@@ -2180,6 +2182,18 @@ body {
     display: none;
   }
 }
+/* Side-by-side layout on narrower desktops: headers and names may wrap so
+   the browse table fits its half of the screen. */
+@media (max-width: 1200px) {
+  .data-table th,
+  .data-table td:first-child { white-space: normal; }
+}
+/* Phones: tighter cells so the three columns fit without a sideways scroll,
+   including with larger text. */
+@media (max-width: 430px) {
+  .data-table th,
+  .data-table td { padding-left: 6px; padding-right: 6px; }
+}
 
 /* Badges */
 .badge-edu {
@@ -2366,6 +2380,9 @@ body {
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
   border-radius: var(--radius-md);
 }
+[data-theme="light"] .combobox-input-box:focus-within {
+  border-color: var(--accent-blue);
+}
 [data-theme="light"] .combobox-input {
   background: transparent;
   border: none;
@@ -2489,7 +2506,16 @@ body {
   .theme-toggle,
   .portfolio-back { position: relative; }
   .theme-toggle::after,
-  .portfolio-back::after { content: ""; position: absolute; inset: -8px; }
+  .portfolio-back::after { content: ""; position: absolute; inset: -9px; }
+  .masthead-brand { position: relative; }
+  .masthead-brand::after { content: ""; position: absolute; inset: -12px 0; }
+  /* Clear buttons: 16-23px visual, 44px+ hit area. */
+  .sel-chip .sel-chip-x { position: relative; }
+  .sel-chip .sel-chip-x::after,
+  .combobox-clear::after { content: ""; position: absolute; inset: -14px; }
+  .combobox-input { height: 44px; }
+  .control-select,
+  .browse-back-btn { min-height: 44px; }
   .map-zoom-btn { min-width: 44px; height: 44px; }
   .combobox-input-box { min-height: 44px; }
 }
@@ -2511,6 +2537,11 @@ body {
   .map-metric-option { min-height: 44px; font-size: 16px; }
 }
 @media (max-width: 560px) {
+  /* Drill-down bar: back button and title on one row, the two selects share
+     the next (their inline widths are desktop sizes). */
+  #browseDrilldownBar { flex-wrap: wrap; padding: 8px 12px !important; }
+  #browseDrilldownBar > div:last-child { width: 100%; gap: 6px !important; }
+  #browseDrilldownBar select { flex: 1 1 0 !important; max-width: none !important; min-width: 0 !important; }
   #browseControlBar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   #browseControlBar > .control-select { width: 100%; min-height: 44px; font-size: 16px; }
   #browseWageMetric { grid-column: 1 / -1; }

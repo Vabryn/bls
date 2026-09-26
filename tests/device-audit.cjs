@@ -63,6 +63,13 @@ async function selectValue(page, selector, value) {
   await sleep(100);
 }
 
+// page.tap scrolls a target only to the viewport edge, where the sticky
+// masthead can cover it; centre it first.
+async function tapCentred(page, selector) {
+  await page.$eval(selector, el => el.scrollIntoView({ block: "center", behavior: "instant" }));
+  await page.tap(selector);
+}
+
 async function clearArea(page) {
   await page.click("#areaSelChipClear");
   await page.waitForFunction(() => state.currentAreaId === "99");
@@ -503,7 +510,7 @@ test("iPhone No data key appears only when areas lack a value", "iphone", async 
   k = await key();
   assert.ok(k.missing > 0 && !k.hidden, `occupation with suppressed areas shows the key: ${JSON.stringify(k)}`);
 
-  await page.tap('#mapModeTabs [data-mode="bubble"]');
+  await tapCentred(page, '#mapModeTabs [data-mode="bubble"]');
   await page.waitForFunction(() => state.mapMode === "bubble");
   assert.equal((await key()).hidden, true, "bubble mode draws no no-data areas, so no key");
 });

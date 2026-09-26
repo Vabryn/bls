@@ -1486,6 +1486,22 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
   moveTooltip(e);
 }
 
+// On short screens (a phone held sideways), bring a search field to the top of
+// the page so its suggestion list opens with room below it. A pointer focus
+// waits for the click to finish; scrolling on mousedown would move the page
+// under the pointer and send the click to another element. The jump is instant
+// (the page otherwise scrolls smoothly) so the list is still when tapped.
+function bindComboboxReveal(input) {
+  const reveal = () => {
+    const room = innerHeight - input.getBoundingClientRect().bottom;
+    if (room < Math.min(360, innerHeight * 0.55) + 16) input.closest(".card-search").scrollIntoView({ block: "start", behavior: "instant" });
+  };
+  let fromPointer = false;
+  input.addEventListener("pointerdown", () => { fromPointer = true; });
+  input.addEventListener("focus", () => { if (!fromPointer) reveal(); });
+  input.addEventListener("click", () => { if (fromPointer) { fromPointer = false; reveal(); } });
+}
+
 function setupMapControls() {
   // Compact, consistently-sized metric menu. Native select popups are sized
   // and padded by the OS, which made this menu unnecessarily large on macOS.
@@ -1523,6 +1539,13 @@ function setupMapControls() {
         }
       });
     });
+    // Escape from the trigger, and a tap or click outside, close the menu.
+    metricPicker.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && metricPicker.open) { event.preventDefault(); metricPicker.open = false; metricSelect.focus(); }
+    });
+    document.addEventListener("click", (event) => {
+      if (metricPicker.open && !metricPicker.contains(event.target)) metricPicker.open = false;
+    });
   }
 
   // Map Mode Tabs (Area Map, Bubble Map)
@@ -1547,6 +1570,7 @@ function setupMapControls() {
   const dropdown = document.getElementById("mapJobDropdown");
   const clearBtn = document.getElementById("mapJobClear");
 
+  bindComboboxReveal(input);
   input.addEventListener("focus", () => {
     input.select();
     filterMapJobDropdown(input.value);
@@ -2798,6 +2822,7 @@ function setupDropdowns() {
   const dropdown = document.getElementById("areaDropdown");
   const clearBtn = document.getElementById("areaSearchClear");
 
+  bindComboboxReveal(input);
   input.addEventListener("focus", () => {
     filterAreaDropdown(input.value);
     setComboboxOpen(input, dropdown, true);
