@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "test": "python3 tests/data.py && node tests/browser.cjs",
+    "test:devices": "node tests/device-audit.cjs",
     "deploy": "node scripts/stamp-version.mjs && npx wrangler deploy --tag \"$(git rev-parse --short HEAD)\" --message \"$(git log -1 --format=%s)\""
   },
   "devDependencies": {

@@ -49,10 +49,10 @@ const EDU_LEVELS = [
 // [soc,title,grp,edu,emp,mean,median,p10,p25,p75,p90,lq]; `areaIdx` indexes a
 // drilldown row [emp,mean,median,p25,p75,lq].
 const WAGE_METRIC_OPTIONS = [
-  { v: "median", label: "Median Wage", occIdx: 6, areaIdx: 2 },
-  { v: "mean",   label: "Mean Wage",   occIdx: 5, areaIdx: 1 },
-  { v: "p25",    label: "Bottom 25%",  occIdx: 8, areaIdx: 3 },
-  { v: "p75",    label: "Top 25%",     occIdx: 9, areaIdx: 4 }
+  { v: "median", label: "Typical Wage (Median)", occIdx: 6, areaIdx: 2 },
+  { v: "mean",   label: "Average Wage (Mean)",   occIdx: 5, areaIdx: 1 },
+  { v: "p25",    label: "Lower Range (P25)",     occIdx: 8, areaIdx: 3 },
+  { v: "p75",    label: "Upper Range (P75)",     occIdx: 9, areaIdx: 4 }
 ];
 function wageMetric() {
   return WAGE_METRIC_OPTIONS.find(o => o.v === state.browseWageMetric) || WAGE_METRIC_OPTIONS[0];
@@ -64,4 +64,3 @@ function syncWageColHeaders() {
   if (a) a.textContent = label;
   if (b) b.textContent = label;
 }
-

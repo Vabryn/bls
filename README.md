@@ -19,7 +19,7 @@ and by how concentrated each field is in that local economy.
 | | |
 |---|---|
 | **National → local** | Start on a county‑level choropleth of the whole country, then search a state / metro / non‑metro area / 5‑digit ZIP to zoom to it and re‑scope every panel. |
-| **Six lenses on the same geography** | Median, Mean, Bottom 25% (P25), Top 25% (P75), Employment, and **Density** (location quotient — how over/under‑represented a field is locally vs nationally). |
+| **Six lenses on the same geography** | Typical wage (median), average wage (mean), lower range (P25), upper range (P75), employment, and **Density** (location quotient — how over/under‑represented a field is locally vs nationally). |
 | **Two map styles** | Area choropleth or proportional bubbles. |
 | **Sector browser** | The right panel opens on the 22 SOC major groups; drill a sector → its occupations → per‑region breakdown for one occupation, with a breadcrumb the whole way down. |
 | **Comparison built in** | Every wage is shown with its delta vs the U.S. figure; the legend pins both the selected area and the national marker on a shared gradient. |
@@ -128,12 +128,22 @@ Use Node 22.12+ and Python 3:
 ```bash
 npm ci
 npm test
+npm run test:devices
 ```
 
 The Python check validates numeric values and uncensored percentile ordering in
 all annual area files. Browser tests reproduce blocked storage, out-of-order
-loads, failed requests and censored-wage comparisons, then check both themes at
-phone, tablet and desktop widths. Tests start an isolated localhost server.
+loads, failed requests, censored-wage comparisons, strict CSP behavior,
+accessible search/map controls and mobile ordering, then
+check both themes at phone, tablet and desktop widths. Tests start an isolated
+localhost server.
+`npm run test:devices` is the reusable end-to-end audit: it covers the complete
+desktop interaction workflow and repeats the touch workflow in an iPhone 12
+emulation (search, map modes/metrics, zoom/pan/reset, filters, sorting,
+drilldown, deep links, themes, target sizes, overflow, and runtime errors).
+Use `BLS_URL=https://bls.riverakarom.com/ npm run test:devices` to run the same
+checks against production, or set `AUDIT_SCREENSHOTS`/`AUDIT_JSON` to retain
+visual and machine-readable artifacts.
 Set `AUDIT_SCREENSHOTS` to a directory to retain screenshots. These checks do not
 replace a physical Safari/Android pass or a source-spreadsheet reconciliation.
 

@@ -12,9 +12,12 @@ bls_draft.html
 LICENSE
 README.md
 docs
+.DS_Store
+**/.DS_Store
 
 node_modules
 package.json
 package-lock.json
 tests
 AUDIT.md
+TODO.md

@@ -53,6 +53,44 @@ test('Censored wages do not produce a falsely precise national percentage',async
  await p.evaluate(async()=>{await loadArea('27');await loadMapJob('29-1242');state.activeJobPayload.nat.median=239200;renderHeroAndKPIs();});
  assert.equal(await p.$eval('#kpiMedianDelta',e=>e.textContent.includes('%')),false);
 });
+test('Strict script CSP is active and inline event handlers are absent',async(p,url)=>{
+ const response=await p.goto(url);const csp=response.headers()['content-security-policy']||'';
+ assert.match(csp,/script-src 'self'(?:\s+https:\/\/static\.cloudflareinsights\.com)?;/);
+ assert.doesNotMatch(csp,/script-src[^;]*'unsafe-inline'/);
+ assert.equal(await p.$$eval('[onclick],[onchange],[oninput],[onkeydown],[onkeyup],[onmousedown],[onmouseup],[ontouchstart],[ontouchend]',es=>es.length),0);
+});
+test('Search controls expose listbox semantics and map regions are keyboard-selectable',async(p,url)=>{
+ await p.goto(url);await p.waitForSelector('#areaDropdown .area-option');await p.waitForSelector('#areasLayer .area-boundary-shape');
+ const semantics=await p.evaluate(()=>{
+  const area=document.getElementById('areaSearchInput'),job=document.getElementById('mapJobSearchInput');
+  const region=document.querySelector('#areasLayer .area-boundary-shape');
+  return {areaRole:area.getAttribute('role'),areaControls:area.getAttribute('aria-controls'),jobRole:job.getAttribute('role'),jobControls:job.getAttribute('aria-controls'),options:document.querySelectorAll('[role="option"]').length,regionRole:region?.getAttribute('role'),regionTabIndex:region?.getAttribute('tabindex'),regionLabel:region?.getAttribute('aria-label')};
+ });
+ assert.deepEqual(semantics.areaRole,'combobox');assert.equal(semantics.areaControls,'areaDropdown');
+ assert.deepEqual(semantics.jobRole,'combobox');assert.equal(semantics.jobControls,'mapJobDropdown');
+ assert.ok(semantics.options>0);assert.equal(semantics.regionRole,'button');assert.equal(semantics.regionTabIndex,'0');assert.match(semantics.regionLabel,/Select/);
+ await p.focus('#areaSearchInput');assert.equal(await p.$eval('#areaSearchInput',e=>e.getAttribute('aria-expanded')),'true');await p.keyboard.press('ArrowDown');
+ assert.ok(await p.$eval('#areaSearchInput',e=>e.getAttribute('aria-activedescendant')));
+ assert.equal(await p.$$eval('#areaDropdown [role="option"][aria-selected="true"]',es=>es.length),1);
+ await p.keyboard.press('Escape');assert.equal(await p.$eval('#areaSearchInput',e=>e.getAttribute('aria-expanded')),'false');
+ await p.$eval('#areasLayer .area-boundary-shape',e=>e.focus());await p.keyboard.press('Enter');
+ assert.equal(await p.$eval('#areasLayer .area-boundary-shape:focus',e=>e.getAttribute('aria-label')!==null),true);
+});
+test('Mobile layout leads with map, then Summary, then occupation browser',async(p,url)=>{
+ await p.goto(url);await p.waitForFunction(()=>document.querySelector('#areasLayer .area-boundary-shape'));
+ await p.setViewport({width:390,height:900});await p.evaluate(()=>positionSummaryPanel());
+ const mobile=await p.evaluate(()=>{const split=document.getElementById('mapCenterSplit');return {order:[...split.children].map(e=>e.id),summaryParent:document.getElementById('kpiBar').parentElement.id,summaryPosition:getComputedStyle(document.getElementById('kpiBar')).position};});
+ const mi=mobile.order.indexOf('mapCardContainer'),si=mobile.order.indexOf('kpiBar'),bi=mobile.order.indexOf('browseCardContainer');
+ assert.ok(mi>=0&&si>mi&&bi>si);assert.equal(mobile.summaryParent,'mapCenterSplit');assert.equal(mobile.summaryPosition,'static');
+ await p.setViewport({width:1440,height:900});await p.evaluate(()=>positionSummaryPanel());
+ assert.equal(await p.$eval('#kpiBar',e=>e.parentElement.id),'mapCanvasColumn');
+});
+test('Metric selector groups pay and workforce measures accessibly',async(p,url)=>{
+ await p.goto(url);
+ const info=await p.$eval('#mapMetricSelect',e=>({open:document.getElementById('mapMetricPicker').open,controls:e.getAttribute('aria-controls'),description:document.getElementById(e.getAttribute('aria-describedby'))?.textContent||'',options:[...document.querySelectorAll('#mapMetricMenu [role="option"]')].map(o=>o.textContent.trim())}));
+ assert.equal(info.open,false);assert.equal(info.controls,'mapMetricMenu');assert.deepEqual(info.options,['Typical pay (Median)','Average pay (Mean)','Lower range (P25)','Upper range (P75)','Employment','Density (LQ)']);assert.match(info.description,/location quotient/i);
+ assert.match(await p.$eval('#occupationsTable th[data-col="lq"]',e=>e.textContent),/Density \(LQ\)/);
+});
 test('Both themes fit phone, tablet and desktop widths',async(p,url)=>{
  await p.goto(url);await p.waitForFunction(()=>state.mapData&&state.areaData);
  for(const width of [320,390,768,1024,1440])for(const dark of [false,true]){

@@ -86,6 +86,44 @@ function debounce(fn, wait = 130) {
   };
 }
 
+// Keep custom search controls in sync with their ARIA combobox/listbox state.
+// The visual highlighted class remains for pointer users; these attributes
+// provide an equivalent announcement and focus target for keyboard users.
+function setComboboxOpen(input, dropdown, open) {
+  if (!dropdown) return;
+  dropdown.classList.toggle("open", open);
+  if (input) {
+    input.setAttribute("aria-expanded", String(open));
+    if (!open) input.removeAttribute("aria-activedescendant");
+  }
+  if (!open) {
+    dropdown.querySelectorAll('[role="option"]').forEach(opt => opt.setAttribute("aria-selected", "false"));
+  }
+}
+
+function setComboboxActive(input, option) {
+  if (!input) return;
+  const dropdown = document.getElementById(input.getAttribute("aria-controls"));
+  if (!dropdown) return;
+  dropdown.querySelectorAll('[role="option"]').forEach(opt => {
+    opt.setAttribute("aria-selected", opt === option ? "true" : "false");
+  });
+  if (option) {
+    if (!option.id) {
+      const key = option.dataset.soc || option.dataset.id || Math.random().toString(36).slice(2);
+      option.id = `${dropdown.id}-option-${key}`;
+    }
+    input.setAttribute("aria-activedescendant", option.id);
+  } else {
+    input.removeAttribute("aria-activedescendant");
+  }
+}
+
+function activateMapRegion(el) {
+  if (!el) return;
+  el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+}
+
 // Color Scale Interpolator (5 stops: Deep Indigo -> Blue -> Teal -> Emerald -> Radiant Gold)
 const COLOR_STOPS = [
   { t: 0.0, rgb: [49, 46, 129] },   // #312e81
@@ -152,9 +190,8 @@ function getChoroplethFill(val, minVal, maxVal, isDark = true, isLog = false) {
 }
 
 // Initialize Application
-// Stacked layout (phones/tablets, <=990px): the Summary is the first section,
-// above the map, and pins under the masthead in a compressed form so the
-// current area + its figures are always on screen. On desktop it's its own
+// Stacked layout (phones/tablets, <=990px): show the map/search first, then
+// the Summary, then the occupation browser. On desktop the Summary is its own
 // full-width panel below the map+browse split. Move the actual node (a CSS
 // display:contents reorder did not take on iOS Safari) and re-settle it on
 // breakpoint changes.
@@ -165,7 +202,10 @@ function positionSummaryPanel() {
   if (!summary || !col || !split) return;
   const stacked = window.matchMedia("(max-width: 990px)").matches;
   if (stacked) {
-    if (col.firstElementChild !== summary) col.insertBefore(summary, split);
+    const browse = document.getElementById("browseCardContainer");
+    if (browse && (summary.parentElement !== split || summary.nextElementSibling !== browse)) {
+      split.insertBefore(summary, browse);
+    }
   } else if (summary.parentElement !== col || summary.nextElementSibling) {
     col.appendChild(summary);   // back to last child, after #summaryDivider
   }
@@ -330,12 +370,21 @@ function renderStateBoundaries(states) {
     path.setAttribute("d", s.d);
     path.setAttribute("data-id", s.id);
     path.setAttribute("data-name", s.name);
+    path.setAttribute("role", "button");
+    path.setAttribute("tabindex", "0");
+    path.setAttribute("focusable", "true");
+    path.setAttribute("aria-label", `Zoom to ${s.name || "state"}`);
     if (s.state) path.setAttribute("data-state", s.state);
 
     path.addEventListener("click", (e) => {
       if (state.dragSuppressedClick) return;
       e.stopPropagation();
       zoomToState(s.id);
+    });
+    path.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      activateMapRegion(path);
     });
 
     layer.appendChild(path);
@@ -1000,7 +1049,7 @@ function renderMetroMap() {
 
   // Metric index map in row: [emp=0, mean=1, median=2, p25=3, p75=4, lq=5]
   let metricIdx = { emp: 0, mean: 1, median: 2, p25: 3, p75: 4, lq: 5 }[metric] ?? 2;
-  let metricName = { median: "Median", mean: "Mean", p25: "Bottom 25%", p75: "Top 25%", emp: "Employment", lq: "Density" }[metric] || "Median";
+  let metricName = { median: "Typical (Median)", mean: "Average (Mean)", p25: "Lower Range (P25)", p75: "Upper Range (P75)", emp: "Employment", lq: "Density (Location Quotient)" }[metric] || "Typical (Median)";
   let metricKind = metric === "emp" ? "emp" : metric === "lq" ? "density" : "wage";
 
   // Every metro's row for this occupation, with holes filled from the most recent
@@ -1177,6 +1226,14 @@ function bindMapLayerDelegation(layer, selector, kind) {
     }
     loadArea(aid, true);
   });
+
+  // SVG regions are real keyboard controls as well as pointer targets.
+  layer.addEventListener("keydown", (e) => {
+    const el = e.target.closest(selector);
+    if (!el || (e.key !== "Enter" && e.key !== " ")) return;
+    e.preventDefault();
+    activateMapRegion(el);
+  });
 }
 
 function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, maxVal, isDark, natVal, isEmploymentMapping = false, metricKind = "wage") {
@@ -1201,6 +1258,10 @@ function renderAreasLayer(payload, validMetros, metricIdx, metricName, minVal, m
       path.setAttribute("data-id", aid);
       path.setAttribute("data-state", shape.state || "");
       path.setAttribute("data-type", shape.type || "msa");
+      path.setAttribute("role", "button");
+      path.setAttribute("tabindex", "0");
+      path.setAttribute("focusable", "true");
+      path.setAttribute("aria-label", `Select ${formatAreaName(shape.name || aid)}`);
       frag.appendChild(path);
       state._areaEls.set(aid, path);
     });
@@ -1280,6 +1341,10 @@ function renderBubblesLayer(payload, validMetros, metricIdx, metricName, minVal,
     circle.setAttribute("fill", fill);
     circle.setAttribute("data-id", m.id);
     circle.setAttribute("data-state", m.state || "");
+    circle.setAttribute("role", "button");
+    circle.setAttribute("tabindex", "0");
+    circle.setAttribute("focusable", "true");
+    circle.setAttribute("aria-label", `Select ${formatAreaName(m.name || m.id)}`);
 
     if (state.currentAreaId === m.id) {
       circle.classList.add("highlighted");
@@ -1367,7 +1432,7 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
   }
 
   const primaryLabel = metricKind === "emp" ? "Metro Employment"
-    : metricKind === "density" ? "Employment Density"
+    : metricKind === "density" ? "Employment Density (Location Quotient)"
     : `${metricName} Wage`;
   const primaryValue = metricKind === "emp" ? `${fmt.number(metricVal)} Employed`
     : metricKind === "density" ? `${(metricVal || 0).toFixed(2)}×`
@@ -1398,19 +1463,19 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
 
     <div style="display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; font-family: var(--font-mono); font-size: 11.5px;">
       ${median !== null ? `
-        <span style="color: var(--text-muted);">Median (P50):</span>
+        <span style="color: var(--text-muted);">Typical (Median/P50):</span>
         <span style="text-align: right; font-weight: 600;">${fmt.currency(median)}</span>
       ` : ""}
       ${mean !== null ? `
-        <span style="color: var(--text-muted);">Mean Wage:</span>
+        <span style="color: var(--text-muted);">Average (Mean):</span>
         <span style="text-align: right;">${fmt.currency(mean)}</span>
       ` : ""}
       ${p25 !== null ? `
-        <span style="color: var(--text-muted);">Bottom 25%:</span>
+        <span style="color: var(--text-muted);">Lower Range (P25):</span>
         <span style="text-align: right;">${fmt.currency(p25)}</span>
       ` : ""}
       ${p75 !== null ? `
-        <span style="color: var(--text-muted);">Top 25%:</span>
+        <span style="color: var(--text-muted);">Upper Range (P75):</span>
         <span style="text-align: right;">${fmt.currency(p75)}</span>
       ` : ""}
       ${emp ? `
@@ -1436,24 +1501,57 @@ function showMetroTooltip(e, metro, jobPayload, stats, metricName, metricVal, ra
 }
 
 function setupMapControls() {
-  // Metric selector buttons
-  document.querySelectorAll("#mapMetricTabs .segmented-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("#mapMetricTabs .segmented-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      state.activeMapMetric = btn.dataset.metric;
-      renderMetroMap();
+  // Compact, consistently-sized metric menu. Native select popups are sized
+  // and padded by the OS, which made this menu unnecessarily large on macOS.
+  const metricPicker = document.getElementById("mapMetricPicker");
+  const metricSelect = document.getElementById("mapMetricSelect");
+  const metricMenu = document.getElementById("mapMetricMenu");
+  const metricLabel = document.getElementById("mapMetricSelectedLabel");
+  const metricOptions = metricMenu ? [...metricMenu.querySelectorAll(".map-metric-option")] : [];
+  const selectMetric = (metric, focusTrigger = false) => {
+    const option = metricOptions.find(item => item.dataset.metric === metric);
+    if (!option) return;
+    state.activeMapMetric = metric;
+    metricOptions.forEach(item => {
+      const selected = item === option;
+      item.classList.toggle("active", selected);
+      item.setAttribute("aria-selected", String(selected));
     });
-  });
+    if (metricLabel) metricLabel.textContent = option.textContent;
+    if (metricPicker) metricPicker.open = false;
+    if (focusTrigger) metricSelect.focus();
+    renderMetroMap();
+  };
+  if (metricPicker && metricSelect && metricMenu) {
+    const initialMetric = metricOptions.some(item => item.dataset.metric === state.activeMapMetric)
+      ? state.activeMapMetric : "median";
+    selectMetric(initialMetric);
+    metricOptions.forEach((option, index) => {
+      option.addEventListener("click", () => selectMetric(option.dataset.metric, true));
+      option.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") { event.preventDefault(); metricPicker.open = false; metricSelect.focus(); return; }
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          event.preventDefault();
+          const step = event.key === "ArrowDown" ? 1 : -1;
+          metricOptions[(index + step + metricOptions.length) % metricOptions.length].focus();
+        }
+      });
+    });
+  }
 
   // Map Mode Tabs (Area Map, Bubble Map)
   const modeTabs = document.querySelectorAll("#mapModeTabs .segmented-btn");
   modeTabs.forEach(btn => {
+    btn.setAttribute("aria-pressed", btn.classList.contains("active") ? "true" : "false");
     btn.addEventListener("click", () => {
       const mode = btn.dataset.mode;
       if (!mode || mode === state.mapMode) return;
       state.mapMode = mode;
-      modeTabs.forEach(b => b.classList.toggle("active", b.dataset.mode === mode));
+      modeTabs.forEach(b => {
+        const active = b.dataset.mode === mode;
+        b.classList.toggle("active", active);
+        b.setAttribute("aria-pressed", active ? "true" : "false");
+      });
       renderMetroMap();
     });
   });
@@ -1466,14 +1564,14 @@ function setupMapControls() {
   input.addEventListener("focus", () => {
     input.select();
     filterMapJobDropdown(input.value);
-    dropdown.classList.add("open");
+    setComboboxOpen(input, dropdown, true);
   });
 
   input.addEventListener("input", () => {
     const q = input.value.trim();
     clearBtn.style.display = q ? "block" : "none";
     filterMapJobDropdown(q);
-    dropdown.classList.add("open");
+    setComboboxOpen(input, dropdown, true);
     // This box doubles as the Browse list filter now that the two searches merged.
     if (!state.drilldownSoc && typeof renderBrowseTable === "function") renderBrowseTable();
   });
@@ -1497,18 +1595,20 @@ function setupMapControls() {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (!dropdown.classList.contains("open")) {
-        dropdown.classList.add("open");
+        setComboboxOpen(input, dropdown, true);
         return;
       }
       if (highlighted) highlighted.classList.remove("highlighted");
       idx = (idx + 1) % visibleOptions.length;
       visibleOptions[idx].classList.add("highlighted");
+      setComboboxActive(input, visibleOptions[idx]);
       visibleOptions[idx].scrollIntoView({ block: "nearest" });
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (highlighted) highlighted.classList.remove("highlighted");
       idx = (idx - 1 + visibleOptions.length) % visibleOptions.length;
       visibleOptions[idx].classList.add("highlighted");
+      setComboboxActive(input, visibleOptions[idx]);
       visibleOptions[idx].scrollIntoView({ block: "nearest" });
     } else if (e.key === "Enter") {
       e.preventDefault();
@@ -1712,10 +1812,6 @@ function setupMapControls() {
     updateTransform();
   });
 
-  const mzr = document.getElementById("mapZoomReset");
-  if (mzr) mzr.addEventListener("click", resetMapZoom);
-  // #mapResetBtn (the ⟲ in the zoom stack) is wired in setupEventListeners.
-
   // -------------------------------------------------------------
   // Dynamic Splitter Puck between Map and Search/Browse
   // -------------------------------------------------------------
@@ -1852,8 +1948,9 @@ function filterMapJobDropdown(query) {
   ).slice(0, 35);
 
   dropdown.innerHTML = "";
+  setComboboxActive(document.getElementById("mapJobSearchInput"), null);
   if (matches.length === 0) {
-    dropdown.innerHTML = `<div style="padding: 12px 14px; color: var(--text-muted); font-size: 12px; text-align: center;">No matching occupations found</div>`;
+    dropdown.innerHTML = `<div role="status" style="padding: 12px 14px; color: var(--text-muted); font-size: 12px; text-align: center;">No matching occupations found</div>`;
     return;
   }
 
@@ -1861,6 +1958,10 @@ function filterMapJobDropdown(query) {
   matches.forEach(occ => {
     const opt = document.createElement("div");
     opt.className = "area-option";
+    opt.id = `map-job-option-${occ.soc}`;
+    opt.setAttribute("role", "option");
+    opt.setAttribute("tabindex", "-1");
+    opt.setAttribute("aria-selected", "false");
     opt.dataset.soc = occ.soc;
     opt.dataset.title = occ.title.toLowerCase();
 
@@ -1887,7 +1988,8 @@ function filterMapJobDropdown(query) {
 
 function closeMapJobDropdown() {
   const dropdown = document.getElementById("mapJobDropdown");
-  if (dropdown) dropdown.classList.remove("open");
+  const input = document.getElementById("mapJobSearchInput");
+  setComboboxOpen(input, dropdown, false);
 }
 
 // Commit the zoom transform for an area up front (used before the map re-render
@@ -2639,6 +2741,10 @@ function populateAreaDropdown() {
     grp.items.forEach(item => {
       const opt = document.createElement("div");
       opt.className = "area-option";
+      opt.id = `area-option-${item.id}`;
+      opt.setAttribute("role", "option");
+      opt.setAttribute("tabindex", "-1");
+      opt.setAttribute("aria-selected", "false");
       opt.dataset.id = item.id;
       opt.dataset.name = item.name.toLowerCase();
       opt.dataset.state = (item.state || "").toLowerCase();
@@ -2666,14 +2772,14 @@ function setupDropdowns() {
 
   input.addEventListener("focus", () => {
     filterAreaDropdown(input.value);
-    dropdown.classList.add("open");
+    setComboboxOpen(input, dropdown, true);
   });
 
   input.addEventListener("input", () => {
     const q = input.value.trim();
     clearBtn.style.display = q ? "block" : "none";
     filterAreaDropdown(q);
-    dropdown.classList.add("open");
+    setComboboxOpen(input, dropdown, true);
   });
 
   input.addEventListener("keydown", (e) => {
@@ -2686,18 +2792,20 @@ function setupDropdowns() {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (!dropdown.classList.contains("open")) {
-        dropdown.classList.add("open");
+        setComboboxOpen(input, dropdown, true);
         return;
       }
       if (highlighted) highlighted.classList.remove("highlighted");
       idx = (idx + 1) % visibleOptions.length;
       visibleOptions[idx].classList.add("highlighted");
+      setComboboxActive(input, visibleOptions[idx]);
       visibleOptions[idx].scrollIntoView({ block: "nearest" });
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (highlighted) highlighted.classList.remove("highlighted");
       idx = (idx - 1 + visibleOptions.length) % visibleOptions.length;
       visibleOptions[idx].classList.add("highlighted");
+      setComboboxActive(input, visibleOptions[idx]);
       visibleOptions[idx].scrollIntoView({ block: "nearest" });
     } else if (e.key === "Enter") {
       e.preventDefault();
@@ -2786,6 +2894,7 @@ function filterAreaDropdown(query) {
   const dropdown = document.getElementById("areaDropdown");
   const options = document.querySelectorAll("#areaDropdown .area-option:not(.area-suggestion)");
   const headers = document.querySelectorAll("#areaDropdown .area-optgroup-title");
+  setComboboxActive(document.getElementById("areaSearchInput"), null);
 
   // Suggestion banners (ZIP / place / county) rendered above the plain list.
   let sugWrap = document.getElementById("areaDropdownSuggest");
@@ -2799,6 +2908,10 @@ function filterAreaDropdown(query) {
   suggestions.forEach(s => {
     const el = document.createElement("div");
     el.className = "area-option area-suggestion";
+    el.id = `area-suggestion-${s.id}`;
+    el.setAttribute("role", "option");
+    el.setAttribute("tabindex", "-1");
+    el.setAttribute("aria-selected", "false");
     el.dataset.id = s.id;
     el.innerHTML = `
       <span class="area-opt-name" style="font-weight:600; color:var(--text-accent);">${s.hint} · ${s.label}</span>
@@ -2834,6 +2947,7 @@ function filterAreaDropdown(query) {
 
     const matches = !q || name.includes(q) || st === q || countyMatch || fuzzyName;
     opt.style.display = matches ? "flex" : "none";
+    opt.setAttribute("aria-hidden", matches ? "false" : "true");
 
     let countyHint = opt.querySelector(".area-opt-county-hint");
     if (q && countyMatch && !name.includes(q)) {
@@ -2864,7 +2978,9 @@ function filterAreaDropdown(query) {
 }
 
 function closeAreaDropdown() {
-  document.getElementById("areaDropdown").classList.remove("open");
+  const dropdown = document.getElementById("areaDropdown");
+  const input = document.getElementById("areaSearchInput");
+  setComboboxOpen(input, dropdown, false);
 }
 
 // -------------------------------------------------------------
@@ -3368,16 +3484,25 @@ function applyTheme(isDark) {
   const sunIcon = document.getElementById("themeIconSun");
   const moonIcon = document.getElementById("themeIconMoon");
   const label = document.getElementById("themeLabel");
+  const toggleBtn = document.getElementById("themeToggleBtn");
 
   if (isDark) {
     document.documentElement.removeAttribute("data-theme");
     if (label) label.textContent = "Light Mode";
+    if (toggleBtn) {
+      toggleBtn.setAttribute("aria-label", "Switch to light mode");
+      toggleBtn.setAttribute("aria-pressed", "true");
+    }
     try { localStorage.setItem("bls-theme", "dark"); } catch {}
     if (sunIcon) sunIcon.style.display = "";
     if (moonIcon) moonIcon.style.display = "none";
   } else {
     document.documentElement.setAttribute("data-theme", "light");
     if (label) label.textContent = "Dark Mode";
+    if (toggleBtn) {
+      toggleBtn.setAttribute("aria-label", "Switch to dark mode");
+      toggleBtn.setAttribute("aria-pressed", "false");
+    }
     try { localStorage.setItem("bls-theme", "light"); } catch {}
     if (sunIcon) sunIcon.style.display = "none";
     if (moonIcon) moonIcon.style.display = "";

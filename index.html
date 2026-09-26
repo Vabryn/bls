@@ -6,7 +6,7 @@
 <title>BLS Wage Explorer · Occupational Employment & Wage Statistics 2025</title>
 <meta name="description" content="Explore comprehensive U.S. wage distributions, percentile spreads (P10 to P90), minimum education requirements, and interactive metro-specified USA wage maps across all 50 states and 393 metro areas. Data from the Bureau of Labor Statistics (BLS OEWS May 2025).">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='%230c0e14'/><path d='M7 24V18M13 24V12M19 24V8M25 24V14' stroke='%236ba3d6' stroke-width='2.5' stroke-linecap='round'/></svg>">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=metric-picker-7">
 </head>
 <body>
 <p id="dataNotice" role="status" hidden></p>
@@ -15,6 +15,11 @@
 <header class="masthead">
   <div class="masthead-inner">
     <div class="masthead-left">
+      <a class="portfolio-back" href="https://riverakarom.com" aria-label="Back to portfolio" title="Back to portfolio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path>
+        </svg>
+      </a>
       <a href="." class="masthead-brand">
         <div class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -70,34 +75,48 @@
                     <span class="sel-chip-label" id="hudMetroTitle">United States</span>
                     <button type="button" class="sel-chip-x" id="areaSelChipClear" aria-label="Clear selected area" title="Clear selected area">✕</button>
                   </span>
-                  <input type="text" id="areaSearchInput" class="combobox-input" placeholder="Search state, metro area, or 5-digit ZIP..." autocomplete="off">
+                  <input type="text" id="areaSearchInput" class="combobox-input" placeholder="Search state, metro area, or 5-digit ZIP..." autocomplete="off"
+                         role="combobox" aria-autocomplete="list" aria-controls="areaDropdown" aria-expanded="false">
                   <button id="areaSearchClear" class="combobox-clear" aria-label="Clear area search">✕</button>
                 </div>
-                <div id="areaDropdown" class="combobox-dropdown"></div>
+                <div id="areaDropdown" class="combobox-dropdown" role="listbox" aria-label="Location suggestions"></div>
               </div>
             </div>
 
             <!-- Horizontal Map Controls Bar: Wage Metric & Map Style -->
             <div class="map-card-controls-bar">
-              <!-- Wage Metric Tabs -->
-              <div class="map-controls-cluster">
-                <div class="segmented-control" id="mapMetricTabs">
-                  <button class="segmented-btn active" data-metric="median">Median</button>
-                  <button class="segmented-btn" data-metric="mean">Mean</button>
-                  <button class="segmented-btn" data-metric="p25">Bottom 25%</button>
-                  <button class="segmented-btn" data-metric="p75">Top 25%</button>
-                  <button class="segmented-btn" data-metric="emp">Employment</button>
-                  <button class="segmented-btn" data-metric="lq">Density</button>
-                </div>
+              <!-- One metric selector keeps the toolbar compact while grouping
+                   wage statistics separately from workforce measures. -->
+              <div class="map-controls-cluster map-metric-cluster">
+                <span class="sr-only" id="mapMetricLabel">Map metric</span>
+                <details class="map-metric-picker" id="mapMetricPicker">
+                  <summary id="mapMetricSelect" class="map-metric-trigger" aria-controls="mapMetricMenu"
+                           aria-labelledby="mapMetricLabel mapMetricSelectedLabel" aria-describedby="mapMetricHelp">
+                    <span id="mapMetricSelectedLabel">Typical pay (Median)</span>
+                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"></path></svg>
+                  </summary>
+                  <div id="mapMetricMenu" class="map-metric-menu" role="listbox" aria-label="Map metric">
+                    <div class="map-metric-group">Pay</div>
+                    <button type="button" class="map-metric-option active" role="option" aria-selected="true" data-metric="median">Typical pay (Median)</button>
+                    <button type="button" class="map-metric-option" role="option" aria-selected="false" data-metric="mean">Average pay (Mean)</button>
+                    <button type="button" class="map-metric-option" role="option" aria-selected="false" data-metric="p25">Lower range (P25)</button>
+                    <button type="button" class="map-metric-option" role="option" aria-selected="false" data-metric="p75">Upper range (P75)</button>
+                    <div class="map-metric-group map-metric-group-workforce">Workforce</div>
+                    <button type="button" class="map-metric-option" role="option" aria-selected="false" data-metric="emp">Employment</button>
+                    <button type="button" class="map-metric-option" role="option" aria-selected="false" data-metric="lq">Density (LQ)</button>
+                  </div>
+                </details>
               </div>
 
               <!-- Map Style Tabs -->
-              <div class="map-controls-cluster">
-                <span class="map-controls-label">Style</span>
+                <div class="map-controls-cluster">
+                  <span class="map-controls-label">Style</span>
                 <div class="segmented-control" id="mapModeTabs">
                   <button class="segmented-btn active" data-mode="area">Area Map</button>
                   <button class="segmented-btn" data-mode="bubble">Bubble Map</button>
                 </div>
+
+                <span id="mapMetricHelp" class="sr-only">Choose how to compare areas. Median is the midpoint wage. Mean is the average wage. P25 and P75 are lower- and upper-range wage thresholds. Density is the location quotient, comparing local and national employment shares.</span>
               </div>
 
               <strong id="sidebarActiveJobTitle" hidden>All Occupations</strong>
@@ -115,7 +134,7 @@
                   </svg>
                 </button>
               </div>
-              <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet">
+              <svg id="usMetroSvg" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Interactive U.S. wage map">
                 <g id="mapZoomGroup" style="transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);">
                   <!-- Base US States Layer -->
                   <g id="statesLayer"></g>
@@ -197,10 +216,11 @@
                     <span class="sel-chip-label" id="browseCardHeading">All occupations</span>
                     <button type="button" class="sel-chip-x" id="jobSelChipClear" aria-label="Clear selected occupation" title="Clear selected occupation">✕</button>
                   </span>
-                  <input type="text" id="mapJobSearchInput" class="combobox-input" placeholder="Search occupation (e.g. Registered Nurses)..." autocomplete="off">
+                  <input type="text" id="mapJobSearchInput" class="combobox-input" placeholder="Search occupation (e.g. Registered Nurses)..." autocomplete="off"
+                         role="combobox" aria-autocomplete="list" aria-controls="mapJobDropdown" aria-expanded="false">
                   <button id="mapJobClear" class="combobox-clear" aria-label="Clear occupation search">✕</button>
                 </div>
-                <div id="mapJobDropdown" class="combobox-dropdown"></div>
+                <div id="mapJobDropdown" class="combobox-dropdown" role="listbox" aria-label="Occupation suggestions"></div>
               </div>
             </div>
 
@@ -220,10 +240,10 @@
                 <option value="-1">Sectors</option>
               </select>
               <select id="browseWageMetric" class="control-select" aria-label="Wage metric shown">
-                <option value="median">Median</option>
-                <option value="mean">Mean</option>
-                <option value="p25">Bottom 25%</option>
-                <option value="p75">Top 25%</option>
+                <option value="median">Typical (Median)</option>
+                <option value="mean">Average (Mean)</option>
+                <option value="p25">Lower Range (P25)</option>
+                <option value="p75">Upper Range (P75)</option>
               </select>
             </div>
 
@@ -240,10 +260,10 @@
                   <option value="ALL">All Regions</option>
                 </select>
                 <select id="drilldownWageMetric" class="control-select" style="flex: 0 1 130px; min-width: 96px;" aria-label="Wage metric shown">
-                  <option value="median">Median</option>
-                  <option value="mean">Mean</option>
-                  <option value="p25">Bottom 25%</option>
-                  <option value="p75">Top 25%</option>
+                  <option value="median">Typical (Median)</option>
+                  <option value="mean">Average (Mean)</option>
+                  <option value="p25">Lower Range (P25)</option>
+                  <option value="p75">Upper Range (P75)</option>
                 </select>
               </div>
             </div>
@@ -257,7 +277,7 @@
                     <th data-col="title">Occupation Title</th>
                     <th data-col="emp" style="text-align: right;">Employment</th>
                     <th data-col="wage" style="text-align: right;" id="occWageColHeader">Median Wage</th>
-                    <th data-col="lq" style="text-align: right;">Density</th>
+                    <th data-col="lq" style="text-align: right;" title="Location quotient: local employment share divided by the national share.">Density (LQ)</th>
                   </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
@@ -270,7 +290,7 @@
                     <th data-col="name">Statistical Area / Region</th>
                     <th data-col="emp" style="text-align: right;">Employment</th>
                     <th data-col="wage" style="text-align: right;" id="areaWageColHeader">Median Wage</th>
-                    <th data-col="lq" style="text-align: right;">Density</th>
+                    <th data-col="lq" style="text-align: right;" title="Location quotient: local employment share divided by the national share.">Density (LQ)</th>
                   </tr>
                 </thead>
                 <tbody id="occupationAreasTableBody"></tbody>
@@ -345,7 +365,7 @@
 
 </main>
 
-  <script src="js/constants.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/constants.js?v=metric-picker-3"></script>
+  <script src="js/app.js?v=metric-picker-3"></script>
 </body>
 </html>
