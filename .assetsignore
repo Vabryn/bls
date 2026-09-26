@@ -21,3 +21,4 @@ package-lock.json
 tests
 AUDIT.md
 TODO.md
+data/area_definitions_*.json

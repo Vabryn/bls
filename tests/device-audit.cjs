@@ -124,7 +124,7 @@ test("Desktop boot, data, semantics, and duplicate-id audit", "desktop", async p
       notice: document.getElementById("dataNotice")?.textContent.trim()
     };
   });
-  assert.equal(inventory.areaCount, 510);
+  assert.equal(inventory.areaCount, 520);
   assert.ok(inventory.stateCount >= 50);
   assert.ok(inventory.sectorRows >= 15);
   assert.ok(inventory.summaryValues.every(value => value && value !== "—"));

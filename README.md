@@ -57,7 +57,7 @@ BLS OEWS "All Data" release). Nothing here runs in production.
 | Step | Script | In → Out |
 |---|---|---|
 | 1 | `process_bls.py <year>` | `bls_data/all_data_M_<year>.xlsx` → `data/<year>/areas/*.json`, `areas.json` |
-| 2 | `build_all_statistical_areas.mjs` | CBSA↔county crosswalk + county atlas → `data/metro_shapes.json` (MSA + non‑metro polygons) |
+| 2 | `build_area_definitions.py <year>`, `build_all_statistical_areas.mjs <year>` | BLS area definitions + county atlas → `data/metro_shapes.json` (MSA + non‑metro polygons) |
 | 3 | `build_metro_map_data.py <year>` | per‑area data + shapes → `data/<year>/jobs/*.json`, `metro_map.json` |
 | 4 | `build_place_index.py` | US‑cities CSV + crosswalk → `data/place_index.json` (ZIP / city → area) |
 
