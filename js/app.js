@@ -451,10 +451,8 @@ function zoomToState(stateIdOrCode) {
     const ty = Math.round(610 / 2 - scale * cy);
 
     state.mapZoom = { scale, x: tx, y: ty };
-    const zoomGroup = document.getElementById("mapZoomGroup");
-    if (zoomGroup) {
-      zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
-    }
+
+    writeMapTransform();
     refreshBubblesForZoom();
   }
 
@@ -488,13 +486,20 @@ function zoomToState(stateIdOrCode) {
   loadArea(stFips, false);
 }
 
+// Writes state.mapZoom to the map. Every zoom path goes through here so the
+// container's is-zoomed class (which switches touch panning on) stays in sync.
+function writeMapTransform() {
+  const { scale, x, y } = state.mapZoom;
+  const zoomGroup = document.getElementById("mapZoomGroup");
+  if (zoomGroup) zoomGroup.setAttribute("transform", `translate(${x}, ${y}) scale(${scale})`);
+  const container = document.getElementById("mapSvgContainer");
+  if (container) container.classList.toggle("is-zoomed", scale > 1);
+}
+
 function resetMapZoom() {
   state.focusedState = null;
   state.mapZoom = { scale: 1, x: 0, y: 0 };
-  const zoomGroup = document.getElementById("mapZoomGroup");
-  if (zoomGroup) {
-    zoomGroup.setAttribute("transform", "translate(0, 0) scale(1)");
-  }
+  writeMapTransform();
   refreshBubblesForZoom();
 
   document.querySelectorAll(".state-boundary").forEach(p => {
@@ -867,6 +872,28 @@ function formatAreaName(name) {
 // -------------------------------------------------------------
 // DYNAMIC MAP LEGEND: TWO PUCKS (AREA ABOVE, US BELOW)
 // -------------------------------------------------------------
+// Puts a legend puck's arrow at pct% along the gradient and centres its badge
+// over the arrow, shifting the badge (not the arrow) to stay inside the legend.
+function placeLegendPuck(puck, arrow, pct) {
+  const badge = puck.querySelector(".legend-puck-badge");
+  const legend = puck.closest(".map-legend-container");
+  const track = puck.offsetParent;
+  puck.style.left = `${pct}%`;
+  puck.style.transform = "translateX(-50%)";
+  if (arrow) arrow.style.transform = "";
+  if (!badge || !legend || !track) return;
+  const pad = 8;
+  const bound = legend.getBoundingClientRect();
+  badge.style.maxWidth = `${Math.max(0, bound.width - pad * 2)}px`;
+  const w = puck.offsetWidth;
+  const center = track.getBoundingClientRect().left + track.offsetWidth * pct / 100;
+  const shift = Math.min(0, bound.right - pad - (center + w / 2)) || Math.max(0, bound.left + pad - (center - w / 2));
+  if (!shift) return;
+  puck.style.transform = `translateX(calc(-50% + ${shift}px))`;
+  if (arrow) arrow.style.transform = `translateX(${-shift}px)`;
+}
+window.addEventListener("resize", () => updateMapLegend(), { passive: true });
+
 function updateMapLegend() {
   const payload = state.activeJobPayload;
   if (!payload || !state.mapLegendScale) return;
@@ -879,6 +906,11 @@ function updateMapLegend() {
   if (minEl) minEl.textContent = fmtMetric(minVal, metricKind);
   if (maxEl) maxEl.textContent = fmtMetric(maxVal, metricKind);
 
+  // Bubble mode draws nothing for areas without a value, so the key only
+  // applies to the area map.
+  const noDataEl = document.getElementById("mapLegendNoData");
+  if (noDataEl) noDataEl.hidden = !(state.mapLegendScale.missingCount > 0 && state.mapMode !== "bubble");
+
   // 2. U.S. Puck (Below line, arrow points up ▲)
   const usPuck = document.getElementById("mapLegendUsPuck");
   const usNameEl = document.getElementById("puckUsName");
@@ -887,7 +919,6 @@ function updateMapLegend() {
 
   if (usPuck && usNameEl && usValEl && natVal && natVal > 0 && maxVal > minVal) {
     const natPct = Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal)) * 100));
-    usPuck.style.left = `${natPct}%`;
     usPuck.style.display = "flex";
 
     const isAllJobs = !state.activeMapSoc || state.activeMapSoc === "00-0000";
@@ -905,29 +936,7 @@ function updateMapLegend() {
     }
     usValEl.textContent = fmtMetric(natVal, metricKind);
 
-    // Edge clamping so badge does not clip off container boundaries
-    if (natPct < 12) {
-      usPuck.style.transform = "translateX(0%)";
-      if (usArrow) {
-        usArrow.style.alignSelf = "flex-start";
-        usArrow.style.marginLeft = "12px";
-        usArrow.style.marginRight = "0";
-      }
-    } else if (natPct > 88) {
-      usPuck.style.transform = "translateX(-100%)";
-      if (usArrow) {
-        usArrow.style.alignSelf = "flex-end";
-        usArrow.style.marginRight = "12px";
-        usArrow.style.marginLeft = "0";
-      }
-    } else {
-      usPuck.style.transform = "translateX(-50%)";
-      if (usArrow) {
-        usArrow.style.alignSelf = "center";
-        usArrow.style.marginLeft = "0";
-        usArrow.style.marginRight = "0";
-      }
-    }
+    placeLegendPuck(usPuck, usArrow, natPct);
   } else if (usPuck) {
     usPuck.style.display = "none";
   }
@@ -954,7 +963,6 @@ function updateMapLegend() {
 
     if (displayVal && displayVal > 0 && maxVal > minVal) {
       const pct = Math.max(0, Math.min(100, ((displayVal - minVal) / (maxVal - minVal)) * 100));
-      areaPuck.style.left = `${pct}%`;
       areaPuck.style.display = "flex";
 
       areaNameEl.textContent = cleanName;
@@ -979,38 +987,15 @@ function updateMapLegend() {
         areaCompEl.style.display = "none";
       }
 
-      // Edge clamping so badge does not clip off container boundaries
-      if (pct < 12) {
-        areaPuck.style.transform = "translateX(0%)";
-        if (areaArrow) {
-          areaArrow.style.alignSelf = "flex-start";
-          areaArrow.style.marginLeft = "12px";
-          areaArrow.style.marginRight = "0";
-        }
-      } else if (pct > 88) {
-        areaPuck.style.transform = "translateX(-100%)";
-        if (areaArrow) {
-          areaArrow.style.alignSelf = "flex-end";
-          areaArrow.style.marginRight = "12px";
-          areaArrow.style.marginLeft = "0";
-        }
-      } else {
-        areaPuck.style.transform = "translateX(-50%)";
-        if (areaArrow) {
-          areaArrow.style.alignSelf = "center";
-          areaArrow.style.marginLeft = "0";
-          areaArrow.style.marginRight = "0";
-        }
-      }
+      placeLegendPuck(areaPuck, areaArrow, pct);
     } else {
       // Area selected, but data suppressed
       const pct = natVal && maxVal > minVal ? Math.max(0, Math.min(100, ((natVal - minVal) / (maxVal - minVal)) * 100)) : 50;
-      areaPuck.style.left = `${pct}%`;
       areaPuck.style.display = "flex";
       areaNameEl.textContent = cleanName;
       areaValEl.textContent = "Data Suppressed";
       areaCompEl.style.display = "none";
-      areaPuck.style.transform = "translateX(-50%)";
+      placeLegendPuck(areaPuck, areaArrow, pct);
     }
   } else {
     // When in National view (no area selected), hide the top area puck
@@ -1125,7 +1110,8 @@ function renderMetroMap() {
     metricKind,
     metricName,
     metricIdx,
-    metric
+    metric,
+    missingCount: metros.length - validMetros.length
   };
   updateMapLegend();
 
@@ -1634,19 +1620,42 @@ function setupMapControls() {
   // Map Zoom / Pan Handlers
   const zoomGroup = document.getElementById("mapZoomGroup");
   const svgContainer = document.getElementById("mapSvgContainer");
+  const svgEl = document.getElementById("usMetroSvg");
   let _lastZoomScale = state.mapZoom.scale;
-  let _containerRect = null;
-  const getContainerRect = () => {
-    if (!_containerRect) _containerRect = svgContainer.getBoundingClientRect();
-    return _containerRect;
+  let _svgRect = null;
+  const getSvgRect = () => {
+    if (!_svgRect) _svgRect = svgEl.getBoundingClientRect();
+    return _svgRect;
   };
-  window.addEventListener("resize", () => { _containerRect = null; }, { passive: true });
+  window.addEventListener("resize", () => { _svgRect = null; }, { passive: true });
+
+  // Client pixels -> viewBox units. The SVG letterboxes the 975x610 viewBox
+  // (preserveAspectRatio meet), so one factor k applies to both axes.
+  const viewPoint = (clientX, clientY) => {
+    const r = getSvgRect();
+    const k = Math.min(r.width / 975, r.height / 610) || 1;
+    return {
+      x: (clientX - r.left - (r.width - 975 * k) / 2) / k,
+      y: (clientY - r.top - (r.height - 610 * k) / 2) / k,
+      k
+    };
+  };
+
+  // At 1x the whole map is in view and stays centred; once zoomed, keep at
+  // least part of the U.S. on screen.
+  const clampPan = () => {
+    const s = state.mapZoom.scale;
+    if (s <= 1) {
+      state.mapZoom.x = 0;
+      state.mapZoom.y = 0;
+      return;
+    }
+    state.mapZoom.x = Math.max((1 - s) * 975 - 250, Math.min(250, state.mapZoom.x));
+    state.mapZoom.y = Math.max((1 - s) * 610 - 200, Math.min(200, state.mapZoom.y));
+  };
 
   const updateTransform = () => {
-    zoomGroup.setAttribute(
-      "transform",
-      `translate(${state.mapZoom.x}, ${state.mapZoom.y}) scale(${state.mapZoom.scale})`
-    );
+    writeMapTransform();
     if (state.mapZoom.scale !== _lastZoomScale) {
       _lastZoomScale = state.mapZoom.scale;
       refreshBubblesForZoom();
@@ -1663,7 +1672,16 @@ function setupMapControls() {
     });
   };
 
-  // Click-Drag Pan Implementation (Works seamlessly even when zoomed in)
+  const settleTransform = () => {
+    svgContainer.classList.remove("is-dragging");
+    zoomGroup.style.transition = "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
+    state.dragSuppressedClick = true;
+    setTimeout(() => {
+      state.dragSuppressedClick = false;
+    }, 140);
+  };
+
+  // Drag to pan (mouse, or one finger on a zoomed map)
   let isPointerDown = false;
   let hasDragged = false;
   let startX = 0;
@@ -1675,7 +1693,7 @@ function setupMapControls() {
     if (e.button && e.button !== 0) return;
     isPointerDown = true;
     hasDragged = false;
-    _containerRect = svgContainer.getBoundingClientRect();
+    _svgRect = null;
     startX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
     startY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
     startTx = state.mapZoom.x;
@@ -1692,60 +1710,83 @@ function setupMapControls() {
 
     if (!hasDragged) {
       if (Math.hypot(dx, dy) <= 8) return;
-      // On touch, a vertical-dominant swipe is the page scrolling past the
-      // map (touch-action: pan-y), not a map pan — release and let it through.
-      if (isTouch && Math.abs(dy) > Math.abs(dx)) { isPointerDown = false; return; }
+      // At 1x a one-finger swipe belongs to the page (touch-action: pan-y);
+      // the map only pans by touch once it is zoomed (touch-action: none).
+      if (isTouch && state.mapZoom.scale <= 1) { isPointerDown = false; return; }
       hasDragged = true;
       svgContainer.classList.add("is-dragging");
       zoomGroup.style.transition = "none";
     }
 
-    if (hasDragged) {
-      const rect = getContainerRect();
-      const scaleRatioX = 975 / (rect.width || 975);
-      const scaleRatioY = 610 / (rect.height || 610);
-
-      const targetX = startTx + dx * scaleRatioX;
-      const targetY = startTy + dy * scaleRatioY;
-
-      // Bound pan limits to keep the US map in viewport
-      const minTx = (1 - state.mapZoom.scale) * 975 - 250;
-      const maxTx = 250;
-      const minTy = (1 - state.mapZoom.scale) * 610 - 200;
-      const maxTy = 200;
-
-      state.mapZoom.x = Math.max(minTx, Math.min(maxTx, targetX));
-      state.mapZoom.y = Math.max(minTy, Math.min(maxTy, targetY));
-      scheduleUpdateTransform();
-    }
+    const { k } = viewPoint(curX, curY);
+    state.mapZoom.x = startTx + dx / k;
+    state.mapZoom.y = startTy + dy / k;
+    clampPan();
+    scheduleUpdateTransform();
   };
 
   const onPointerUp = () => {
     if (!isPointerDown) return;
     isPointerDown = false;
-    _containerRect = null;
-    if (hasDragged) {
-      svgContainer.classList.remove("is-dragging");
-      zoomGroup.style.transition = "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
-      state.dragSuppressedClick = true;
-      setTimeout(() => {
-        state.dragSuppressedClick = false;
-      }, 140);
-    }
+    _svgRect = null;
+    if (hasDragged) settleTransform();
   };
 
   svgContainer.addEventListener("mousedown", onPointerDown);
   window.addEventListener("mousemove", onPointerMove);
   window.addEventListener("mouseup", onPointerUp);
 
+  // Two-finger pinch: spreading zooms, moving both fingers pans. The map point
+  // first under the fingers' midpoint is kept under the midpoint throughout.
+  let pinch = null;
+  const touchMid = (t) => ({ x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 });
+  const touchDist = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY) || 1;
+
   svgContainer.addEventListener("touchstart", (e) => {
-    if (e.touches && e.touches.length === 1) onPointerDown(e);
-  }, { passive: true });
+    if (e.touches.length === 2) {
+      isPointerDown = false;
+      _svgRect = null;
+      const m = touchMid(e.touches);
+      const p = viewPoint(m.x, m.y);
+      const { scale, x, y } = state.mapZoom;
+      pinch = { dist: touchDist(e.touches), scale, lx: (p.x - x) / scale, ly: (p.y - y) / scale };
+      svgContainer.classList.add("is-dragging");
+      zoomGroup.style.transition = "none";
+      if (e.cancelable) e.preventDefault();
+    } else if (e.touches.length === 1) {
+      onPointerDown(e);
+    }
+  }, { passive: false });
+
+  svgContainer.addEventListener("touchmove", (e) => {
+    if (!pinch || e.touches.length < 2) return;
+    if (e.cancelable) e.preventDefault();
+    const m = touchMid(e.touches);
+    const p = viewPoint(m.x, m.y);
+    const scale = Math.min(8, Math.max(1, pinch.scale * touchDist(e.touches) / pinch.dist));
+    state.mapZoom = { scale, x: p.x - pinch.lx * scale, y: p.y - pinch.ly * scale };
+    clampPan();
+    scheduleUpdateTransform();
+  }, { passive: false });
+
   window.addEventListener("touchmove", (e) => {
-    if (e.touches && e.touches.length === 1 && isPointerDown) onPointerMove(e);
+    if (!pinch && e.touches && e.touches.length === 1 && isPointerDown) onPointerMove(e);
   }, { passive: true });
-  window.addEventListener("touchend", onPointerUp, { passive: true });
-  window.addEventListener("touchcancel", onPointerUp, { passive: true });
+
+  const onTouchEnd = (e) => {
+    if (pinch) {
+      // Lifting one finger of a pinch ends it; the remaining finger does not
+      // start a pan, which would jump the map.
+      if (e.touches && e.touches.length >= 2) return;
+      pinch = null;
+      _svgRect = null;
+      settleTransform();
+      return;
+    }
+    onPointerUp();
+  };
+  window.addEventListener("touchend", onTouchEnd, { passive: true });
+  window.addEventListener("touchcancel", onTouchEnd, { passive: true });
 
   // Mouse wheel zoom centered on cursor
   let _wheelTransitionTimer = null;
@@ -1753,9 +1794,7 @@ function setupMapControls() {
 
   svgContainer.addEventListener("wheel", (e) => {
     e.preventDefault();
-    const rect = getContainerRect();
-    const mouseX = (e.clientX - rect.left) * (975 / (rect.width || 975));
-    const mouseY = (e.clientY - rect.top) * (610 / (rect.height || 610));
+    const { x: mouseX, y: mouseY } = viewPoint(e.clientX, e.clientY);
 
     const factor = e.deltaY < 0 ? 1.15 : 0.87;
     const oldScale = state.mapZoom.scale;
@@ -1765,11 +1804,7 @@ function setupMapControls() {
     state.mapZoom.x = mouseX - (mouseX - state.mapZoom.x) * (newScale / oldScale);
     state.mapZoom.y = mouseY - (mouseY - state.mapZoom.y) * (newScale / oldScale);
     state.mapZoom.scale = newScale;
-
-    if (newScale === 1) {
-      state.mapZoom.x = 0;
-      state.mapZoom.y = 0;
-    }
+    clampPan();
 
     if (!_isWheelZooming) {
       _isWheelZooming = true;
@@ -1781,7 +1816,7 @@ function setupMapControls() {
     clearTimeout(_wheelTransitionTimer);
     _wheelTransitionTimer = setTimeout(() => {
       _isWheelZooming = false;
-      _containerRect = null;
+      _svgRect = null;
       zoomGroup.style.transition = "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
     }, 80);
   }, { passive: false });
@@ -2095,10 +2130,8 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
       const ty = Math.round(610 / 2 - scale * cy);
 
       state.mapZoom = { scale, x: tx, y: ty };
-      const zoomGroup = document.getElementById("mapZoomGroup");
-      if (zoomGroup) {
-        zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
-      }
+
+      writeMapTransform();
     }
   }
   // 2. If U.S. State
@@ -2149,10 +2182,8 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
       const ty = Math.round(610 / 2 - scale * cy);
 
       state.mapZoom = { scale, x: tx, y: ty };
-      const zoomGroup = document.getElementById("mapZoomGroup");
-      if (zoomGroup) {
-        zoomGroup.setAttribute("transform", `translate(${tx}, ${ty}) scale(${scale})`);
-      }
+
+      writeMapTransform();
     }
 
     const titleEl = document.getElementById("hudMetroTitle");
@@ -2185,10 +2216,7 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     });
     if (shouldZoom) {
       state.mapZoom = { scale: 1, x: 0, y: 0 };
-      const zoomGroup = document.getElementById("mapZoomGroup");
-      if (zoomGroup) {
-        zoomGroup.setAttribute("transform", "translate(0, 0) scale(1)");
-      }
+      writeMapTransform();
     }
   }
   updateMapLegend();

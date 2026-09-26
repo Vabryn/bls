@@ -1513,11 +1513,12 @@ body {
   touch-action: none;
   contain: layout paint;
 }
-/* On touch devices, let a vertical swipe scroll the page past the map;
-   only horizontal/diagonal drags pan (the JS pan handler bails on
-   vertical-dominant touch moves so the two don't fight). */
+/* On touch devices at 1x, a one-finger swipe scrolls the page past the map and
+   two fingers pinch-zoom it (handled in JS). Once zoomed, one finger pans the
+   map in any direction. */
 @media (pointer: coarse) {
   .map-svg-container { touch-action: pan-y; }
+  .map-svg-container.is-zoomed { touch-action: none; }
 }
 .map-svg-container:active,
 .map-svg-container.is-dragging,
@@ -1534,8 +1535,24 @@ body {
   will-change: transform;
 }
 @media (max-width: 990px) {
-  .map-svg-container { flex: 0 0 auto; min-height: 300px; }
+  .map-svg-container { flex: 0 0 auto; min-height: 0; }
   #usMetroSvg { height: auto; }
+}
+/* Phones: the map is too short for a floating control column without covering
+   the East Coast, so the zoom buttons sit in a row beneath it. */
+@media (max-width: 760px) {
+  .map-svg-container { display: flex; flex-direction: column; }
+  .map-zoom-overlay {
+    position: static;
+    order: 1;
+    flex-direction: row;
+    align-self: flex-end;
+    margin: 4px 12px 10px;
+  }
+  .map-zoom-btn + .map-zoom-btn {
+    border-top: none;
+    border-left: 1px solid var(--border-subtle);
+  }
 }
 
 /* State Boundaries Layer (Thin background context) */
@@ -1837,6 +1854,7 @@ body {
 .puck-area-name {
   color: var(--text-secondary);
   font-weight: 500;
+  min-width: 0;
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1848,11 +1866,13 @@ body {
 .puck-value {
   color: var(--text-primary);
   font-weight: 700;
+  flex-shrink: 0;
 }
 [data-theme="light"] .puck-value {
   color: #0f172a;
 }
 .puck-comparison {
+  flex-shrink: 0;
   font-size: 10px;
   font-weight: 600;
   padding: 1.5px 5px;
@@ -1904,6 +1924,29 @@ body {
 [data-theme="light"] .legend-puck-arrow-up {
   border-bottom-color: #475569;
   filter: drop-shadow(0 -1px 1px rgba(255, 255, 255, 0.6));
+}
+
+/* Key for areas drawn with the no-value fill (getChoroplethFill). */
+.map-legend-nodata {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.legend-nodata-swatch {
+  width: 14px;
+  height: 9px;
+  border-radius: 2px;
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+[data-theme="light"] .legend-nodata-swatch {
+  background: #e2e8f0;
+  border-color: rgba(30, 41, 59, 0.35);
 }
 
 /* Slimmed Down Gradient Color Bar Track */

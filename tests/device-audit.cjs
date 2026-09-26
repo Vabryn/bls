@@ -398,6 +398,110 @@ test("iPhone occupation flow remains usable with touch scrolling", "iphone", asy
   assert.equal((await checkNoOverflow(page)).offenders.length, 0);
 });
 
+// Synthetic touch gestures through CDP, so the browser applies touch-action
+// and page scrolling the way it does for a real finger.
+async function touchGesture(page, frames) {
+  const cdp = await page.target().createCDPSession();
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: frames[0] });
+  for (const points of frames.slice(1)) {
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: points });
+    await sleep(16);
+  }
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await cdp.detach();
+  await sleep(250);
+}
+
+function pinchFrames(cx, cy, fromGap, toGap, steps = 10) {
+  return Array.from({ length: steps + 1 }, (_, i) => {
+    const gap = fromGap + (toGap - fromGap) * i / steps;
+    return [{ x: cx - gap / 2, y: cy }, { x: cx + gap / 2, y: cy }];
+  });
+}
+
+function dragFrames(x, y, dx, dy, steps = 12) {
+  return Array.from({ length: steps + 1 }, (_, i) => [{ x: x + dx * i / steps, y: y + dy * i / steps }]);
+}
+
+const mapZoom = page => page.evaluate(() => ({ ...state.mapZoom, scrollY: Math.round(scrollY),
+  zoomed: document.getElementById("mapSvgContainer").classList.contains("is-zoomed"),
+  touchAction: getComputedStyle(document.getElementById("mapSvgContainer")).touchAction }));
+
+test("iPhone map pinch-zooms, pans freely when zoomed, and stays centred at 1x", "iphone", async page => {
+  await ready(page);
+  const box = await page.$eval("#usMetroSvg", el => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+
+  await touchGesture(page, dragFrames(box.x + 90, box.y, -160, 3));
+  let z = await mapZoom(page);
+  assert.deepEqual([z.scale, z.x, z.y], [1, 0, 0], "a sideways swipe at 1x leaves the map centred");
+  assert.equal(z.touchAction, "pan-y");
+
+  await touchGesture(page, pinchFrames(box.x, box.y, 40, 200));
+  z = await mapZoom(page);
+  assert.ok(z.scale > 2, `pinch out zooms the map: ${JSON.stringify(z)}`);
+  assert.ok(z.zoomed && z.touchAction === "none", `zoomed map takes one-finger pans: ${JSON.stringify(z)}`);
+
+  const before = z;
+  await touchGesture(page, dragFrames(box.x, box.y + 40, 0, -100));
+  z = await mapZoom(page);
+  assert.ok(z.y < before.y - 50, `vertical drag pans the zoomed map: ${JSON.stringify([before, z])}`);
+  assert.equal(z.scrollY, before.scrollY, "the page does not scroll while panning the zoomed map");
+
+  await touchGesture(page, pinchFrames(box.x, box.y, 240, 20, 14));
+  z = await mapZoom(page);
+  assert.deepEqual([z.scale, z.x, z.y, z.zoomed], [1, 0, 0, false], "pinching back in returns to the centred 1x map");
+});
+
+test("iPhone zoom controls sit below the map and legend badges stay inside the card", "iphone", async page => {
+  await ready(page);
+  const layout = await page.evaluate(() => {
+    const rect = id => document.getElementById(id).getBoundingClientRect();
+    const svg = rect("usMetroSvg"), zoom = rect("mapZoomButtonsGroup"), box = rect("mapSvgContainer");
+    return { overlap: zoom.top < svg.bottom && zoom.bottom > svg.top && zoom.left < svg.right && zoom.right > svg.left,
+      slack: Math.round(box.height - svg.height - zoom.height) };
+  });
+  assert.equal(layout.overlap, false, "zoom buttons do not cover the map");
+  assert.ok(layout.slack <= 20, `no empty band under the map: ${JSON.stringify(layout)}`);
+
+  // A low-wage area puts the area badge near the left edge; the long U.S.
+  // label for an occupation stresses the other badge.
+  for (const areaId of ["4800002", "19740"]) {
+    await page.evaluate(id => loadArea(id, true), areaId);
+    await page.waitForFunction(id => state.currentAreaId === id &&
+      getComputedStyle(document.getElementById("mapLegendAreaPuck")).display !== "none", {}, areaId);
+    await sleep(450);
+    const clipped = await page.evaluate(() => {
+      const bound = document.querySelector(".map-legend-container").getBoundingClientRect();
+      return ["legendAreaPuckBadge", "legendUsPuckBadge"].map(id => {
+        const r = document.getElementById(id).getBoundingClientRect();
+        return { id, left: Math.round(r.left - bound.left), right: Math.round(bound.right - r.right) };
+      }).filter(b => b.left < 0 || b.right < 0);
+    });
+    assert.deepEqual(clipped, [], `legend badges stay inside the legend for area ${areaId}`);
+  }
+});
+
+test("iPhone No data key appears only when areas lack a value", "iphone", async page => {
+  await ready(page);
+  const key = () => page.evaluate(() => ({ hidden: document.getElementById("mapLegendNoData").hidden,
+    missing: state.mapLegendScale.missingCount, mode: state.mapMode }));
+  let k = await key();
+  assert.equal(k.hidden, !(k.missing > 0), `key matches missing areas: ${JSON.stringify(k)}`);
+
+  await page.tap("#mapJobSearchInput");
+  await page.type("#mapJobSearchInput", "Chief Executives");
+  await page.waitForSelector('#mapJobDropdown [data-soc="11-1011"]', { timeout: 10000 });
+  await page.tap('#mapJobDropdown [data-soc="11-1011"]');
+  await page.waitForFunction(() => state.activeMapSoc === "11-1011" && state.mapLegendScale);
+  await sleep(300);
+  k = await key();
+  assert.ok(k.missing > 0 && !k.hidden, `occupation with suppressed areas shows the key: ${JSON.stringify(k)}`);
+
+  await page.tap('#mapModeTabs [data-mode="bubble"]');
+  await page.waitForFunction(() => state.mapMode === "bubble");
+  assert.equal((await key()).hidden, true, "bubble mode draws no no-data areas, so no key");
+});
+
 async function main() {
   const useLocal = !process.env.BLS_URL;
   if (useLocal) await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
