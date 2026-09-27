@@ -158,6 +158,9 @@ The check list is at the top of `tests/layout-audit.cjs`. Errors fail the run
 and `--strict` fails on warnings too; accepted findings go in
 `tests/layout-audit.allow.json` with a reason. `--quick` runs one phone and one
 desktop size. `LAYOUT_SCREENSHOTS`, `LAYOUT_JSON` and `BLS_URL` work as above.
+For CSS refactors, `node tests/style-snapshot.cjs save before.json`, edit, then
+`node tests/style-snapshot.cjs compare before.json` confirms every element's
+computed style is unchanged across phone/desktop, both themes and three app states.
 Set `AUDIT_SCREENSHOTS` to a directory to retain screenshots. These checks do not
 replace a physical Safari/Android pass or a source-spreadsheet reconciliation.
 

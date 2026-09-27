@@ -48,6 +48,11 @@ test('Failed occupation loads restore the previous selection and map',async(p,ur
  assert.deepEqual(await p.evaluate(()=>[state.activeMapSoc,state.activeJobPayload.soc]),['00-0000','00-0000']);
  assert.equal(await p.$eval('#dataNotice',e=>!e.hidden),true);
 });
+test('Failed map data load shows an error notice',async(p,url)=>{
+ await p.evaluateOnNewDocument(()=>{const original=fetch;window.fetch=(...args)=>String(args[0]).includes('metro_shapes.json')?Promise.resolve(new Response('',{status:503})):original(...args);});
+ await p.goto(url);await p.waitForFunction(()=>!document.getElementById('dataNotice').hidden,{timeout:15000});
+ assert.match(await p.$eval('#dataNotice',e=>e.textContent),/Map data could not be loaded/);
+});
 test('Censored wages do not produce a falsely precise national percentage',async(p,url)=>{
  await p.goto(url);await p.waitForFunction(()=>state.mapData&&state.areaData);
  await p.evaluate(async()=>{await loadArea('27');await loadMapJob('29-1242');state.activeJobPayload.nat.median=239200;renderHeroAndKPIs();});

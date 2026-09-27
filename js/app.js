@@ -215,7 +215,7 @@ async function init() {
   setupTheme();
   setupDropdowns();
   setupEventListeners();
-  setupYearSelect();
+  setSourceLabel();
   introTraceSearchBars();
   positionSummaryPanel();
   try {
@@ -290,29 +290,12 @@ async function init() {
   }
 }
 
-// Wire up the OEWS data-year selector. Switching year reloads the page with
-// ?year=<yyyy> so every data engine re-initializes cleanly against the new
-// release; the current ?area= selection is preserved across the reload.
-function setupYearSelect() {
-  const sel = document.getElementById("yearSelect");
-  if (sel) {
-    sel.value = state.year;
-    sel.addEventListener("change", () => {
-      const url = new URL(window.location);
-      if (sel.value === "2025") {
-        url.searchParams.delete("year");
-      } else {
-        url.searchParams.set("year", sel.value);
-      }
-      window.location.assign(url);
-    });
-  }
+// Shows the OEWS release year chosen by ?year=<yyyy> in the masthead.
+function setSourceLabel() {
   const src = document.getElementById("sourceLabel");
   if (src) {
     src.textContent = `U.S. Bureau of Labor Statistics May ${state.year} Release`;
   }
-  const fy = document.getElementById("footerYear");
-  if (fy) fy.textContent = state.year;
 }
 
 // -------------------------------------------------------------
@@ -347,7 +330,7 @@ async function initMetroMap() {
     }
   } catch (err) {
     console.error("Failed to initialize metro map:", err);
-    document.getElementById("mapSummaryStats").textContent = "Unable to load metro map data.";
+    showDataNotice("Map data could not be loaded. Check your connection and reload this page.");
   }
 }
 
@@ -478,9 +461,7 @@ function zoomToState(stateIdOrCode) {
 
   // 5. Update Toolbar Area Info
   const titleEl = document.getElementById("hudMetroTitle");
-  const resetBtn = document.getElementById("hudResetBtn");
   if (titleEl) titleEl.textContent = stateMeta.name;
-  if (resetBtn) resetBtn.style.display = "inline-flex";
 
   // 6. Update Explorer Data for the State
   loadArea(stFips, false);
@@ -516,9 +497,7 @@ function resetMapZoom() {
   if (layer) layer.innerHTML = "";
 
   const titleEl = document.getElementById("hudMetroTitle");
-  const resetBtn = document.getElementById("hudResetBtn");
   if (titleEl) titleEl.textContent = "United States";
-  if (resetBtn) resetBtn.style.display = "inline-flex";
 
 
   if (state.currentAreaId && state.currentAreaId !== "99") {
@@ -557,10 +536,6 @@ async function loadMapJob(soc) {
   if (sidebarJobTitle) {
     sidebarJobTitle.textContent = occMeta.title;
   }
-  const sidebarStatsTitle = document.getElementById("sidebarStatsJobTitle");
-  if (sidebarStatsTitle) {
-    sidebarStatsTitle.textContent = occMeta.title;
-  }
 
   if (soc === "00-0000") {
     // All occupations total: build payload from master map data
@@ -595,9 +570,6 @@ async function loadMapJob(soc) {
     renderHeroAndKPIs();
     return;
   }
-
-  const mapSummaryStatsEl = document.getElementById("mapSummaryStats");
-  if (mapSummaryStatsEl) mapSummaryStatsEl.textContent = `Loading ${occMeta.title} across statistical areas...`;
 
   try {
     let payload = null;
@@ -2107,9 +2079,7 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
 
     // Update Toolbar Area Info
     const titleEl = document.getElementById("hudMetroTitle");
-    const resetBtn = document.getElementById("hudResetBtn");
     if (titleEl) titleEl.textContent = formatAreaName(metroMeta.name);
-    if (resetBtn) resetBtn.style.display = "inline-flex";
 
     // Direct O(1) polygon selection class sync
     if (state._areaEls) {
@@ -2211,9 +2181,7 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     }
 
     const titleEl = document.getElementById("hudMetroTitle");
-    const resetBtn = document.getElementById("hudResetBtn");
     if (titleEl) titleEl.textContent = stateMeta.name;
-    if (resetBtn) resetBtn.style.display = "inline-flex";
   }
   // 3. National benchmark or reset
   else {
@@ -2225,9 +2193,7 @@ function renderMetroShapeOverlay(areaId, shouldZoom = true) {
     }
 
     const titleEl = document.getElementById("hudMetroTitle");
-    const resetBtn = document.getElementById("hudResetBtn");
     if (titleEl) titleEl.textContent = "United States";
-    if (resetBtn) resetBtn.style.display = "inline-flex";
 
     (state._stateEls || document.querySelectorAll(".state-boundary")).forEach(p => {
       p.classList.remove("state-focused", "state-dimmed");
@@ -2513,10 +2479,6 @@ function renderHeroAndKPIs() {
     areaInputEl.placeholder = data.id === "99" ? "Search state, metro area, or ZIP…" : "Change area…";
   }
 
-  const statsJobTitle = document.getElementById("sidebarStatsJobTitle");
-  if (statsJobTitle) {
-    statsJobTitle.textContent = isAllJobs ? "All Occupations" : occTitle;
-  }
   const sidebarJobTitle = document.getElementById("sidebarActiveJobTitle");
   if (sidebarJobTitle) {
     sidebarJobTitle.textContent = isAllJobs ? "All Occupations" : occTitle;

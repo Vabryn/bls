@@ -33,17 +33,6 @@ const MAJOR_SOCS = [
   "53-0000"
 ];
 
-// Education Levels
-const EDU_LEVELS = [
-  { name: "No formal requirement", short: "None", color: "#78716c" },
-  { name: "High school / GED", short: "HS/GED", color: "#64748b" },
-  { name: "Certificate / License", short: "Certificate", color: "#0d9488" },
-  { name: "Associate's degree", short: "Associate's", color: "#0284c7" },
-  { name: "Bachelor's degree", short: "Bachelor's", color: "#6366f1" },
-  { name: "Master's degree", short: "Master's", color: "#8b5cf6" },
-  { name: "Doctoral / Professional", short: "Doctoral", color: "#d97706" }
-];
-
 // Wage metrics offered in the browse tables' single wage column — same set the
 // map's metric control uses. `occIdx` indexes an occupations-table row
 // [soc,title,grp,edu,emp,mean,median,p10,p25,p75,p90,lq]; `areaIdx` indexes a
